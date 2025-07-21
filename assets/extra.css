@@ -1,0 +1,42 @@
+/* Custom CSS for Cracktrader documentation */
+
+/* Force monospace font for architecture diagrams */
+.highlight pre code {
+  font-family: 'Courier New', Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
+  font-size: 0.85em;
+  line-height: 1.2;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Ensure proper spacing for ASCII art */
+pre code {
+  font-feature-settings: "liga" 0, "calt" 0;
+  letter-spacing: 0;
+}
+
+/* Style for architecture diagram container */
+.highlight {
+  background-color: var(--md-code-bg-color);
+  border-radius: 0.2rem;
+  margin: 1em 0;
+  overflow: hidden;
+}
+
+.highlight pre {
+  margin: 0;
+  padding: 1rem;
+  background: transparent;
+}
+
+/* Dark mode adjustments */
+[data-md-color-scheme="slate"] .highlight {
+  background-color: var(--md-code-bg-color);
+}
+
+/* Ensure consistent font rendering across browsers */
+@supports (font-variant-ligatures: none) {
+  .highlight pre code {
+    font-variant-ligatures: none;
+  }
+}
