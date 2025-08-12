@@ -85,6 +85,7 @@ nav:
     - Web Dashboard: examples/web_dashboard.md
   - Development:
     - Publishing Docs: development/publishing.md
+    - Testing Guidelines: development/testing_guidelines.md
     - Development Workflow: development/workflow.md
     - Quick Reference: development/quick-reference.md
   - API Reference:
