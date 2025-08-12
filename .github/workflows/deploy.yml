@@ -33,7 +33,7 @@ jobs:
 
     - name: Build documentation
       run: |
-        mkdocs build --clean --strict
+        mkdocs build --clean --strict --config-file mkdocs-subtree.yml
 
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3

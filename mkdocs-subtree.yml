@@ -5,8 +5,9 @@ site_url: https://your-domain.com/cracktrader-docs  # Update with your VPS domai
 repo_name: cracktrader
 edit_uri: ""  # Disable edit links for private repo
 
-
-
+# Docs directory - in subtree, markdown files are at root level
+docs_dir: .
+site_dir: site
 
 theme:
   name: material
