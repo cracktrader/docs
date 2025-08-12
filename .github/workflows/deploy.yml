@@ -34,6 +34,7 @@ jobs:
     - name: Build documentation
       run: |
         mkdocs build --clean --config-file mkdocs-subtree.yml
+        cp -r /tmp/mkdocs_site ./site
 
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
