@@ -83,6 +83,10 @@ nav:
     - Multi-Asset: examples/multi_asset.md
     - Live Trading: examples/live_trading.md
     - Web Dashboard: examples/web_dashboard.md
+  - Development:
+    - Publishing Docs: development/publishing.md
+    - Development Workflow: development/workflow.md
+    - Quick Reference: development/quick-reference.md
   - API Reference:
     - Store: reference/store.md
     - Broker: reference/broker.md
