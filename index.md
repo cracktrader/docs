@@ -1,44 +1,21 @@
-# Cracktrader Documentation
+# CrackTrader Documentation
 
-> **A modern cryptocurrency trading framework that bridges CCXT and Backtrader for unified backtesting, paper trading, and live trading.**
+Cryptocurrency trading framework that connects CCXT (400+ exchanges) with Backtrader (backtesting engine).
 
-## What is Cracktrader?
-
-Cracktrader is a comprehensive cryptocurrency trading platform that combines the power of:
+## What it does
 
 - **[CCXT](https://github.com/ccxt/ccxt)** - Connect to 400+ cryptocurrency exchanges
-- **[Backtrader](https://github.com/mementum/backtrader)** - Professional backtesting and strategy development
-- **Modern tooling** - FastAPI web interface, React dashboard, comprehensive logging & monitoring
+- **[Backtrader](https://github.com/mementum/backtrader)** - Backtesting and strategy development
+- **Web interface** - FastAPI + React dashboard for monitoring
 
-## Key Features
+## Features
 
-**Unified Trading Modes**
-
-- Backtest with historical data validation
-- Paper trading with live market data
-- Live trading with real money execution
-- Same strategy code across all modes
-
-**Production Ready**
-
-- Comprehensive logging and health monitoring
-- Robust error handling and recovery
-- Full test coverage (89 test files, 2:1 test-to-source ratio)
-- Type-safe with extensive documentation
-
-**Developer Experience**
-
-- Full Backtrader compatibility
-- Hot-reloadable configuration
-- RESTful API for integration
-- Modern React dashboard
-
-**Exchange Integration**
-
-- 400+ exchanges through CCXT
-- Real-time WebSocket data feeds
-- Multiple asset classes (spot, futures, margin)
-- Unified order management
+- **Trading modes**: Backtesting, paper trading, live trading
+- **Data**: Historical data caching, real-time WebSocket feeds
+- **Exchanges**: 400+ exchanges via CCXT
+- **Testing**: 89 test files, 2:1 test-to-source ratio
+- **Monitoring**: Health checks, structured logging
+- **Web API**: FastAPI + React dashboard
 
 ## Quick Start
 
@@ -65,18 +42,18 @@ from cracktrader import Cerebro, CCXTStore, CCXTDataFeed
 
 class MovingAverageCross(bt.Strategy):
     params = (('fast_period', 10), ('slow_period', 30))
-    
+
     def __init__(self):
         self.fast_ma = bt.indicators.SMA(period=self.p.fast_period)
         self.slow_ma = bt.indicators.SMA(period=self.p.slow_period)
         self.crossover = bt.indicators.CrossOver(self.fast_ma, self.slow_ma)
-    
+
     def next(self):
         if not self.position and self.crossover > 0:
             # OCO order with stop-loss and take-profit
             size = self.broker.get_cash() * 0.95 / self.data.close[0]
             entry_price = self.data.close[0]
-            
+
             self.buy_bracket(
                 size=size,
                 price=entry_price,
@@ -116,7 +93,7 @@ results = cerebro.run(web_api=True, web_host="0.0.0.0", web_port=8000)
 **Key Features:**
 
 - Integrated with cerebro execution - no separate process
-- Multi-client support - multiple frontends can connect simultaneously  
+- Multi-client support - multiple frontends can connect simultaneously
 - Real-time strategy monitoring - WebSocket streams for live data
 - RESTful endpoints - full strategy and market data access
 
@@ -199,10 +176,10 @@ The integrated web API provides comprehensive access to your trading system:
     │    Binance  │  Coinbase  │  Kraken      │
     │   Bybit │ OKX │ Bitget │ Gate.io │ ... │
     └─────────────────────────────────────────┘
-    
+
     Data Flow:
     • Strategies ──→ Cerebro ──→ Data Feeds ──→ Store ──→ Exchanges
-    • Orders: Cerebro ──→ Brokers ──→ Store ──→ Exchanges  
+    • Orders: Cerebro ──→ Brokers ──→ Store ──→ Exchanges
     • API: Web Dashboard ──→ REST API ──→ Cerebro (monitoring/control)
 
 ## What Makes Cracktrader Different?

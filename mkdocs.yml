@@ -1,0 +1,111 @@
+site_name: Cracktrader Documentation
+site_description: A modern cryptocurrency trading framework that bridges CCXT and Backtrader
+site_url: https://your-domain.com/cracktrader-docs  # Update with your VPS domain
+
+repo_name: cracktrader
+edit_uri: ""  # Disable edit links for private repo
+
+theme:
+  name: material
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+  - toc:
+      permalink: true
+  - attr_list
+  - md_in_html
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting_started/installation.md
+    - Quick Start: getting_started/quickstart.md
+    - Configuration: getting_started/configuration.md
+    - First Strategy: getting_started/first_strategy.md
+  - Core Concepts:
+    - Architecture: core_concepts/architecture.md
+    - Exchanges: core_concepts/exchanges.md
+    - Data Feeds: core_concepts/feeds.md
+    - Brokers: core_concepts/brokers.md
+    - Strategies: core_concepts/strategies.md
+    - Data Caching: core_concepts/caching.md
+  - Performance & Scale:
+    - Overview: performance/overview.md
+    - Benchmarking: performance/benchmarking.md
+    - Large Datasets: performance/large_datasets.md
+    - Optimization Roadmap: performance/optimization_roadmap.md
+    - Caching Guide: performance/caching_guide.md
+  - Advanced:
+    - Live Trading: advanced/live_trading.md
+    - Backtesting: advanced/backtesting.md
+    - Testing Infrastructure: advanced/testing.md
+    - Monitoring: advanced/monitoring.md
+    - Web API & Dashboard: advanced/web_api.md
+  - Examples:
+    - Basic Strategy: examples/basic_strategy.md
+    - Multi-Asset: examples/multi_asset.md
+    - Live Trading: examples/live_trading.md
+    - Web Dashboard: examples/web_dashboard.md
+  - API Reference:
+    - Store: reference/store.md
+    - Broker: reference/broker.md
+    - Feeds: reference/feeds.md
+    - Utils: reference/utils.md
+
+plugins:
+  - search
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            merge_init_into_class: true
+            show_submodules: true
+
+extra_css:
+  - assets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/LachlanBridges/cracktrader
+      name: GitHub Repository
