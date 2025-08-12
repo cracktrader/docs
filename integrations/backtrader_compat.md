@@ -68,7 +68,7 @@ import backtrader as bt
 class MyStrategy(bt.Strategy):
     def __init__(self):
         self.sma = bt.indicators.SMA(period=20)
-    
+
     def next(self):
         if self.data.close[0] > self.sma[0]:
             self.buy()
@@ -92,7 +92,7 @@ from cracktrader import Cerebro, CCXTStore, CCXTDataFeed
 class MyStrategy(bt.Strategy):  # No changes needed!
     def __init__(self):
         self.sma = bt.indicators.SMA(period=20)
-    
+
     def next(self):
         if self.data.close[0] > self.sma[0]:
             self.buy()
@@ -290,7 +290,7 @@ class ArbitrageStrategy(bt.Strategy):
     def next(self):
         binance_price = self.datas[0].close[0]
         coinbase_price = self.datas[1].close[0]
-        
+
         spread = (coinbase_price - binance_price) / binance_price
         if spread > 0.01:  # 1% arbitrage opportunity
             self.buy(data=self.datas[0])  # Buy on Binance
@@ -305,7 +305,7 @@ class LiveStrategy(bt.Strategy):
         # This runs in real-time with live market data
         current_time = self.data.datetime.datetime()
         current_price = self.data.close[0]
-        
+
         # Real-time decision making
         if self.should_trade():
             self.buy()
@@ -329,11 +329,11 @@ class AdvancedOrderStrategy(bt.Strategy):
         if not self.position:
             # Place bracket order (entry + stop + target)
             main_order = self.buy()
-            
+
             # Automatic stop loss and take profit
             stop_price = self.data.close[0] * 0.95  # 5% stop
             target_price = self.data.close[0] * 1.10  # 10% target
-            
+
             self.sell(exectype=bt.Order.Stop, price=stop_price, parent=main_order)
             self.sell(exectype=bt.Order.Limit, price=target_price, parent=main_order)
 
@@ -388,7 +388,7 @@ class OptimizedStrategy(bt.Strategy):
         # Calculate once, use many times
         self.sma = bt.indicators.SMA(period=20)
         self.signal = self.data.close > self.sma  # Boolean series
-    
+
     def next(self):
         if self.signal[0]:  # Direct boolean check
             self.buy()
@@ -407,13 +407,13 @@ class TestMyStrategy(unittest.TestCase):
     def setUp(self):
         self.cerebro = Cerebro()
         self.cerebro.addstrategy(MyStrategy)
-        
+
         # Use test data
         from tests.fixtures.fake_exchange import FakeExchange
         store = CCXTStore(exchange_id='fake', exchange=FakeExchange())
         feed = CCXTDataFeed(store=store, symbol='BTC/USDT')
         self.cerebro.adddata(feed)
-    
+
     def test_strategy_runs(self):
         results = self.cerebro.run()
         self.assertIsNotNone(results)
@@ -431,7 +431,7 @@ class TestCryptoStrategy(unittest.TestCase):
         mock_store.return_value.fetch_ohlcv.return_value = [
             [1640995200000, 50000, 51000, 49000, 50500, 100],  # OHLCV data
         ]
-        
+
         cerebro = Cerebro()
         cerebro.addstrategy(MyStrategy)
         # Test continues...
@@ -494,26 +494,26 @@ class TestCryptoStrategy(unittest.TestCase):
 ```python
 def validate_migration():
     """Validate that migrated strategy produces expected results."""
-    
+
     # Run original Backtrader strategy
     bt_cerebro = bt.Cerebro()
     bt_cerebro.addstrategy(OriginalStrategy)
     # Add equivalent data...
     bt_results = bt_cerebro.run()
-    
+
     # Run migrated Cracktrader strategy
     ct_cerebro = Cerebro()
     ct_cerebro.addstrategy(MigratedStrategy)
     # Add CCXT data...
     ct_results = ct_cerebro.run()
-    
+
     # Compare results
     bt_final_value = bt_results[0].broker.getvalue()
     ct_final_value = ct_results[0].broker.getvalue()
-    
+
     difference = abs(bt_final_value - ct_final_value) / bt_final_value
     assert difference < 0.01, f"Results differ by {difference:.2%}"
-    
+
     print("✅ Migration validated successfully")
 ```
 

@@ -57,45 +57,47 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Getting Started:
-    - Installation: getting_started/installation.md
-    - Quick Start: getting_started/quickstart.md
-    - Configuration: getting_started/configuration.md
-    - First Strategy: getting_started/first_strategy.md
-  - Core Concepts:
-    - Architecture: core_concepts/architecture.md
-    - Exchanges: core_concepts/exchanges.md
-    - Data Feeds: core_concepts/feeds.md
-    - Brokers: core_concepts/brokers.md
-    - Strategies: core_concepts/strategies.md
-    - Data Caching: core_concepts/caching.md
-  - Performance & Scale:
-    - Overview: performance/overview.md
-    - Benchmarking: performance/benchmarking.md
-    - Large Datasets: performance/large_datasets.md
-    - Optimization Roadmap: performance/optimization_roadmap.md
-    - Caching Guide: performance/caching_guide.md
-  - Advanced:
-    - Live Trading: advanced/live_trading.md
-    - Backtesting: advanced/backtesting.md
-    - Testing Infrastructure: advanced/testing.md
-    - Monitoring: advanced/monitoring.md
-    - Web API & Dashboard: advanced/web_api.md
-  - Examples:
-    - Basic Strategy: examples/basic_strategy.md
-    - Multi-Asset: examples/multi_asset.md
-    - Live Trading: examples/live_trading.md
-    - Web Dashboard: examples/web_dashboard.md
-  - Development:
-    - Publishing Docs: development/publishing.md
-    - Testing Guidelines: development/testing_guidelines.md
-    - Development Workflow: development/workflow.md
-    - Quick Reference: development/quick-reference.md
-  - API Reference:
-    - Store: reference/store.md
-    - Broker: reference/broker.md
-    - Feeds: reference/feeds.md
-    - Utils: reference/utils.md
+  - Tutorials:
+      - Quickstart: tutorials/quickstart.md
+      - Install: tutorials/installation.md
+      - First Strategy: tutorials/first_strategy.md
+      - Basic Example: tutorials/basic_strategy.md
+  - How-to:
+      - Configure the platform: how-to/configuration.md
+      - Strategy cookbook: how-to/strategy_guide.md
+      - Use the Web API: how-to/web_api.md
+      - Backtrader compatibility: integrations/backtrader_compat.md
+  - Explanations:
+      - Architecture: explanations/architecture.md
+      - Strategies: explanations/strategies.md
+      - Feeds: explanations/feeds.md
+      - Brokers: explanations/brokers.md
+      - Exchanges: explanations/exchanges.md
+      - Caching model: explanations/caching.md
+  - Reference:
+      - Web API Reference: reference/web_api.md
+      - Configuration reference: reference/configuration.md
+  - Performance:
+      - Overview: performance/overview.md
+      - Caching guide: performance/caching_guide.md
+      - Large datasets: performance/large_datasets.md
+      - Benchmarking: performance/benchmarking.md
+      - Optimization roadmap: performance/optimization_roadmap.md
+  - Testing & Quality:
+      - Strategy analysis: testing/strategy_analysis.md
+      - Fixtures & sample strategy: testing/fixture_strategy.md
+      - Mocking policy: testing/mocking_policy.md
+      - Test coverage status: testing/test_coverage.md
+      - Known gaps: testing/known_gaps.md
+  - Contributing:
+      - Overview: development/README.md
+      - Workflow: development/workflow.md
+      - Quick reference: development/quick-reference.md
+      - Testing guidelines: development/testing_guidelines.md
+      - Publishing: development/publishing.md
+  - Project (internal):
+      - Documentation plan: internal/DOCUMENTATION_PLAN.md
+      - Documentation status: internal/DOCUMENTATION_STATUS.md
 
 plugins:
   - search

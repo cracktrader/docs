@@ -7,49 +7,49 @@ Cracktrader's architecture is designed for **modularity**, **performance**, and 
 ```mermaid
 graph TB
     subgraph "User Layer"
-        S[Strategies] 
+        S[Strategies]
         W[Web Dashboard]
         CLI[CLI Tools]
     end
-    
-    subgraph "Execution Layer"  
+
+    subgraph "Execution Layer"
         C[Cerebro Engine]
         A[Analyzers]
         I[Indicators]
     end
-    
+
     subgraph "Trading Layer"
         B[Brokers]
-        F[Data Feeds] 
+        F[Data Feeds]
         R[Risk Manager]
     end
-    
+
     subgraph "Integration Layer"
         ST[CCXT Store]
         WS[WebSocket Streams]
         API[REST API]
     end
-    
+
     subgraph "Exchange Layer"
         EX[400+ Exchanges]
     end
-    
+
     S --> C
     W --> API
     CLI --> C
-    
+
     C --> B
     C --> F
     C --> A
     C --> I
-    
+
     B --> ST
     F --> ST
     B --> R
-    
+
     ST --> WS
     ST --> API
-    
+
     ST --> EX
     WS --> EX
     API --> EX
@@ -62,14 +62,14 @@ graph TB
 The **Cerebro** is Cracktrader's execution engine, inherited from Backtrader:
 
 - **Strategy Orchestration**: Manages strategy lifecycle and execution
-- **Data Flow**: Coordinates data between feeds, strategies, and brokers  
+- **Data Flow**: Coordinates data between feeds, strategies, and brokers
 - **Event Loop**: Handles tick-by-tick or bar-by-bar execution
 - **Performance Tracking**: Collects metrics and runs analyzers
 
 ```python
 cerebro = bt.Cerebro()
 cerebro.adddata(data_feed)
-cerebro.addstrategy(MyStrategy) 
+cerebro.addstrategy(MyStrategy)
 cerebro.setbroker(broker)
 cerebro.run()
 ```
@@ -125,7 +125,7 @@ Multiple broker implementations for different trading modes:
 - Real-time position updates
 - Commission and slippage modeling
 
-#### CCXTBackBroker  
+#### CCXTBackBroker
 - Historical backtesting
 - Perfect execution simulation
 - Configurable slippage models
@@ -144,7 +144,7 @@ Built on Backtrader's strategy framework with enhancements:
 class MyStrategy(bt.Strategy):
     def __init__(self):
         self.sma = bt.indicators.SMA(period=20)
-        
+
     def next(self):
         if self.data.close > self.sma:
             self.buy(size=0.1)
@@ -199,7 +199,7 @@ Cracktrader uses a **hybrid async/sync** architecture:
 
 ### Main Thread (Synchronous)
 - Backtrader strategy execution
-- Indicator calculations  
+- Indicator calculations
 - Analyzer processing
 
 ### Background Threads (Asynchronous)
@@ -278,7 +278,7 @@ config = {
 ```
 
 ### 3. Strategy Parameters
-```python  
+```python
 class Strategy(bt.Strategy):
     params = (
         ('period', 20),
@@ -290,7 +290,7 @@ class Strategy(bt.Strategy):
 
 ### 1. Structured Logging
 - **JSON Format**: Machine-readable logs
-- **Context Propagation**: Request tracing across components  
+- **Context Propagation**: Request tracing across components
 - **Log Levels**: Configurable verbosity
 
 ### 2. Metrics Collection

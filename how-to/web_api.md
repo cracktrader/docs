@@ -7,7 +7,7 @@ A comprehensive RESTful API and web interface for managing cryptocurrency tradin
 The Cracktrader Web API provides a modern HTTP interface to all Cracktrader functionality, allowing you to:
 
 - Run backtests through HTTP requests
-- Manage live and paper trading sessions  
+- Manage live and paper trading sessions
 - Monitor system health and performance
 - Access real-time trading data and results
 - Control strategy execution remotely
@@ -209,7 +209,7 @@ async def run_backtest():
         }) as resp:
             result = await resp.json()
             run_id = result['run_id']
-        
+
         # Monitor progress
         while True:
             async with session.get('http://127.0.0.1:8000/api/v1/status') as resp:
@@ -217,7 +217,7 @@ async def run_backtest():
                 if status['status'] in ['completed', 'failed']:
                     break
             await asyncio.sleep(1)
-        
+
         # Get results
         async with session.get('http://127.0.0.1:8000/api/v1/results') as resp:
             results = await resp.json()
@@ -241,21 +241,21 @@ async function runBacktest() {
     timeframe: '1h',
     initial_cash: 10000.0
   });
-  
+
   console.log(`Backtest started: ${startResult.run_id}`);
-  
+
   // Monitor progress
   while (true) {
     const { data: status } = await axios.get(`${API_BASE}/status`);
     console.log(`Status: ${status.status}`);
-    
+
     if (['completed', 'failed'].includes(status.status)) {
       break;
     }
-    
+
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
-  
+
   // Get results
   const { data: results } = await axios.get(`${API_BASE}/results`);
   console.log(`Final value: $${results.final_value}`);

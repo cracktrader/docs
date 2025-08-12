@@ -96,7 +96,7 @@ exchanges:
       secret: "your_sandbox_secret"
       sandbox: true
     live:
-      apiKey: "your_live_api_key"  
+      apiKey: "your_live_api_key"
       secret: "your_live_secret"
       sandbox: false
 EOF
@@ -174,5 +174,5 @@ print(exchange.fetch_ticker('BTC/USDT'))
 ## Next Steps
 
 - [**Quick Start Guide**](quickstart.md) - Build your first strategy
-- [**Configuration**](configuration.md) - Advanced setup options  
+- [**Configuration**](configuration.md) - Advanced setup options
 - [**Core Concepts**](../core_concepts/architecture.md) - Understanding the framework
