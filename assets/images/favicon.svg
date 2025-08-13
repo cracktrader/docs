@@ -1,5 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <circle cx="16" cy="16" r="14" fill="#2563eb"/>
-  <text x="16" y="21" font-family="Arial, sans-serif" font-size="12" font-weight="bold" 
-        text-anchor="middle" fill="white">CT</text>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="32" height="32" viewBox="0 0 1000 1000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+<g>
+<path d="M235.28,723.99l182.828,-0l83.649,159.091l-449.306,-0l0,-795.455l365.657,0l-0,159.091l-182.828,0l-0,477.273Z" style="fill-rule:nonzero;"/>
+<path d="M599.764,246.717l-182.828,0l0,-159.091l548.485,0l0,159.091l-182.828,0l-0,636.364l-182.829,-0l0,-636.364Z" style="fill-rule:nonzero;"/>
+</g>
 </svg>
