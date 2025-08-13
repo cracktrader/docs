@@ -45,7 +45,7 @@ Create `config.json` in your project root:
 }
 ```
 
-### Coinbase Pro
+### Coinbase
 ```json
 {
   "coinbase": {
@@ -81,25 +81,23 @@ export COINBASE_PASSPHRASE="your_passphrase"
 from cracktrader import CCXTStore
 
 # Basic configuration
-store = CCXTStore({
-    'exchange': 'binance',
-    'sandbox': True
-})
+store = CCXTStore(exchange='binance', sandbox=True)
 
 # With caching enabled
 store = CCXTStore(
-    {'exchange': 'binance', 'sandbox': True},
+    exchange='binance',
+    sandbox=True,
     cache_enabled=True,
     cache_dir="./trading_data"
 )
 
-# Advanced configuration
+# With CCXT-specific settings
 store = CCXTStore(
-    exchange_config={'exchange': 'binance', 'sandbox': True},
+    exchange='binance',
+    sandbox=True,
+    config={'enableRateLimit': True, 'rateLimit': 1200},
     cache_enabled=True,
-    cache_dir="./data",
-    connection_pool_size=10,
-    rate_limit=True
+    cache_dir="./data"
 )
 ```
 
@@ -129,36 +127,9 @@ logging.getLogger('cracktrader.broker').setLevel(logging.WARNING)
 
 ## Common Settings
 
-### For Backtesting
-```python
-config = {
-    'exchange': 'binance',
-    'sandbox': False,  # Use historical data
-    'cache_enabled': True,
-    'rate_limit': False  # Faster for backtesting
-}
-```
-
-### For Live Trading
-```python
-config = {
-    'exchange': 'binance',
-    'sandbox': False,  # Real trading
-    'cache_enabled': False,  # Always fresh data
-    'rate_limit': True,  # Respect exchange limits
-    'health_monitoring': True
-}
-```
-
-### For Development
-```python
-config = {
-    'exchange': 'binance',
-    'sandbox': True,  # Safe testing
-    'cache_enabled': True,  # Faster iterations
-    'verbose_logging': True
-}
-```
+- Backtesting: sandbox can be False; enable caching for repeat runs.
+- Live trading: sandbox=False; pass API keys via `config={...}`; disable caching.
+- Development: sandbox=True; enable caching for speed; keep logging at INFO.
 
 ## Security Best Practices
 

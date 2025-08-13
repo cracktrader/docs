@@ -1,6 +1,6 @@
-# Data Feeds Guide
+# Data Feeds
 
-Cracktrader's data feeds system provides unified access to real-time and historical market data from 400+ cryptocurrency exchanges through CCXT integration. This guide covers data feed configuration, usage patterns, and optimization techniques.
+Cracktrader's data feeds system provides unified access to real-time and historical market data from 100+ cryptocurrency exchanges through CCXT integration. This guide covers data feed configuration, usage patterns, and optimization techniques.
 
 ## Overview
 
@@ -39,15 +39,14 @@ Cracktrader's data feeds system provides unified access to real-time and histori
 from cracktrader import Cerebro, CCXTStore, CCXTDataFeed
 
 # Create store connection
-store = CCXTStore(exchange_id='binance')
+store = CCXTStore(exchange='binance')
 
 # Create historical data feed
 feed = CCXTDataFeed(
     store=store,
     symbol='BTC/USDT',
-    timeframe='1h',
-    start_date='2024-01-01T00:00:00Z',
-    end_date='2024-03-01T23:59:59Z'
+    ccxt_timeframe='1h',
+    historical_limit=2000
 )
 
 # Add to strategy
@@ -60,12 +59,13 @@ cerebro.run()
 ### Live Data Feed
 
 ```python
-# Live streaming data (no start/end dates)
+# Live streaming data
 feed = CCXTDataFeed(
     store=store,
     symbol='BTC/USDT',
-    timeframe='1m'
-    # Omitting dates creates live feed
+    ccxt_timeframe='1m',
+    live=True,
+    historical_limit=1  # Seed with at least one candle
 )
 
 # Strategy receives real-time updates
@@ -77,20 +77,12 @@ class LiveStrategy(bt.Strategy):
         print(f"{current_time}: BTC price is ${current_price:,.2f}")
 ```
 
-### Paper Trading Data
+### Paper Trading
 
 ```python
 # Paper trading with sandbox data
-store = CCXTStore(
-    exchange_id='binance',
-    config={
-        'apiKey': 'your_api_key',
-        'secret': 'your_secret',
-        'sandbox': True  # Use testnet/sandbox
-    }
-)
-
-feed = CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='5m')
+store = CCXTStore(exchange='binance', sandbox=True, config={'apiKey': '...', 'secret': '...'})
+feed = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='5m')
 ```
 
 ## Data Feed Configuration

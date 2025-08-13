@@ -5,14 +5,14 @@ CrackTrader automatically caches historical data to avoid repeated API calls.
 ## Why It Matters
 
 Without caching:
-- 1M candles take 20-50 seconds to load
-- Every backtest refetches the same data
-- Hit API rate limits quickly
+- Large datasets take longer to load
+- Backtests may repeatedly fetch the same data
+- Higher chance of hitting API limits
 
 With caching:
-- Same 1M candles load in 0.5 seconds (100x faster)
-- Only fetch new data since last update
-- Unlimited backtesting without API limits
+- Repeated runs avoid redundant downloads
+- Only new data since last update is fetched
+- Fewer API calls and faster iteration
 
 ## How to Enable
 

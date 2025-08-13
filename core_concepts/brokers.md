@@ -1,53 +1,31 @@
 # Brokers
 
-CrackTrader provides three broker types for different trading scenarios.
+CrackTrader brokers execute orders and track portfolio state. Use backtesting for research and the live broker for production.
 
 ## Broker Types
 
-### CCXTBackBroker
-For backtesting with historical data.
+### Backtesting (CCXTBackBroker)
+For historical simulations with deterministic execution.
 
 ```python
-from cracktrader.broker import CCXTBackBroker
+from cracktrader.broker import BrokerFactory
 
-broker = CCXTBackBroker(store=store, startingcash=10000.0)
+# Paper/backtest broker with virtual cash
+broker = BrokerFactory.create(mode='paper', cash=10000, commission=0.001)
+cerebro.setbroker(broker)
 ```
 
-**Features**:
-- Uses historical data only
-- Simulated order execution
-- No real money involved
-- Fast backtesting
-
-### CCXTLiveBroker
-For live trading with real money.
+### Live Trading (CCXTLiveBroker)
+For real exchange connectivity and live order placement.
 
 ```python
-from cracktrader.broker import CCXTLiveBroker
+from cracktrader import CCXTStore
+from cracktrader.broker import BrokerFactory
 
-broker = CCXTLiveBroker(store=store)
+store = CCXTStore(exchange='binance', sandbox=False, config={'apiKey': '...', 'secret': '...'})
+broker = BrokerFactory.create(mode='live', store=store)
+cerebro.setbroker(broker)
 ```
-
-**Features**:
-- Real exchange connectivity
-- Actual order placement
-- Real money execution
-- Live position tracking
-
-### CCXTPaperBroker
-For paper trading with live data.
-
-```python
-from cracktrader.broker import CCXTPaperBroker
-
-broker = CCXTPaperBroker(store=store, startingcash=10000.0)
-```
-
-**Features**:
-- Live market data
-- Simulated execution at real prices
-- No real money involved
-- Good for strategy validation
 
 ## Order Types
 
@@ -123,10 +101,10 @@ def next(self):
 ```python
 def next(self):
     # Available cash
-    cash = self.broker.get_cash()
+    cash = self.broker.getcash()
 
     # Total portfolio value
-    value = self.broker.get_value()
+    value = self.broker.getvalue()
 
     # Calculate position size based on risk
     risk_amount = value * 0.02  # 2% risk
@@ -150,36 +128,13 @@ def notify_order(self, order):
 
 ## Broker Configuration
 
-### Backtest Broker
-```python
-broker = CCXTBackBroker(
-    store=store,
-    startingcash=10000.0,
-    commission=0.001  # 0.1% commission
-)
-```
-
-### Live Broker
-```python
-broker = CCXTLiveBroker(
-    store=store,
-    # Cash managed by exchange account
-)
-```
-
-### Paper Broker
-```python
-broker = CCXTPaperBroker(
-    store=store,
-    startingcash=10000.0,
-    slippage=0.0005  # 0.05% slippage simulation
-)
-```
+- Backtest broker: `BrokerFactory.create(mode='paper', cash=...)`
+- Live broker: `BrokerFactory.create(mode='live', store=store)`
 
 ## Best Practices
 
 1. **Start with backtesting**: Test strategies with CCXTBackBroker
-2. **Validate with paper trading**: Use CCXTPaperBroker with live data
+2. **Validate with paper trading**: Use the backtest broker with live data feeds (paper mode)
 3. **Go live gradually**: Start with small positions on CCXTLiveBroker
 4. **Monitor positions**: Always check broker.get_value() and positions
 5. **Handle errors**: Implement notify_order() and notify_trade() methods

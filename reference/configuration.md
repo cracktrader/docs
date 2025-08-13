@@ -1,126 +1,78 @@
 # Configuration Reference
 
-This page provides a comprehensive reference for all configuration options in CrackTrader.
+Key parameters for programmatic configuration of Cracktrader components.
 
-## Exchange Configuration
+CCXTStore (exchange connectivity)
 
-### Basic Settings
+- `exchange` (str): CCXT exchange id, e.g., `"binance"`
+- `sandbox` (bool): Use testnet/paper endpoints when available
+- `config` (dict): Passed to CCXT (e.g., `apiKey`, `secret`, `enableRateLimit`)
+- `cache_enabled` (bool): Enable historical data caching
+- `cache_dir` (str): Cache directory path
+- `exchange_instance` (object): Preconfigured CCXT instance (advanced/testing)
 
-```json
-{
-  "exchange": {
-    "name": "binance",
-    "sandbox": true,
-    "apiKey": "your_api_key",
-    "secret": "your_secret",
-    "password": "your_passphrase"
-  }
-}
+Example
+
+```python
+from cracktrader.store import CCXTStore
+
+store = CCXTStore(
+    exchange='binance',
+    sandbox=True,
+    config={'apiKey': '...', 'secret': '...', 'enableRateLimit': True},
+    cache_enabled=True,
+    cache_dir='./data'
+)
 ```
 
-### Rate Limiting
+CCXTDataFeed (market data)
 
-```json
-{
-  "rateLimit": {
-    "requests_per_second": 10,
-    "burst_size": 20
-  }
-}
+- `symbol` (str): e.g., `"BTC/USDT"`
+- `ccxt_timeframe` (str): e.g., `"1m"`, `"1h"`, `"1d"`
+- `live` (bool): Stream live data via WebSocket
+- `historical_limit` (int): Max historical candles to load
+- `fromdate`/`todate` (datetime|None): Historical window
+- `reorder_buffer_size` (int): Out‑of‑order tick buffer size
+- `reorder_buffer_timeout` (float): Buffer flush timeout (seconds)
+
+Example
+
+```python
+from datetime import datetime
+from cracktrader.feeds import CCXTDataFeed
+
+feed = CCXTDataFeed(
+    store=store,
+    symbol='BTC/USDT',
+    ccxt_timeframe='1h',
+    historical_limit=2000,
+    fromdate=datetime(2024,1,1),
+    todate=datetime(2024,3,1)
+)
 ```
 
-## Data Feed Configuration
+Brokers (order execution)
 
-### WebSocket Settings
+- Paper/backtest: `BrokerFactory.create(mode='paper', cash=..., commission=..., slip_perc=...)`
+- Live: `BrokerFactory.create(mode='live', store=store)`
 
-```json
-{
-  "websocket": {
-    "enabled": true,
-    "reconnect_delay": 5,
-    "max_reconnects": 10
-  }
-}
+Example
+
+```python
+from cracktrader.broker import BrokerFactory
+
+# Paper
+paper = BrokerFactory.create(mode='paper', cash=10_000, commission=0.001)
+
+# Live
+live = BrokerFactory.create(mode='live', store=store)
 ```
 
-### OHLCV Settings
+Logging (Python logging)
 
-```json
-{
-  "ohlcv": {
-    "timeframes": ["1m", "5m", "15m", "1h", "4h", "1d"],
-    "limit": 1000,
-    "cache_size": 10000
-  }
-}
-```
+- Configure standard library logging levels/handlers per your environment.
 
-## Broker Configuration
+Secrets
 
-### Paper Trading
-
-```json
-{
-  "paper_trading": {
-    "initial_cash": 10000,
-    "commission": 0.001,
-    "slippage": 0.0005
-  }
-}
-```
-
-### Live Trading
-
-```json
-{
-  "live_trading": {
-    "max_position_size": 0.1,
-    "stop_loss": true,
-    "take_profit": true
-  }
-}
-```
-
-## Logging Configuration
-
-```json
-{
-  "logging": {
-    "level": "INFO",
-    "format": "json",
-    "file": "cracktrader.log",
-    "max_size": "100MB",
-    "backup_count": 5
-  }
-}
-```
-
-## Performance Configuration
-
-```json
-{
-  "performance": {
-    "cache_enabled": true,
-    "cache_size": 10000,
-    "parallel_processing": true,
-    "max_workers": 4
-  }
-}
-```
-
-## Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `CRACKTRADER_CONFIG` | Path to config file | `config.json` |
-| `CRACKTRADER_LOG_LEVEL` | Log level | `INFO` |
-| `CRACKTRADER_CACHE_DIR` | Cache directory | `.cache` |
-| `CRACKTRADER_DATA_DIR` | Data directory | `data` |
-
-## Configuration File Locations
-
-1. `./config.json` (current directory)
-2. `~/.cracktrader/config.json` (user home)
-3. `/etc/cracktrader/config.json` (system-wide)
-
-Configuration files are loaded in order, with later files overriding earlier ones.
+- Prefer environment variables for API keys (e.g., `BINANCE_API_KEY`, `BINANCE_SECRET`).
+- Do not commit secrets to source control.

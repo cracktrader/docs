@@ -78,7 +78,7 @@ class RiskManagedStrategy(bt.Strategy):
     params = (('risk_percent', 0.02),)  # 2% risk per trade
 
     def calculate_position_size(self, entry_price, stop_price):
-        portfolio_value = self.broker.get_value()
+        portfolio_value = self.broker.getvalue()
         risk_amount = portfolio_value * self.p.risk_percent
         risk_per_share = abs(entry_price - stop_price)
         return risk_amount / risk_per_share if risk_per_share > 0 else 0

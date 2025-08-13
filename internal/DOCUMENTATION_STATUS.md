@@ -9,7 +9,7 @@
 - `performance/optimization_roadmap.md` - Rust/Go optimization plans (copied from performance/)
 - `performance/caching_guide.md` - Detailed guide to HistoricalDataCache
 
-### **Core Concepts Enhancement**
+### Core Concepts Enhancement
 - `core_concepts/caching.md` - Overview of data caching system
 
 ### **Getting Started**
@@ -29,7 +29,7 @@
 - `getting_started/first_strategy.md` - Step-by-step strategy tutorial
 
 ### **Core Concepts**
-- `core_concepts/exchanges.md` - 400+ exchanges, how to add new ones
+- `core_concepts/exchanges.md` - 100+ exchanges, how to add new ones
 - `core_concepts/feeds.md` - Working with data feeds (should move existing feeds.md)
 - `core_concepts/brokers.md` - Live/back/paper broker modes
 - `core_concepts/strategies.md` - Strategy development patterns

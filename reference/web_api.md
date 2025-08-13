@@ -1,258 +1,103 @@
 # Web API Reference
 
-Complete API reference for CrackTrader's REST API and WebSocket endpoints.
+REST endpoints exposed by the Cracktrader FastAPI server. Base path: `/api/v1`.
 
-## Authentication
+Authentication
 
-### API Key Authentication
+- No authentication by default (development). Add your own in production.
+
+Health and Status
+
+- GET `/health`: Overall health with checks and metrics
+- GET `/status`: Current run status (basic fields)
+- GET `/status/detailed`: Extended status (recent trades, equity, metrics)
+
+Runs
+
+- POST `/run/backtest`: Start a backtest
+  - Body: BacktestRequest
+    - `strategy_name` (str)
+    - `strategy_params` (dict)
+    - `symbols` (list[str])
+    - `timeframe` (str, e.g., `"1h"`)
+    - `start_date` (ISO str, optional)
+    - `end_date` (ISO str, optional)
+    - `initial_cash` (float)
+    - `exchange` (str)
+- POST `/run/live`: Start paper or live trading
+  - Body: LiveTradingRequest
+    - `strategy_name` (str)
+    - `strategy_params` (dict)
+    - `symbols` (list[str])
+    - `timeframe` (str)
+    - `exchange` (str)
+    - `exchange_config` (dict; API keys and settings)
+    - `mode` ("paper" | "live")
+- POST `/run/stop`: Stop the current run
+- DELETE `/run/reset`: Reset the runner to idle
+
+Results and Configuration
+
+- GET `/results`: Full results for the last run
+- GET `/strategies`: Available strategies and parameters
+- GET `/exchanges`: Common exchanges and sandbox notes
+
+Models (responses)
+
+- HealthResponse
+  - `status` (str), `checks` (dict), `metrics` (dict), `timestamp` (ISO)
+- StatusResponse
+  - `run_id`, `status`, `mode`, `start_time`, `end_time`, `runtime_seconds`, `cash`, `value`, `pnl`, `trade_count`, `error`
+- DetailedStatusResponse
+  - Inherits StatusResponse; adds `recent_trades`, `equity_curve`, `performance_metrics`, `health`
+- RunResponse
+  - `run_id`, `status`, `message`
+- ResultsResponse
+  - `run_id`, `config`, `status`, `start_time`, `end_time`, `trades`, `equity_curve`, `performance_metrics`, `final_value`, `error`
+
+Examples
+
+Start a backtest
 
 ```http
-Authorization: Bearer your_api_key
-```
-
-### Session Authentication
-
-```http
-POST /api/auth/login
+POST /api/v1/run/backtest
 Content-Type: application/json
 
 {
-  "username": "your_username",
-  "password": "your_password"
+  "strategy_name": "TestStrategy",
+  "strategy_params": {"period": 20, "threshold": 0.02},
+  "symbols": ["BTC/USDT"],
+  "timeframe": "1h",
+  "start_date": "2024-01-01T00:00:00Z",
+  "end_date": "2024-03-01T23:59:59Z",
+  "initial_cash": 10000.0,
+  "exchange": "binance"
 }
 ```
 
-## REST Endpoints
+Start paper trading
 
-### Account Information
+```http
+POST /api/v1/run/live
+Content-Type: application/json
 
-#### GET /api/account/balance
-
-Get account balance across all exchanges.
-
-**Response:**
-```json
 {
-  "total_balance": 10000.50,
-  "exchanges": {
-    "binance": {
-      "BTC": 0.5,
-      "USDT": 1000.0
-    }
-  }
+  "strategy_name": "TestStrategy",
+  "strategy_params": {"period": 10, "slow": 30},
+  "symbols": ["BTC/USDT"],
+  "timeframe": "5m",
+  "exchange": "binance",
+  "exchange_config": {"apiKey": "...", "secret": "...", "sandbox": true},
+  "mode": "paper"
 }
 ```
 
-#### GET /api/account/positions
+Stop and reset
 
-Get current positions.
-
-**Response:**
-```json
-{
-  "positions": [
-    {
-      "symbol": "BTC/USDT",
-      "side": "long",
-      "size": 0.1,
-      "entry_price": 50000,
-      "unrealized_pnl": 500
-    }
-  ]
-}
+```http
+POST /api/v1/run/stop
+DELETE /api/v1/run/reset
 ```
-
-### Market Data
-
-#### GET /api/market/ticker/{symbol}
-
-Get ticker data for a symbol.
-
-**Parameters:**
-- `symbol`: Trading pair (e.g., BTC/USDT)
-
-**Response:**
-```json
-{
-  "symbol": "BTC/USDT",
-  "last": 50000,
-  "bid": 49999,
-  "ask": 50001,
-  "volume": 1000,
-  "change": 2.5
-}
-```
-
-#### GET /api/market/ohlcv/{symbol}
-
-Get OHLCV data.
-
-**Parameters:**
-- `symbol`: Trading pair
-- `timeframe`: 1m, 5m, 15m, 1h, 4h, 1d
-- `limit`: Number of candles (default: 100)
-
-**Response:**
-```json
-{
-  "data": [
-    [1640995200000, 50000, 50100, 49900, 50050, 10.5]
-  ]
-}
-```
-
-### Trading
-
-#### POST /api/trading/order
-
-Place a new order.
-
-**Request:**
-```json
-{
-  "symbol": "BTC/USDT",
-  "side": "buy",
-  "type": "limit",
-  "amount": 0.1,
-  "price": 50000
-}
-```
-
-**Response:**
-```json
-{
-  "order_id": "12345",
-  "status": "open",
-  "symbol": "BTC/USDT",
-  "side": "buy",
-  "amount": 0.1,
-  "price": 50000,
-  "timestamp": 1640995200000
-}
-```
-
-#### GET /api/trading/orders
-
-Get order history.
-
-**Response:**
-```json
-{
-  "orders": [
-    {
-      "order_id": "12345",
-      "status": "filled",
-      "symbol": "BTC/USDT",
-      "side": "buy",
-      "amount": 0.1,
-      "price": 50000,
-      "filled": 0.1,
-      "timestamp": 1640995200000
-    }
-  ]
-}
-```
-
-#### DELETE /api/trading/order/{order_id}
-
-Cancel an order.
-
-**Response:**
-```json
-{
-  "order_id": "12345",
-  "status": "cancelled"
-}
-```
-
-### Strategy Management
-
-#### GET /api/strategies
-
-List running strategies.
-
-**Response:**
-```json
-{
-  "strategies": [
-    {
-      "id": "strategy_1",
-      "name": "Moving Average Strategy",
-      "status": "running",
-      "pnl": 500.0,
-      "positions": 2
-    }
-  ]
-}
-```
-
-#### POST /api/strategies/{strategy_id}/start
-
-Start a strategy.
-
-#### POST /api/strategies/{strategy_id}/stop
-
-Stop a strategy.
-
-## WebSocket API
-
-### Connection
-
-```javascript
-const ws = new WebSocket('ws://localhost:8000/ws');
-```
-
-### Subscriptions
-
-#### Market Data
-
-```json
-{
-  "action": "subscribe",
-  "channel": "ticker",
-  "symbol": "BTC/USDT"
-}
-```
-
-#### Order Updates
-
-```json
-{
-  "action": "subscribe",
-  "channel": "orders",
-  "user_id": "your_user_id"
-}
-```
-
-#### Trade Execution
-
-```json
-{
-  "action": "subscribe",
-  "channel": "trades",
-  "symbol": "BTC/USDT"
-}
-```
-
-### Message Formats
-
-#### Ticker Update
-
-```json
-{
-  "channel": "ticker",
-  "symbol": "BTC/USDT",
-  "data": {
-    "last": 50000,
-    "bid": 49999,
-    "ask": 50001,
-    "volume": 1000,
-    "timestamp": 1640995200000
-  }
-}
-```
-
-#### Order Update
 
 ```json
 {

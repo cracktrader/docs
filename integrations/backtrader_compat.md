@@ -4,7 +4,7 @@ Cracktrader is built on top of Backtrader, providing full compatibility with exi
 
 ## Overview
 
-### What's Supported ✅
+### What's Supported
 
 **Core Strategy Features:**
 - All `bt.Strategy` methods (`next()`, `__init__()`, `notify_*()`)
@@ -31,10 +31,10 @@ Cracktrader is built on top of Backtrader, providing full compatibility with exi
 - Historical and live data
 - Custom data feeds
 
-### What's Enhanced 🚀
+### What's Enhanced
 
 **Exchange Integration:**
-- Real-time data from 400+ exchanges via CCXT
+- Real-time data from 100+ exchanges via CCXT
 - Live order execution on real exchanges
 - Unified paper/live trading modes
 - Advanced order types (OCO, brackets)
@@ -45,7 +45,7 @@ Cracktrader is built on top of Backtrader, providing full compatibility with exi
 - Web API for remote control
 - Health monitoring and alerting
 
-### What's Different ⚠️
+### What's Different
 
 **Data Feeds:**
 - CCXT-based feeds instead of file-based
@@ -87,6 +87,7 @@ cerebro.run()
 **After (Cracktrader):**
 ```python
 import backtrader as bt
+from datetime import datetime
 from cracktrader import Cerebro, CCXTStore, CCXTDataFeed
 
 class MyStrategy(bt.Strategy):  # No changes needed!
@@ -102,13 +103,13 @@ cerebro = Cerebro()  # Use Cracktrader's Cerebro
 cerebro.addstrategy(MyStrategy)
 
 # Add crypto data
-store = CCXTStore(exchange_id='binance')
+store = CCXTStore(exchange='binance')
 feed = CCXTDataFeed(
     store=store,
     symbol='BTC/USDT',
-    timeframe='1h',
-    start_date='2024-01-01',
-    end_date='2024-03-01'
+    ccxt_timeframe='1h',
+    fromdate=datetime(2024, 1, 1),
+    todate=datetime(2024, 3, 1)
 )
 cerebro.adddata(feed)
 
@@ -121,6 +122,7 @@ cerebro.run()
 
 ```python
 # Old way
+from datetime import datetime
 data = bt.feeds.YahooFinanceData(
     dataname='AAPL',
     fromdate=datetime(2023, 1, 1),
@@ -128,13 +130,13 @@ data = bt.feeds.YahooFinanceData(
 )
 
 # New way
-store = CCXTStore(exchange_id='binance')
+store = CCXTStore(exchange='binance')
 data = CCXTDataFeed(
     store=store,
     symbol='BTC/USDT',
-    timeframe='1d',
-    start_date='2023-01-01T00:00:00Z',
-    end_date='2023-12-31T23:59:59Z'
+    ccxt_timeframe='1d',
+    fromdate=datetime(2023, 1, 1),
+    todate=datetime(2023, 12, 31)
 )
 ```
 
@@ -152,13 +154,8 @@ class MyCSVData(bt.feeds.GenericCSVData):
         ('volume', 5),
     )
 
-# Cracktrader equivalent - wrap with CCXTDataFeed
-from cracktrader.feeds import CustomDataFeed
-
-class MyCryptoFeed(CustomDataFeed):
-    def _load_data(self):
-        # Load data from your source
-        return df  # Return pandas DataFrame with OHLCV columns
+# Cracktrader focuses on CCXT-backed feeds. For custom sources,
+# implement a Backtrader-compatible feed in your project.
 ```
 
 ### Broker Migration
@@ -175,23 +172,23 @@ cerebro.broker.setcommission(commission=0.001)
 cerebro.broker.setcash(10000)
 cerebro.broker.setcommission(commission=0.001)
 
-# Or use enhanced broker
-from cracktrader.broker import CTBroker
-broker = CTBroker.create(mode="back", cash=10000)
-cerebro.broker = broker
+# Or use BrokerFactory for paper mode
+from cracktrader.broker import BrokerFactory
+broker = BrokerFactory.create(mode='paper', cash=10000)
+cerebro.setbroker(broker)
 ```
 
 **Cracktrader Broker (Live):**
 ```python
-from cracktrader.broker import CCXTLiveBroker
+from cracktrader.broker import BrokerFactory
 
-# Paper trading
-broker = CCXTLiveBroker(store=store, mode='paper')
-cerebro.broker = broker
+# Paper trading (with live data feed)
+paper_broker = BrokerFactory.create(mode='paper', cash=10000)
+cerebro.setbroker(paper_broker)
 
 # Live trading
-broker = CCXTLiveBroker(store=store, mode='live')
-cerebro.broker = broker
+live_broker = BrokerFactory.create(mode='live', store=store)
+cerebro.setbroker(live_broker)
 ```
 
 ## Feature Compatibility Matrix
@@ -276,8 +273,8 @@ cerebro.addanalyzer(RiskAnalyzer, _name='risk')
 
 ```python
 # Connect to multiple exchanges
-binance_store = CCXTStore(exchange_id='binance')
-coinbase_store = CCXTStore(exchange_id='coinbase')
+binance_store = CCXTStore(exchange='binance')
+coinbase_store = CCXTStore(exchange='coinbase')
 
 # Compare prices across exchanges
 binance_feed = CCXTDataFeed(binance_store, 'BTC/USDT')
@@ -311,8 +308,8 @@ class LiveStrategy(bt.Strategy):
             self.buy()
 
 # Setup for live trading
-store = CCXTStore(exchange_id='binance', sandbox=True)
-feed = CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='1m')
+store = CCXTStore(exchange='binance', sandbox=True)
+feed = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='1m')
 # No start/end dates = live streaming
 
 cerebro = Cerebro()

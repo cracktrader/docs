@@ -1,4 +1,4 @@
-# CrackTrader Performance Optimization Roadmap
+# Performance Optimization Roadmap
 
 ## Current Performance Baseline (from bench.py profiling)
 
@@ -14,7 +14,7 @@
 - **Network operations**: 200-1000ms - External Binance testnet
 - **Performance score**: 56/100 - Acceptable for sandbox with network
 
-## 🎯 Optimization Priority Analysis
+## Optimization Priority Analysis
 
 ### Priority 1: High Impact, Production Critical
 **Historical Data Pipeline (MAJOR INSIGHT!)**
@@ -56,7 +56,7 @@
 - Impact: Developer experience only
 - Solution: Lazy imports, smaller test fixtures
 
-## 🦀 Rust Integration Strategy
+## Native Acceleration Strategy (optional)
 
 ### Phase 1: Proof of Concept (Post-Documentation)
 **Target**: Order validation module
@@ -91,7 +91,7 @@ sma_values = cracktrader_fast.sma(prices, window=20)  # ~10ms for 1000 points
 - Custom protocol optimizations
 - Only if network becomes the bottleneck
 
-## 🔄 Integration Approach
+## Integration Approach
 
 ### Option 1: PyO3 Rust Extension
 ```toml
@@ -115,7 +115,7 @@ tokio = "1.0"
 - Rust -> WebAssembly for browser compatibility
 - Could enable web-based backtesting
 
-## 📊 Success Metrics
+## Success Metrics
 
 ### Before Optimization (Current)
 - Order validation: ~1ms Python
@@ -129,13 +129,13 @@ tokio = "1.0"
 - Technical indicators: 50x faster than pandas
 - Memory usage: Reduced allocations
 
-## 🗓️ Timeline & Dependencies
+## Timeline & Dependencies
 
-### Prerequisites (Current Priority)
-1. ✅ Complete performance benchmarking framework
-2. 🔄 Finish documentation
-3. 🔄 Stabilize core Python functionality
-4. 🔄 Comprehensive test coverage
+### Prerequisites (current priority)
+1. Complete performance benchmarking framework
+2. Finish documentation
+3. Stabilize core Python functionality
+4. Comprehensive test coverage
 
 ### Rust Development (Post-Documentation)
 1. **Week 1-2**: Set up Rust development environment, PyO3 hello world
@@ -143,7 +143,7 @@ tokio = "1.0"
 3. **Week 5-6**: Performance testing and integration
 4. **Week 7-8**: Technical indicators (if needed)
 
-## 🤔 Key Questions to Resolve Later
+## Key Questions to Revisit
 
 1. **Do we actually need pandas-like operations?**
    - Current code doesn't use pandas heavily
@@ -159,7 +159,7 @@ tokio = "1.0"
    - Cross-platform distribution challenges
    - Is the performance gain worth it?
 
-## 💡 Immediate Actions (Low Effort, High Impact)
+## Immediate Actions (low effort, high impact)
 
 1. **Profile real trading scenarios** (not benchmark simulations)
 2. **Optimize Python imports** (lazy loading)

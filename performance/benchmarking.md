@@ -72,19 +72,19 @@ performance/reports/
 
 ## Understanding the Results
 
-### What's Actually Fast ✅
-- **Order processing**: 17ms overhead is excellent for Python
-- **Data validation**: Sub-millisecond
-- **Cached data loading**: 0.1-0.5s for million candles
+### What’s typically fast
+- Order processing paths
+- Data validation
+- Cached data loading
 
-### What's Actually Slow ⚠️
+### What's Actually Slow
 - **Network calls**: 200-1000ms (can't optimize - external exchange)
 - **Pandas operations**: 700ms for complex calculations on large datasets
 - **System startup**: 4.6s (test infrastructure only, not production)
 
-### False Bottlenecks ℹ️
-- Store creation slowness: Just test fixture imports
-- Pandas operations: Were benchmark artifacts, not real code
+### False bottlenecks
+- Store creation slowness from test fixture imports
+- Standalone pandas benchmark artifacts (not core code)
 
 ## Optimization Recommendations
 
@@ -125,14 +125,11 @@ for stat in top_stats[:10]:
     print(stat)
 ```
 
-## Interpreting Performance Scores
+## Interpreting Benchmarks
 
-- **90-100**: Excellent performance
-- **70-89**: Good performance
-- **50-69**: Acceptable (network-bound scenarios)
-- **<50**: Performance issues, investigate bottlenecks
-
-Current score: 56/100 (acceptable for sandbox with network latency)
+- Use mock mode for code baselines; sandbox includes network latency
+- Compare medians across multiple runs; watch variance
+- Investigate outliers before optimizing
 
 ## Next Steps
 

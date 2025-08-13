@@ -1,6 +1,6 @@
-# Quick Start
+# Quickstart
 
-Get CrackTrader running in 5 minutes.
+Get CrackTrader running in minutes.
 
 ## Installation
 
@@ -34,11 +34,12 @@ Create `config.json`:
 }
 ```
 
-## Your First Strategy
+## Your First Strategy (backtest)
 
 ```python
 import backtrader as bt
-from cracktrader import CCXTStore, CCXTDataFeed
+from cracktrader import CCXTStore
+from cracktrader.feeds import CCXTDataFeed
 
 class SimpleMA(bt.Strategy):
     def __init__(self):
@@ -50,9 +51,9 @@ class SimpleMA(bt.Strategy):
         elif self.data.close[0] < self.sma[0] and self.position:
             self.sell()
 
-# Setup
-store = CCXTStore({'exchange': 'binance', 'sandbox': True})
-data = CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='1h')
+# Setup (shared store for feeds/brokers)
+store = CCXTStore(exchange='binance', sandbox=True)
+data = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='1h')
 
 # Run
 cerebro = bt.Cerebro()
@@ -80,7 +81,8 @@ For faster backtesting:
 
 ```python
 store = CCXTStore(
-    {'exchange': 'binance', 'sandbox': True},
+    exchange='binance',
+    sandbox=True,
     cache_enabled=True,
     cache_dir="./data"
 )
@@ -95,6 +97,18 @@ store = CCXTStore(
 
 ## Common Issues
 
-**Connection errors**: Check your API keys in `config.json`
-**Slow backtests**: Enable caching with `cache_enabled=True`
-**Test failures**: Run `python -m pytest tests/unit/` to check setup
+- Connection errors: Check your API keys in `config.json`
+- Slow backtests: Enable caching with `cache_enabled=True`
+- Test failures: Run `python -m pytest tests/unit/` to check setup
+
+## Go Live (optional)
+
+For live or paper trading, attach a broker. The store is reused automatically.
+
+```python
+from cracktrader.broker import BrokerFactory
+
+store = CCXTStore(exchange='binance', sandbox=True, config={'apiKey': '...', 'secret': '...'})
+broker = BrokerFactory.create(mode='live', store=store)
+cerebro.setbroker(broker)
+```

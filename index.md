@@ -1,26 +1,22 @@
 # CrackTrader
 
-**Professional cryptocurrency trading framework bridging CCXT and Backtrader**
+Professional crypto trading framework for traders and quants
 
-Connect to 400+ exchanges • Backtest with precision • Trade with confidence
+Connect to 100+ CCXT exchanges. Backtest with precision. Deploy with confidence.
 
 ---
 
-## Why CrackTrader?
+## Overview
 
-**For Traders & Quants** - Build, test, and deploy trading strategies across any cryptocurrency exchange with professional-grade tools.
-
-**For Developers** - Modern async architecture with comprehensive testing, web API, and production-ready monitoring.
-
-**For Teams** - Structured documentation, clear patterns, and maintainable code that scales from research to production.
+CrackTrader lets you build, test, and deploy algorithmic strategies across CCXT-supported exchanges with native Backtrader compatibility. It’s designed for practitioners who care about execution quality, data integrity, and reproducibility.
 
 ## Key Benefits
 
-🚀 **Fast Development** - Write strategies once, run on any exchange
-📊 **Data-Rich** - Real-time WebSocket feeds + historical data caching
-🧪 **Battle-Tested** - 2:1 test-to-source ratio with comprehensive test coverage
-🌐 **Web-Enabled** - Built-in REST API and React dashboard
-⚡ **High Performance** - Async architecture supporting sub-minute intervals
+- Fast development: Unified exchange layer via CCXT
+- Solid data: WebSocket streaming and historical caching
+- Reliable: Comprehensive tests and clear failure modes
+- Web-ready: REST API and dashboard integrations
+- Performance: Async pipeline with sub-minute timeframes
 
 ---
 
@@ -32,22 +28,25 @@ Connect to 400+ exchanges • Backtest with precision • Trade with confidence
 pip install git+https://github.com/LachlanBridges/cracktrader.git
 ```
 
-### 2. Your First Strategy
+### 2. Your First Strategy (backtest)
 
 ```python
 import backtrader as bt
 from cracktrader import CCXTStore, CCXTDataFeed
 
 class SimpleMovingAverage(bt.Strategy):
+    def __init__(self):
+        self.sma = bt.indicators.SMA(period=20)
+
     def next(self):
         if not self.position and self.data.close[0] > self.sma[0]:
             self.buy()
         elif self.position and self.data.close[0] < self.sma[0]:
             self.sell()
 
-# Connect to any exchange
+# Connect to an exchange (shared CCXT store)
 store = CCXTStore(exchange='binance', cache_enabled=True)
-data = CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='1h')
+data = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='1h')
 
 cerebro = bt.Cerebro()
 cerebro.adddata(data)
@@ -55,91 +54,38 @@ cerebro.addstrategy(SimpleMovingAverage)
 cerebro.run()
 ```
 
-### 3. Trade Live
+### 3. Go Live (when ready)
 
 ```python
 # Switch to live trading
-store = CCXTStore(exchange='binance', sandbox=False, api_key='...', secret='...')
+store = CCXTStore(
+    exchange='binance',
+    sandbox=False,
+    config={'apiKey': '...', 'secret': '...'}
+)
 ```
 
-**That's it!** Same strategy, live market execution.
+Use Backtrader’s broker for backtesting. Switch to `CCXTLiveBroker` for live execution. The store uses a registry so your broker and feeds share the same connection automatically.
 
 ---
 
-## Documentation Structure
+## Explore the Docs
 
-This documentation follows the **Diátaxis framework** - designed for both newcomers and power users:
-
-### 🎯 Tutorials - **Learn by Doing**
-Step-by-step learning path from installation to your first profitable strategy.
-
-- **[Quickstart](getting_started/quickstart.md)** - Get trading in 5 minutes
-- **[Installation](getting_started/installation.md)** - Complete setup guide
-- **[First Strategy](getting_started/first_strategy.md)** - Build your first algorithm
-- **[Basic Example](examples/basic_strategy.md)** - Real-world strategy patterns
-
-### 🛠️ How-to Guides - **Task Recipes**
-Solutions to specific problems and common tasks.
-
-- **[Configure Platform](getting_started/configuration.md)** - All configuration options
-- **[Strategy Cookbook](strategy_guide.md)** - Common patterns and techniques
-- **[Use Web API](WEB_API.md)** - REST API and dashboard integration
-- **[Backtrader Compatibility](integrations/backtrader_compat.md)** - Existing strategy migration
-
-### 🧠 Explanations - **Understanding Concepts**
-Deep dive into architecture and key concepts.
-
-- **[Architecture](core_concepts/architecture.md)** - System design and data flow
-- **[Strategies](core_concepts/strategies.md)** - Strategy patterns and lifecycle
-- **[Data Feeds](core_concepts/feeds.md)** - Real-time and historical data
-- **[Brokers](core_concepts/brokers.md)** - Order execution and position management
-- **[Exchanges](core_concepts/exchanges.md)** - CCXT integration and exchange support
-- **[Caching](core_concepts/caching.md)** - Performance optimization strategies
-
-### 📚 Reference - **Quick Lookup**
-Complete API and configuration reference.
-
-- **[Web API Reference](reference/web_api.md)** - REST endpoints and WebSocket API
-- **[Configuration Reference](reference/configuration.md)** - All settings and environment variables
-
-### ⚡ Performance - **Scale & Optimize**
-- **[Overview](performance/overview.md)** - Performance characteristics
-- **[Caching Guide](performance/caching_guide.md)** - Data caching strategies
-- **[Large Datasets](performance/large_datasets.md)** - Handling big data efficiently
-- **[Benchmarking](performance/benchmarking.md)** - Performance measurement
-- **[Optimization Roadmap](performance/optimization_roadmap.md)** - Future improvements
-
-### 🧪 Testing & Quality - **Reliability**
-- **[Strategy Analysis](testing/strategy_analysis.md)** - Testing trading strategies
-- **[Test Fixtures](testing/fixture_strategy.md)** - Sample strategies for testing
-- **[Mocking Policy](testing/mocking_policy.md)** - Test isolation strategies
-- **[Coverage Status](testing/test_coverage.md)** - Current test coverage
-- **[Known Gaps](testing/known_gaps.md)** - Areas needing improvement
-
-### 🤝 Contributing - **Development Workflow**
-- **[Overview](development/README.md)** - Getting started with development
-- **[Workflow](development/workflow.md)** - Git workflow and code standards
-- **[Testing Guidelines](development/testing_guidelines.md)** - How to write tests
-- **[Publishing](development/publishing.md)** - Release and documentation process
+- Getting Started: [Quickstart](getting_started/quickstart.md), [Installation](getting_started/installation.md), [Configuration](getting_started/configuration.md), [First Strategy](getting_started/first_strategy.md)
+- How‑to: [Strategy Cookbook](strategy_guide.md), [Web API](WEB_API.md), [Backtrader Compatibility](integrations/backtrader_compat.md)
+- Concepts: [Architecture](core_concepts/architecture.md), [Strategies](core_concepts/strategies.md), [Feeds](core_concepts/feeds.md), [Brokers](core_concepts/brokers.md), [Exchanges](core_concepts/exchanges.md), [Caching](core_concepts/caching.md)
+- Reference: [Web API Reference](reference/web_api.md), [Configuration Reference](reference/configuration.md)
+- Development: [Performance](performance/overview.md), [Testing Methodology](testing/known_gaps.md), [Contributing](development/README.md)
 
 ---
 
-## What Makes CrackTrader Different?
+## For Traders & Quants
 
-### 🔗 **True CCXT Integration**
-Not just another wrapper - deep integration with CCXT for reliable exchange connectivity, unified symbol handling, and comprehensive order type support.
-
-### 📈 **Backtrader Native**
-100% compatible with existing Backtrader strategies and indicators. Migrate existing strategies with zero code changes.
-
-### 🌐 **Production Web API**
-Built-in FastAPI server with React dashboard. Monitor strategies, analyze performance, and manage trades through a professional web interface.
-
-### ⚡ **Performance First**
-Async architecture with WebSocket streaming, data caching, and sub-minute interval support. Built for high-frequency and algorithmic trading.
-
-### 🧪 **Quality Assured**
-Comprehensive test suite with 2:1 test-to-source ratio. Unit, integration, and end-to-end tests ensure reliability in production.
+- CCXT integration: Reliable connectivity, unified symbols, thorough order support
+- Backtrader native: Run existing strategies with minimal changes
+- Web API: FastAPI server plus dashboard for monitoring and control
+- Performance: Async streaming, caching, and sub‑minute intervals
+- Quality: Unit, integration, and end‑to‑end test coverage
 
 ---
 
@@ -157,7 +103,7 @@ graph TB
     G[Web Dashboard] --> H[REST API]
     H --> B
 
-    subgraph "400+ Exchanges"
+    subgraph "100+ Exchanges"
         F1[Binance]
         F2[Coinbase]
         F3[Kraken]
@@ -170,24 +116,22 @@ graph TB
     F --> F4
 ```
 
-**Data flows seamlessly** from exchanges through CCXT to your strategies, while the web API provides real-time monitoring and control.
+Data flows from exchanges through CCXT to your strategies. The web API provides real-time monitoring and control. See [Performance](performance/overview.md) for current characteristics and benchmarks.
 
 ---
 
 ## Ready to Start?
 
 ### New to Algorithmic Trading?
-**→ [Quickstart Tutorial](getting_started/quickstart.md)** - Learn the basics with guided examples
+→ [Quickstart Tutorial](getting_started/quickstart.md) - Learn the basics with guided examples
 
 ### Experienced with Backtrader?
-**→ [Migration Guide](integrations/backtrader_compat.md)** - Adapt existing strategies in minutes
+→ [Migration Guide](integrations/backtrader_compat.md) - Adapt existing strategies in minutes
 
 ### Building for Production?
-**→ [Architecture Guide](core_concepts/architecture.md)** - Understand the system design
+→ [Architecture Guide](core_concepts/architecture.md) - Understand the system design
 
 ### Need API Integration?
-**→ [Web API Reference](reference/web_api.md)** - Complete REST and WebSocket documentation
+→ [Web API Reference](reference/web_api.md) - Complete REST and WebSocket documentation
 
 ---
-
-*Built with ❤️ for the cryptocurrency trading community*

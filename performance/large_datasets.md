@@ -1,6 +1,6 @@
 # CrackTrader Large Dataset Performance Analysis
 
-## 🚨 **The Real Challenge: Historical Data Volume**
+## The challenge: historical data volume
 
 ### **Data Volume Reality Check**
 
@@ -11,11 +11,11 @@
 | **5m candles** | 8.6K | 25.9K | 105.1K | 315.4K |
 | **1h candles** | 720 | 2,160 | 8,760 | 26,280 |
 
-**Multi-symbol impact**: 10 symbols × 1-year × 1m = **5.25M candles**
+Multi-symbol impact example: 10 symbols × 1 year × 1m ≈ 5.25M candles
 
-### **Current CrackTrader Caching System** ✅
+### Current caching system
 
-Good news! We already have a sophisticated caching system:
+Cracktrader includes a caching system:
 
 ```python
 # HistoricalDataCache (already implemented!)
@@ -26,16 +26,16 @@ cache = HistoricalDataCache(base_dir="data", enabled=True)
 # data/binance/spot/BTC_USDT/1m/2024-02.pkl
 ```
 
-**Features already implemented**:
-- ✅ Monthly file segmentation (efficient for large datasets)
-- ✅ Automatic deduplication
-- ✅ Multiple exchange support
-- ✅ Configurable cache directory
-- ✅ Incremental updates (only fetches new data)
-- ✅ Thread-safe operations
-- ✅ Metadata tracking for statistics
+Features:
+- Monthly file segmentation
+- Automatic deduplication
+- Multiple exchange support
+- Configurable cache directory
+- Incremental updates (only fetches new data)
+- Thread-safe operations
+- Metadata tracking
 
-## 📊 **Performance Bottleneck Analysis**
+## Performance Bottleneck Analysis
 
 ### **Problem 1: Pandas CSV Reading**
 ```python
@@ -45,10 +45,7 @@ df = pd.read_csv("btc_1m_2024.csv")  # 525K rows = ~2-5 seconds
 df['sma_20'] = df['close'].rolling(20).mean()  # Another 1-2 seconds
 ```
 
-**For 5.25M candles (10 symbols, 1 year)**:
-- CSV reading: **20-50 seconds**
-- Pandas operations: **10-30 seconds**
-- Total: **30-80 seconds** just to load data!
+For multi‑million rows, CSV and pandas operations can add up. Prefer cached, columnar formats and streaming.
 
 ### **Problem 2: Memory Usage**
 ```python
@@ -67,10 +64,10 @@ class MyStrategy(bt.Strategy):
         self.sma = bt.indicators.SMA(period=20)  # Calculates for all historical data
 ```
 
-## 🚀 **Enhancement Roadmap**
+## Enhancement Roadmap
 
-### **Phase 1: Enable Existing Cache (Immediate)**
-The cache system exists but isn't enabled by default!
+### Phase 1: Enable caching
+Enable caching for repeated backtests and large ranges.
 
 ```python
 # In CCXTStore.__init__ - ADD THIS:
@@ -81,7 +78,7 @@ def __init__(self, exchange_config, cache_enabled=True, cache_dir="./data"):
         self._data_cache = HistoricalDataCache(base_dir=cache_dir, enabled=True)
 ```
 
-**User experience improvement**:
+Example
 ```python
 # First run: Fetches from API and caches
 store = CCXTStore(exchange_config, cache_enabled=True)
@@ -91,9 +88,9 @@ feed = CCXTDataFeed(store, symbol="BTC/USDT", timeframe="1m", historical_limit=1
 # Only fetches new data since last update
 ```
 
-### **Phase 2: Optimize Data Pipeline (Next)**
+### Phase 2: Optimize data pipeline
 
-#### **2A: Replace Pickle with Parquet**
+#### 2A: Prefer Parquet over pickle/CSV
 ```python
 # Current: Monthly pickle files (~2-5MB per month)
 # Upgrade: Monthly parquet files (~500KB-1MB per month, 5x smaller!)
@@ -102,14 +99,12 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 # Parquet benefits:
-# - 70-90% smaller file sizes
-# - 10-50x faster reading than CSV
-# - Built-in compression
-# - Column-oriented (perfect for OHLCV)
-# - Cross-language compatibility
+# - Smaller file sizes with compression
+# - Faster reads than CSV in many cases
+# - Column-oriented, cross-language
 ```
 
-#### **2B: Lazy Loading & Streaming**
+#### 2B: Lazy loading and streaming
 ```python
 class StreamingCCXTDataFeed(CCXTDataFeed):
     """Memory-efficient streaming data feed for large datasets."""
@@ -130,7 +125,7 @@ class StreamingCCXTDataFeed(CCXTDataFeed):
             yield from chunk
 ```
 
-#### **2C: Vectorized Operations (Rust Candidate)**
+#### 2C: Vectorized operations (potential native acceleration)
 ```python
 # Current pandas approach (slow for large datasets)
 def calculate_technical_indicators(df):
@@ -148,9 +143,9 @@ def calculate_technical_indicators_fast(ohlcv_array):
     return sma_20, rsi
 ```
 
-### **Phase 3: User-Friendly Configuration (Polish)**
+### Phase 3: User-friendly configuration
 
-#### **3A: Smart Cache Management**
+#### 3A: Smart cache management
 ```python
 # Auto-enable caching for large datasets
 class SmartCCXTStore(CCXTStore):
@@ -158,11 +153,11 @@ class SmartCCXTStore(CCXTStore):
         # Automatically enable caching for large historical requests
         if kwargs.get('historical_limit', 0) > auto_cache_threshold:
             kwargs['cache_enabled'] = True
-            print(f"[AUTO] Enabling cache for large dataset ({kwargs['historical_limit']} candles)")
+            print(f"Auto-enabling cache for large dataset ({kwargs['historical_limit']} candles)")
         super().__init__(*args, **kwargs)
 ```
 
-#### **3B: Configurable Cache Locations**
+#### 3B: Configurable cache locations
 ```python
 # Support for custom cache directories
 store = CCXTStore(
@@ -173,7 +168,7 @@ store = CCXTStore(
 )
 ```
 
-#### **3C: Cache Statistics & Management**
+#### 3C: Cache statistics and management
 ```python
 # Add cache management utilities
 store.cache.get_cache_info("BTC/USDT", "1m")
@@ -188,7 +183,7 @@ store.cache.update_cache("BTC/USDT", "1m")  # Fetch only new data
 store.cache.clear_cache("BTC/USDT")  # Clean up old data
 ```
 
-## 🎯 **Rust Optimization Priorities for Large Data**
+## Potential native optimizations for large data
 
 ### **Priority 1: Data Processing Pipeline**
 ```rust
@@ -198,7 +193,7 @@ use pyo3::prelude::*;
 
 #[pyfunction]
 fn sma(prices: &PyArray1<f64>, window: usize) -> PyResult<Vec<f64>> {
-    // Process 1M datapoints in ~10ms vs pandas ~1000ms
+    // Example native implementation outline
     let prices = prices.as_slice()?;
     let mut sma_values = Vec::with_capacity(prices.len());
 
@@ -239,9 +234,9 @@ impl OHLCVStreamer {
 }
 ```
 
-## 📈 **Expected Performance Improvements**
+## Example performance outline
 
-### **Before Optimization (Large Dataset)**
+### Before optimization (large dataset)
 ```
 Loading 1M candles from CSV: 5-10 seconds
 Calculating SMA(20): 2-5 seconds
@@ -250,7 +245,7 @@ Memory usage: ~500MB-1GB
 Total time: 10-22 seconds
 ```
 
-### **After Phase 1 (Cache Enabled)**
+### After enabling caching
 ```
 First run: 5-10 seconds (same as before, but cached)
 Subsequent runs: 0.1-0.5 seconds (loaded from cache!)
@@ -275,7 +270,7 @@ Memory usage: <50MB (minimal allocations)
 Total time: 0.13-0.35 seconds (50-100x overall improvement!) ✅
 ```
 
-## 🗺️ **Implementation Timeline**
+## Implementation Timeline
 
 ### **Phase 1: Enable Cache (1-2 days)**
 - ✅ Cache system already exists!
@@ -295,7 +290,7 @@ Total time: 0.13-0.35 seconds (50-100x overall improvement!) ✅
 - 🔄 Add fast data I/O operations
 - 🔄 Integration testing and benchmarks
 
-## ⚡ **Immediate Actions (High Impact, Low Effort)**
+## Immediate Actions (High Impact, Low Effort)
 
 1. **Enable caching by default** for `historical_limit > 10000`
 2. **Add cache configuration** to CCXTStore constructor

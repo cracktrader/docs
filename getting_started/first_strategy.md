@@ -88,20 +88,21 @@ class MovingAverageCross(bt.Strategy):
 
 ```python
 def run_strategy():
-    # Configure exchange connection
+    # Configure exchange connection (sandbox recommended for testing)
     store = CCXTStore(
-        {'exchange': 'binance', 'sandbox': True},  # Use sandbox for testing
-        cache_enabled=True,  # Enable caching for faster backtests
-        cache_dir="./data"
+        exchange='binance',
+        sandbox=True,
+        cache_enabled=True,
+        cache_dir='./data'
     )
 
-    # Setup data feed
+    # Setup data feed (backtesting mode)
     data = CCXTDataFeed(
         store=store,
         symbol='BTC/USDT',
-        timeframe='1h',
-        historical_limit=1000,  # Last 1000 hours
-        live=False  # Backtesting mode
+        ccxt_timeframe='1h',
+        historical_limit=1000,
+        live=False
     )
 
     # Create cerebro engine
@@ -112,7 +113,7 @@ def run_strategy():
     cerebro.adddata(data)
 
     # Set initial capital
-    cerebro.broker.setcash(10000.0)  # $10,000
+    cerebro.broker.setcash(10000.0)
 
     # Add analyzers
     cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
@@ -130,12 +131,39 @@ def run_strategy():
     print(f"Max Drawdown: {strategy.analyzers.drawdown.get_analysis()['max']['drawdown']:.2f}%")
 
     trade_analysis = strategy.analyzers.trades.get_analysis()
-    print(f"Total trades: {trade_analysis.get('total', {}).get('total', 0)}")
-    print(f"Win rate: {trade_analysis.get('won', {}).get('total', 0) / trade_analysis.get('total', {}).get('total', 1) * 100:.1f}%")
+    total = trade_analysis.get('total', {}).get('total', 0)
+    wins = trade_analysis.get('won', {}).get('total', 0)
+    win_rate = (wins / total * 100) if total else 0
+    print(f"Total trades: {total}")
+    print(f"Win rate: {win_rate:.1f}%")
 
 if __name__ == '__main__':
     run_strategy()
 ```
+
+### Broker choices
+
+- Backtest or paper: use the built-in backtesting broker.
+- Live: use the CCXT live broker to send real orders.
+
+Backtest/paper (optional explicit broker):
+```python
+from cracktrader.broker import BrokerFactory
+
+broker = BrokerFactory.create(mode='paper', cash=10000)
+cerebro.setbroker(broker)
+```
+
+Live trading (testnet or live):
+```python
+from cracktrader.broker import BrokerFactory
+
+store = CCXTStore(exchange='binance', sandbox=True, config={'apiKey': '...', 'secret': '...'})
+broker = BrokerFactory.create(mode='live', store=store)
+cerebro.setbroker(broker)
+```
+
+Note: CCXTStore uses a registry (singleton-like) keyed by exchange and settings. Creating a store with the same arguments returns the same instance, so your broker and data feed automatically share the connection.
 
 ## Step 4: Run the Strategy
 
@@ -192,23 +220,25 @@ Once backtesting looks good:
 ```python
 # Change these settings for live trading
 store = CCXTStore(
-    {'exchange': 'binance', 'sandbox': False},  # Live trading
-    cache_enabled=False  # Always fresh data
+    exchange='binance',
+    sandbox=False,  # Live trading
+    config={'apiKey': '...', 'secret': '...'},
+    cache_enabled=False
 )
 
 data = CCXTDataFeed(
     store=store,
     symbol='BTC/USDT',
-    timeframe='1h',
-    live=True  # Live data feed
+    ccxt_timeframe='1h',
+    live=True
 )
 ```
 
 ## Common Issues
 
-**No trades**: Check if enough historical data for MA calculation
-**Cache errors**: Make sure `./data` directory is writable
-**API errors**: Verify your config.json has correct API keys
+**No trades**: Check for enough historical data for MA calculation
+**Cache errors**: Ensure `./data` is writable
+**API errors**: Verify API keys in your config
 **Slow backtests**: Enable caching with `cache_enabled=True`
 
 ## Next Steps
@@ -216,4 +246,9 @@ data = CCXTDataFeed(
 - [Configuration Guide](configuration.md) - Set up multiple exchanges
 - [Examples](../examples/basic_strategy.md) - More strategy examples
 - [Performance](../performance/overview.md) - Optimize for large datasets
-- [Advanced](../advanced/live_trading.md) - Production deployment
+
+## Full Example Source
+
+The complete moving average crossover example is available here:
+
+--8<-- "examples/moving_average_cross.py"

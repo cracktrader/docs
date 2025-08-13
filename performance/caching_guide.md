@@ -1,10 +1,10 @@
 # Historical Data Caching Guide
 
-How to use the built-in caching system for faster backtesting.
+How to use the built-in caching system to speed up repeated backtests.
 
 ## Overview
 
-CrackTrader has a sophisticated caching system that's **already implemented** but not enabled by default. It provides 90-99% performance improvement for repeated backtesting.
+CrackTrader includes a caching system that is disabled by default. Enabling it can significantly reduce repeated backtest load times by avoiding redundant downloads.
 
 ## Quick Enable
 
@@ -13,7 +13,7 @@ from cracktrader import CCXTStore
 
 # Enable caching
 store = CCXTStore(
-    exchange_config,
+    exchange='binance',
     cache_enabled=True,           # Enable caching
     cache_dir="./trading_data"    # Custom location (optional)
 )
@@ -48,28 +48,28 @@ trading_data/
 feed = CCXTDataFeed(
     store=store,
     symbol="BTC/USDT",
-    timeframe="1m",
+    ccxt_timeframe="1m",
     historical_limit=100000  # 100K candles
 )
-# Takes: 20-50 seconds (fetches from API + caches)
+# Fetches from API and writes cache on first run
 ```
 
 ### Subsequent Runs (Cache Hit)
 ```python
 # Same code, but now cached
-feed = CCXTDataFeed(store=store, symbol="BTC/USDT", timeframe="1m", historical_limit=100000)
-# Takes: 0.1-0.5 seconds (98% improvement!)
+feed = CCXTDataFeed(store=store, symbol="BTC/USDT", ccxt_timeframe="1m", historical_limit=100000)
+# Loads from cache on subsequent runs
 ```
 
 ### Incremental Updates
 ```python
 # Later, when you run again:
-feed = CCXTDataFeed(store=store, symbol="BTC/USDT", timeframe="1m", historical_limit=100000)
+feed = CCXTDataFeed(store=store, symbol="BTC/USDT", ccxt_timeframe="1m", historical_limit=100000)
 # Only fetches data since last update
 # Cache grows incrementally
 ```
 
-## Cache Management
+## Cache Management (advanced)
 
 ### Get Cache Info
 ```python
@@ -86,36 +86,16 @@ print(f"Files: {cache_info['files']}")
 
 ### Clear Cache
 ```python
-# Clear all data
-store._data_cache.clear_cache()
-
-# Clear specific exchange
+# Clear entire cache or specific subsets
+store._data_cache.clear_cache()  # all
 store._data_cache.clear_cache(exchange="binance")
-
-# Clear specific symbol
 store._data_cache.clear_cache(exchange="binance", symbol="BTC/USDT")
-
-# Clear specific timeframe
 store._data_cache.clear_cache(exchange="binance", symbol="BTC/USDT", timeframe="1m")
 ```
 
-## Performance Impact
+## Notes on performance
 
-### Without Caching
-```
-1K candles:   0.01s
-100K candles: 2-5s
-1M candles:   20-50s
-5M candles:   60-300s
-```
-
-### With Caching (After First Run)
-```
-1K candles:   0.001s  (10x faster)
-100K candles: 0.1s    (50x faster)
-1M candles:   0.5s    (100x faster)
-5M candles:   2s      (150x faster)
-```
+Cache effectiveness depends on data volume, disk speed, and how often you re-run the same ranges. Use it when iterating frequently on the same symbols/timeframes.
 
 ## Large Dataset Strategy
 
@@ -123,14 +103,8 @@ For multi-year, multi-symbol backtests:
 
 ### 1. Enable Caching by Default
 ```python
-# Add to your config
-CACHE_CONFIG = {
-    "enabled": True,
-    "base_dir": "./trading_data",
-    "auto_enable_threshold": 10000  # Auto-enable for >10K candles
-}
-
-store = CCXTStore(exchange_config, **CACHE_CONFIG)
+# Enable by default for larger ranges
+store = CCXTStore(exchange='binance', cache_enabled=True, cache_dir='./trading_data')
 ```
 
 ### 2. Batch Data Loading
@@ -144,7 +118,7 @@ for symbol in symbols:
         feed = CCXTDataFeed(
             store=store,
             symbol=symbol,
-            timeframe=timeframe,
+            ccxt_timeframe=timeframe,
             historical_limit=500000  # ~1 year of 1m data
         )
         # First run: slow (fetches and caches)

@@ -15,14 +15,14 @@
 pip install cracktrader
 
 # Or install from GitHub
-pip install git+https://github.com/your-username/cracktrader.git
+pip install git+https://github.com/LachlanBridges/cracktrader.git
 ```
 
 ### Development Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/cracktrader.git
+git clone https://github.com/LachlanBridges/cracktrader.git
 cd cracktrader
 
 # Development setup (recommended)
@@ -68,7 +68,7 @@ Test your installation:
 
 ```bash
 # Test basic functionality
-python -c "import cracktrader; print('✅ Cracktrader installed successfully')"
+python -c "import cracktrader; print('Cracktrader installed successfully')"
 
 # Run example strategy
 python examples/basic_strategy.py
@@ -166,13 +166,13 @@ print(exchange.fetch_ticker('BTC/USDT'))
 
 ### Getting Help
 
-- **Documentation**: [Full documentation](https://your-domain.com/cracktrader-docs)
+- **Documentation**: Full documentation (configure `site_url` when hosting)
 - **Examples**: Check the `examples/` directory
 - **Issues**: [GitHub Issues](https://github.com/your-username/cracktrader/issues)
 - **API Reference**: Run `make docs-serve` for local API docs
 
 ## Next Steps
 
-- [**Quick Start Guide**](quickstart.md) - Build your first strategy
+- [**Quickstart Guide**](quickstart.md) - Build your first strategy
 - [**Configuration**](configuration.md) - Advanced setup options
 - [**Core Concepts**](../core_concepts/architecture.md) - Understanding the framework

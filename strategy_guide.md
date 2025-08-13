@@ -1,6 +1,6 @@
 # Strategy Development Guide
 
-This guide covers advanced strategy development patterns, best practices, and techniques for building robust trading strategies with Cracktrader.
+Advanced patterns and practical techniques for building robust strategies with CrackTrader. This guide focuses on clarity and real-world usage.
 
 ## Strategy Template
 
@@ -176,13 +176,11 @@ def run_backtest(strategy_class, **params):
     cerebro.addstrategy(strategy_class, **params)
 
     # Create historical data feed
-    store = CCXTStore(exchange_id='binance')
+    store = CCXTStore(exchange='binance')
     feed = CCXTDataFeed(
         store=store,
         symbol='BTC/USDT',
-        timeframe='1h',
-        start_date='2024-01-01T00:00:00Z',
-        end_date='2024-03-01T23:59:59Z'
+        ccxt_timeframe='1h'
     )
     cerebro.adddata(feed)
 
@@ -208,38 +206,48 @@ results = run_backtest(MyStrategy, period=20, threshold=0.02)
 def run_paper_trading(strategy_class, **params):
     """Run strategy in paper trading mode."""
     from cracktrader import Cerebro, CCXTStore, CCXTDataFeed
-    from cracktrader.broker import CCXTLiveBroker
+    from cracktrader.broker import BrokerFactory
 
     cerebro = Cerebro()
     cerebro.addstrategy(strategy_class, **params)
 
     # Create store with sandbox/testnet
-    store = CCXTStore(
-        exchange_id='binance',
-        config={
-            'apiKey': 'your_api_key',
-            'secret': 'your_secret',
-            'sandbox': True  # Use testnet
-        }
-    )
+    store = CCXTStore(exchange='binance', sandbox=True, config={'apiKey': '...', 'secret': '...'})
 
     # Create live data feed
-    feed = CCXTDataFeed(
-        store=store,
-        symbol='BTC/USDT',
-        timeframe='1h'
-        # No dates = live streaming
-    )
+    feed = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='1h')
     cerebro.adddata(feed)
 
     # Use paper trading broker
-    broker = CCXTLiveBroker(store=store, mode='paper')
-    cerebro.broker = broker
+    broker = BrokerFactory.create(mode='paper', cash=10000)
+    cerebro.setbroker(broker)
 
     # Run indefinitely (Ctrl+C to stop)
     cerebro.run()
 
-# Usage
+```
+
+## Example Strategies
+
+### Moving Average Crossover
+
+--8<-- "examples/moving_average_cross.py"
+
+### Mean Reversion
+
+--8<-- "examples/mean_reversion.py"
+
+### Backtesting Wrapper
+
+--8<-- "examples/basic_backtest.py"
+
+### Live Data Feed Utility
+
+--8<-- "examples/live_data_feed.py"
+
+### Usage
+
+```python
 run_paper_trading(MyStrategy, period=20, threshold=0.02)
 ```
 
@@ -250,25 +258,18 @@ def run_live_trading(strategy_class, **params):
     """Run strategy in live trading mode."""
     from cracktrader import Cerebro, CCXTStore, CCXTDataFeed
     from cracktrader.broker import CCXTLiveBroker
-    from cracktrader.utils import setup_logging, get_health_monitor
+    import logging
+    import os
 
     # Set up production logging
-    setup_logging(
-        level='INFO',
-        json_enabled=True,
-        file_enabled=True
-    )
-
-    # Set up health monitoring
-    health_monitor = get_health_monitor()
-    health_monitor.add_health_check('exchange_connection', check_exchange_connection)
+    logging.basicConfig(level=logging.INFO)
 
     cerebro = Cerebro()
     cerebro.addstrategy(strategy_class, **params)
 
     # Create store with real credentials
     store = CCXTStore(
-        exchange_id='binance',
+        exchange='binance',
         config={
             'apiKey': os.getenv('BINANCE_API_KEY'),
             'secret': os.getenv('BINANCE_SECRET'),
@@ -276,7 +277,7 @@ def run_live_trading(strategy_class, **params):
         }
     )
 
-    feed = CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='1h')
+    feed = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='1h')
     cerebro.adddata(feed)
 
     # Use live trading broker
@@ -287,9 +288,9 @@ def run_live_trading(strategy_class, **params):
     try:
         cerebro.run()
     except KeyboardInterrupt:
-        logger.info("Strategy stopped by user")
+        print("Strategy stopped by user")
     except Exception as e:
-        logger.error(f"Strategy failed: {e}")
+        print(f"Strategy failed: {e}")
         # Add alerting logic here
 
 # Usage (with extreme caution!)
@@ -340,14 +341,14 @@ class MultiTimeframeStrategy(bt.Strategy):
 def create_multi_tf_cerebro():
     cerebro = Cerebro()
 
-    store = CCXTStore(exchange_id='binance')
+    store = CCXTStore(exchange='binance')
 
     # 1h data (primary)
-    feed_1h = CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='1h')
+    feed_1h = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='1h')
     cerebro.adddata(feed_1h, name='1h')
 
     # 4h data (higher timeframe)
-    feed_4h = CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='4h')
+    feed_4h = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='4h')
     cerebro.adddata(feed_4h, name='4h')
 
     cerebro.addstrategy(MultiTimeframeStrategy)
@@ -411,12 +412,12 @@ class PortfolioStrategy(bt.Strategy):
 def create_portfolio_cerebro():
     cerebro = Cerebro()
 
-    store = CCXTStore(exchange_id='binance')
+    store = CCXTStore(exchange='binance')
 
     # Add multiple assets
     symbols = ['BTC/USDT', 'ETH/USDT', 'ADA/USDT', 'DOT/USDT']
     for symbol in symbols:
-        feed = CCXTDataFeed(store=store, symbol=symbol, timeframe='1h')
+        feed = CCXTDataFeed(store=store, symbol=symbol, ccxt_timeframe='1h')
         cerebro.adddata(feed, name=symbol.replace('/', '_'))
 
     cerebro.addstrategy(PortfolioStrategy)

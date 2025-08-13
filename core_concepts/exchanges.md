@@ -1,50 +1,38 @@
 # Exchanges
 
-CrackTrader supports 400+ cryptocurrency exchanges through CCXT.
+CrackTrader connects to 100+ exchanges through CCXT. You configure one store per exchange and reuse it across feeds and brokers.
 
 ## Supported Exchanges
 
-Popular exchanges with full support:
-- **Binance** - Spot, futures, margin
-- **Coinbase Pro** - Spot trading
-- **Kraken** - Spot, futures
-- **Bybit** - Futures, spot
-- **OKX** - Spot, futures, margin
-- **Bitget** - Spot, futures
-- **Gate.io** - Spot, futures
+Popular exchanges:
+- Binance — spot, futures, margin
+- Coinbase — spot
+- Kraken — spot, futures
+- Bybit — futures, spot
+- OKX — spot, futures, margin
+- Bitget — spot, futures
+- Gate.io — spot, futures
 
-Full list: [CCXT Supported Exchanges](https://github.com/ccxt/ccxt#supported-cryptocurrency-exchange-markets)
+Full list: CCXT’s Supported Exchanges
 
 ## Exchange Configuration
 
 ### Binance
 ```python
-config = {
-    'exchange': 'binance',
-    'sandbox': True,  # Use testnet
-    'apiKey': 'your_api_key',
-    'secret': 'your_secret'
-}
+config = {'apiKey': 'your_api_key', 'secret': 'your_secret'}
+store = CCXTStore(exchange='binance', sandbox=True, config=config)
 ```
 
-### Coinbase Pro
+### Coinbase
 ```python
-config = {
-    'exchange': 'coinbase',
-    'sandbox': True,
-    'apiKey': 'your_api_key',
-    'secret': 'your_secret',
-    'passphrase': 'your_passphrase'
-}
+config = {'apiKey': 'your_api_key', 'secret': 'your_secret', 'passphrase': 'your_passphrase'}
+store = CCXTStore(exchange='coinbase', sandbox=True, config=config)
 ```
 
 ### Kraken
 ```python
-config = {
-    'exchange': 'kraken',
-    'apiKey': 'your_api_key',
-    'secret': 'your_secret'
-}
+config = {'apiKey': 'your_api_key', 'secret': 'your_secret'}
+store = CCXTStore(exchange='kraken', config=config)
 ```
 
 ## Exchange-Specific Features
@@ -55,23 +43,23 @@ config = {
 - **Order types**: Market, limit, stop, OCO, bracket
 - **WebSocket**: Real-time data feeds
 
-### Coinbase Pro
-- **Asset types**: Spot only
-- **Timeframes**: 1m, 5m, 15m, 1h, 6h, 1d
-- **Order types**: Market, limit, stop
-- **WebSocket**: Real-time data feeds
+### Coinbase
+- Asset types: spot only
+- Timeframes: selected minutes/hours/days
+- Order types: market, limit, stop (varies)
+- WebSocket: real‑time data feeds
 
 ## Adding New Exchanges
 
-CrackTrader automatically supports any CCXT exchange:
+CrackTrader supports any CCXT exchange:
 
 ```python
 from cracktrader import CCXTStore
 
 # Any CCXT exchange works
-store = CCXTStore({'exchange': 'bybit', 'sandbox': True})
-store = CCXTStore({'exchange': 'okx', 'sandbox': True})
-store = CCXTStore({'exchange': 'gate', 'sandbox': True})
+store = CCXTStore(exchange='bybit', sandbox=True)
+store = CCXTStore(exchange='okx', sandbox=True)
+store = CCXTStore(exchange='gate', sandbox=True)
 ```
 
 ## Exchange Testing
@@ -81,13 +69,13 @@ store = CCXTStore({'exchange': 'gate', 'sandbox': True})
 # Exchanges with sandbox support
 sandbox_exchanges = [
     'binance',     # testnet.binance.vision
-    'coinbase',    # public-sandbox.pro.coinbase.com
+    'coinbase',    # public sandbox
     'bybit',       # api-testnet.bybit.com
-    'okx'          # www.okx.com (paper trading)
+    'okx'          # paper trading
 ]
 
 # Test connection
-store = CCXTStore({'exchange': 'binance', 'sandbox': True})
+store = CCXTStore(exchange='binance', sandbox=True)
 ```
 
 ### Connection Testing
@@ -111,23 +99,20 @@ Each exchange has different rate limits:
 
 ```python
 # Enable rate limiting (recommended)
-config = {
-    'exchange': 'binance',
-    'enableRateLimit': True,
-    'rateLimit': 1200  # ms between requests
-}
-
-store = CCXTStore(config)
+store = CCXTStore(
+    exchange='binance',
+    config={'enableRateLimit': True, 'rateLimit': 1200}
+)
 ```
 
 ## Market Data
 
 ### Available Data Types
-- **OHLCV**: Candlestick data
-- **Trades**: Individual trades
-- **Order book**: Bid/ask levels
-- **Ticker**: 24h statistics
-- **Balance**: Account balances
+- OHLCV: candlestick data
+- Trades: individual trades
+- Order book: bid/ask levels
+- Ticker: 24h statistics
+- Balance: account balances
 
 ### Timeframe Support
 ```python
@@ -155,11 +140,11 @@ coinbase_fees = CoinbaseCommissionInfo()
 
 ```python
 # Trade on multiple exchanges simultaneously
-binance_store = CCXTStore({'exchange': 'binance', 'sandbox': True})
-coinbase_store = CCXTStore({'exchange': 'coinbase', 'sandbox': True})
+binance_store = CCXTStore(exchange='binance', sandbox=True)
+coinbase_store = CCXTStore(exchange='coinbase', sandbox=True)
 
-binance_data = CCXTDataFeed(binance_store, symbol='BTC/USDT')
-coinbase_data = CCXTDataFeed(coinbase_store, symbol='BTC-USD')
+binance_data = CCXTDataFeed(binance_store, symbol='BTC/USDT', ccxt_timeframe='1h')
+coinbase_data = CCXTDataFeed(coinbase_store, symbol='BTC-USD', ccxt_timeframe='1h')
 
 cerebro = bt.Cerebro()
 cerebro.adddata(binance_data, name='binance_btc')
@@ -169,19 +154,17 @@ cerebro.adddata(coinbase_data, name='coinbase_btc')
 ## Exchange-Specific Considerations
 
 ### Symbol Formats
-- **Binance**: BTC/USDT, ETH/USDT
-- **Coinbase**: BTC-USD, ETH-USD
-- **Kraken**: XXBTZUSD, XETHZUSD
+- Binance: BTC/USDT, ETH/USDT
+- Coinbase: BTC-USD, ETH-USD
+- Kraken: XXBTZUSD, XETHZUSD
 
 ### Minimum Order Sizes
-- **Binance BTC/USDT**: 0.00001 BTC
-- **Coinbase BTC-USD**: 0.001 BTC
-- **Kraken BTC/USD**: 0.0001 BTC
+- Binance BTC/USDT: 0.00001 BTC (example)
+- Coinbase BTC-USD: 0.001 BTC (example)
+- Kraken BTC/USD: 0.0001 BTC (example)
 
 ### API Limits
-- **Binance**: 1200 requests/minute
-- **Coinbase**: 10 requests/second
-- **Kraken**: 15 requests/minute
+- See the exchange’s documentation for current limits
 
 ## Best Practices
 

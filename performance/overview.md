@@ -11,7 +11,7 @@ Current performance characteristics and optimization status.
 
 ## Current Performance Baseline
 
-### System Performance (Latest Benchmarks)
+### System Performance (recent benchmarks)
 
 | Component | Mock Mode | Sandbox Mode | Notes |
 |-----------|-----------|--------------|-------|
@@ -21,7 +21,7 @@ Current performance characteristics and optimization status.
 | **Network Operations** | N/A | 200-1000ms | External exchange latency |
 | **Total Benchmark** | 1.6s | 775ms | Full system test |
 
-Performance Score: 56/100 (sandbox mode with network latency included)
+Note: Sandbox mode includes real network latency; use mock mode to measure pure code paths.
 
 ### Large Dataset Performance
 
@@ -42,7 +42,7 @@ Already implemented but not enabled by default.
 ```python
 # Enable automatic caching for large datasets
 store = CCXTStore(
-    exchange_config,
+    exchange='binance',
     cache_enabled=True,           # 90%+ speedup for backtesting
     cache_dir="./trading_data"    # Configurable location
 )
@@ -61,50 +61,45 @@ store = CCXTStore(
 feed = CCXTDataFeed(
     store=store,
     symbol="BTC/USDT",
-    timeframe="1m",
-    historical_limit=1000000,    # 1M candles - handled efficiently
-    streaming=True               # Memory-efficient streaming
+    ccxt_timeframe="1m",
+    historical_limit=1000000
 )
 ```
 
 ### **3. Performance Monitoring**
 
-Built-in performance tracking for production deployments:
+Track timings in your strategy using standard tools:
 
 ```python
-from cracktrader.utils import HealthMonitor
+import time
 
-# Automatic performance tracking
-monitor = HealthMonitor()
-with monitor.track_operation("strategy_execution"):
-    # Your strategy code
-    results = cerebro.run()
-
-# View performance metrics
-print(monitor.get_performance_summary())
+start = time.perf_counter()
+results = cerebro.run()
+elapsed = (time.perf_counter() - start) * 1000
+print(f"Backtest runtime: {elapsed:.1f} ms")
 ```
 
-## 🔍 **Bottleneck Analysis**
+## Bottleneck Analysis
 
-### **What's Fast** ✅
-- **Order processing**: 17ms overhead (excellent for Python)
-- **Data validation**: Sub-millisecond for typical operations
-- **WebSocket streaming**: Near real-time latency
-- **Cached data access**: 0.1-0.5s for million-candle datasets
+### What's Fast
+- Order processing paths
+- Data validation and transformation
+- WebSocket streaming
+- Cached data access
 
-### **What's Slow** ⚠️
-1. **Network calls**: 200-1000ms (external exchange limitation)
-2. **Initial data loading**: Without caching, CSV reading can take 20-80s
-3. **Complex indicators**: Pandas operations on large datasets
-4. **System startup**: Test infrastructure import overhead (4.6s)
+### What's Slow
+1. Network calls (exchange dependent)
+2. Initial data loading without caching
+3. Complex indicators over large datasets
+4. Cold start imports in some environments
 
-### **Optimization Targets** 🎯
+### Optimization Targets
 1. **Historical data pipeline** (90% solved with caching)
 2. **Technical indicators** for large datasets (Rust candidate)
 3. **Network layer** optimization (connection pooling)
 4. **Memory usage** for multi-million candle backtests
 
-## 🚀 **Performance Tools**
+## Performance Tools
 
 ### **Benchmarking Tool**
 
@@ -121,13 +116,9 @@ python performance/bench.py --sandbox --verbose
 python performance/bench.py --profile --verbose
 ```
 
-**Output includes**:
-- Component-by-component timing
-- Memory usage per operation
-- Bottleneck identification
-- Optimization recommendations (including Rust candidates!)
+Output includes component timings, memory usage, and bottleneck hints.
 
-### **Performance Reports**
+### Performance Reports
 
 All benchmarks generate detailed reports:
 
@@ -139,7 +130,7 @@ performance/reports/
 └── optimization_recommendations.json # Action items
 ```
 
-## 📈 **Optimization Roadmap**
+## Optimization Roadmap
 
 ### **Phase 1: Enable Existing Optimizations** (Immediate)
 - Enable caching by default for large datasets
@@ -156,9 +147,9 @@ performance/reports/
 - Data I/O optimization
 - Network layer improvements
 
-## 💡 **Performance Best Practices**
+## Performance Best Practices
 
-### **For Backtesting**
+### For Backtesting
 ```python
 # ✅ Enable caching for repeated tests
 store = CCXTStore(exchange_config, cache_enabled=True)
@@ -170,7 +161,7 @@ feed = CCXTDataFeed(historical_limit=50000)  # Not unlimited
 python performance/bench.py --profile
 ```
 
-### **For Live Trading**
+### For Live Trading
 ```python
 # ✅ Monitor system health
 cerebro.run(enable_health_monitoring=True)
@@ -183,7 +174,7 @@ import logging
 logging.getLogger('cracktrader').setLevel(logging.WARNING)
 ```
 
-### **For Large Datasets**
+### For Large Datasets
 ```python
 # ✅ Stream data instead of loading all at once
 feed = CCXTDataFeed(streaming=True)
@@ -196,7 +187,7 @@ cache_config = {
 }
 ```
 
-## 🎮 **Try It Yourself**
+## Try It Yourself
 
 1. **Run the benchmark**: `python performance/bench.py --verbose`
 2. **Enable caching**: Set `cache_enabled=True` in your store config

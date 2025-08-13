@@ -40,7 +40,10 @@ markdown_extensions:
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      base_path:
+        - .
+        - ..
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -57,44 +60,44 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Tutorials:
+  - Getting Started:
       - Quickstart: getting_started/quickstart.md
-      - Install: getting_started/installation.md
+      - Installation: getting_started/installation.md
       - First Strategy: getting_started/first_strategy.md
-      - Basic Example: examples/basic_strategy.md
+      - Configuration: getting_started/configuration.md
   - How-to:
-      - Configure the platform: getting_started/configuration.md
-      - Strategy cookbook: strategy_guide.md
-      - Use the Web API: WEB_API.md
-      - Backtrader compatibility: integrations/backtrader_compat.md
-  - Explanations:
+      - Strategy Cookbook: strategy_guide.md
+      - Web API: WEB_API.md
+      - Backtrader Compatibility: integrations/backtrader_compat.md
+  - Concepts:
       - Architecture: core_concepts/architecture.md
       - Strategies: core_concepts/strategies.md
       - Feeds: core_concepts/feeds.md
       - Brokers: core_concepts/brokers.md
       - Exchanges: core_concepts/exchanges.md
-      - Caching model: core_concepts/caching.md
+      - Caching: core_concepts/caching.md
   - Reference:
-      - API Reference: reference/web_api.md
-      - Configuration reference: reference/configuration.md
-  - Performance:
-      - Overview: performance/overview.md
-      - Caching guide: performance/caching_guide.md
-      - Large datasets: performance/large_datasets.md
-      - Benchmarking: performance/benchmarking.md
-      - Optimization roadmap: performance/optimization_roadmap.md
-  - Testing & Quality:
-      - Strategy analysis: testing/strategy_analysis.md
-      - Fixtures & sample strategy: testing/fixture_strategy.md
-      - Mocking policy: testing/mocking_policy.md
-      - Test coverage status: testing/test_coverage.md
-      - Known gaps: testing/known_gaps.md
-  - Contributing:
-      - Overview: development/README.md
-      - Workflow: development/workflow.md
-      - Quick reference: development/quick-reference.md
-      - Testing guidelines: development/testing_guidelines.md
-      - Publishing: development/publishing.md
+      - Web API Reference: reference/web_api.md
+      - Configuration Reference: reference/configuration.md
+  - Development:
+      - Performance:
+          - Overview: performance/overview.md
+          - Caching Guide: performance/caching_guide.md
+          - Large Datasets: performance/large_datasets.md
+          - Benchmarking: performance/benchmarking.md
+          - Optimization Roadmap: performance/optimization_roadmap.md
+      - Testing & Quality:
+          - Strategy Analysis: testing/strategy_analysis.md
+          - Fixtures & Sample Strategy: testing/fixture_strategy.md
+          - Mocking Policy: testing/mocking_policy.md
+          - Test Coverage Status: testing/test_coverage.md
+          - Known Gaps: testing/known_gaps.md
+      - Contributing:
+          - Overview: development/README.md
+          - Workflow: development/workflow.md
+          - Quick Reference: development/quick-reference.md
+          - Testing Guidelines: development/testing_guidelines.md
+          - Publishing: development/publishing.md
   - Project (internal):
       - Documentation plan: internal/DOCUMENTATION_PLAN.md
       - Documentation status: internal/DOCUMENTATION_STATUS.md

@@ -4,9 +4,9 @@ This directory contains comprehensive documentation for developing and contribut
 
 ## Getting Started
 
-- 📚 **[Development Workflow](workflow.md)** - Complete guide to development process, CI/CD, and tools
-- ⚡ **[Quick Reference](quick-reference.md)** - Essential commands and information
-- 🧪 **[Testing Guide](../testing/known_gaps.md)** - Current testing status and gaps
+- [Development Workflow](workflow.md) - Complete guide to development process, CI/CD, and tools
+- [Quick Reference](quick-reference.md) - Essential commands and information
+- [Testing Methodology](../testing/known_gaps.md) - How we test across tiers
 
 ## Key Areas
 
@@ -23,19 +23,19 @@ This directory contains comprehensive documentation for developing and contribut
 - **Type checking**: MyPy integration (optional)
 
 ### Testing Strategy
-- **Unit Tests**: Fast, isolated component testing
-- **Integration Tests**: End-to-end system behavior
-- **Performance Tests**: High-frequency data processing validation
-- **Coverage**: >95% with automated reporting
+- Unit: fast, isolated component testing
+- Integration: cross-component behavior using a fake exchange
+- E2E (optional): sandbox/live validation for critical paths
+- Coverage and performance reports in CI
 
 ### CI/CD Pipeline Features
-- ✅ Matrix testing (Python 3.11, 3.12)
-- ✅ Automated dependency caching
-- ✅ Parallel test execution
-- ✅ Security scanning
-- ✅ Build verification
-- ✅ Coverage badge updates
-- ✅ Artifact collection
+- Matrix testing (Python 3.11, 3.12)
+- Dependency caching
+- Parallel test execution
+- Security scanning
+- Build verification
+- Coverage reporting
+- Artifact collection
 
 ## Architecture Overview
 
@@ -43,7 +43,7 @@ Cracktrader is a high-performance cryptocurrency trading framework:
 
 - **7,400 lines** of source code
 - **19,200+ lines** of comprehensive tests
-- **400+ exchanges** supported via CCXT
+- **100+ exchanges** supported via CCXT
 - **Sub-minute timeframes** (1s, 10s, 30s) with tick reordering
 - **Full Backtrader compatibility** including analyzers and optimization
 

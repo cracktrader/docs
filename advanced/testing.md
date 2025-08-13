@@ -378,8 +378,8 @@ class TestDataPipelineIntegration(unittest.TestCase):
         ])
 
         # Create components
-        store = CCXTStore(exchange_id='fake', exchange=fake_exchange)
-        feed = CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='1h')
+        store = CCXTStore(exchange='fake', exchange_instance=fake_exchange)
+        feed = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='1h')
 
         # Test strategy that captures data
         class DataCaptureStrategy(bt.Strategy):
@@ -425,10 +425,10 @@ class TestDataPipelineIntegration(unittest.TestCase):
         fake_exchange.set_symbol_data('ETH/USDT', eth_data)
 
         # Create components
-        store = CCXTStore(exchange_id='fake', exchange=fake_exchange)
+        store = CCXTStore(exchange='fake', exchange_instance=fake_exchange)
 
-        btc_feed = CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='1h')
-        eth_feed = CCXTDataFeed(store=store, symbol='ETH/USDT', timeframe='1h')
+        btc_feed = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='1h')
+        eth_feed = CCXTDataFeed(store=store, symbol='ETH/USDT', ccxt_timeframe='1h')
 
         class MultiAssetStrategy(bt.Strategy):
             def next(self):

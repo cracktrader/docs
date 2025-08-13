@@ -1,6 +1,6 @@
 # Architecture Overview
 
-Cracktrader's architecture is designed for **modularity**, **performance**, and **reliability** in cryptocurrency trading applications.
+Cracktrader is built for modularity, performance, and reliability. This overview shows how strategies, feeds, brokers, and the CCXT store work together.
 
 ## High-Level Architecture
 
@@ -31,7 +31,7 @@ graph TB
     end
 
     subgraph "Exchange Layer"
-        EX[400+ Exchanges]
+        EX[100+ Exchanges]
     end
 
     S --> C
@@ -57,14 +57,13 @@ graph TB
 
 ## Core Components
 
-### 1. Cerebro Engine (Execution)
+### 1. Cerebro (Execution)
 
-The **Cerebro** is Cracktrader's execution engine, inherited from Backtrader:
+Backtrader’s Cerebro runs your strategy, routes data, and manages the broker.
 
-- **Strategy Orchestration**: Manages strategy lifecycle and execution
-- **Data Flow**: Coordinates data between feeds, strategies, and brokers
-- **Event Loop**: Handles tick-by-tick or bar-by-bar execution
-- **Performance Tracking**: Collects metrics and runs analyzers
+- Strategy orchestration and lifecycle
+- Feed ↔ strategy ↔ broker data flow
+- Bar/tick progression and analyzers
 
 ```python
 cerebro = bt.Cerebro()
@@ -74,14 +73,14 @@ cerebro.setbroker(broker)
 cerebro.run()
 ```
 
-### 2. CCXT Store (Integration Hub)
+### 2. CCXT Store (Integration)
 
-The **CCXTStore** is the central integration point:
+The CCXTStore centralizes exchange connectivity and shared resources.
 
-- **Exchange Abstraction**: Unified interface to 400+ exchanges
-- **Connection Pooling**: Efficient WebSocket and REST connections
-- **Data Caching**: Historical data storage and retrieval
-- **Rate Limiting**: Automatic request throttling
+- Unified interface to 100+ exchanges
+- WebSocket/REST connection management
+- Historical data caching
+- Built‑in rate limiting
 
 ```python
 store = CCXTStore(
@@ -91,50 +90,38 @@ store = CCXTStore(
 )
 ```
 
-**Key Features:**
-- Singleton pattern for resource efficiency
-- Async/await support with background event loops
-- Automatic reconnection and error recovery
-- Comprehensive logging and monitoring
+Key features
+- Registry/singleton for shared connections
+- Async background loop for exchange I/O
+- Automatic reconnection and error handling
+- Structured logging and diagnostics
 
 ### 3. Data Feeds (Market Data)
 
-**CCXTDataFeed** provides real-time and historical market data:
+CCXTDataFeed provides real‑time and historical OHLCV data.
 
-- **Multi-Timeframe**: 1s to 1M intervals supported
-- **Live Streaming**: WebSocket feeds for real-time data
-- **Historical Backfill**: Automatic data loading for backtests
-- **Data Quality**: Built-in validation and gap detection
+- Timeframes: seconds to monthly
+- Live streaming via WebSocket
+- Historical backfill for backtests
+- Validation and gap detection
 
 ```python
 feed = CCXTDataFeed(
     store=store,
     symbol='BTC/USDT',
-    timeframe='1h',
+    ccxt_timeframe='1h',
     live=True
 )
 ```
 
-### 4. Brokers (Order Execution)
+### 4. Brokers (Execution)
 
-Multiple broker implementations for different trading modes:
+Two broker paths cover live and research.
 
-#### CCXTLiveBroker
-- Real exchange connectivity
-- Live order placement and tracking
-- Real-time position updates
-- Commission and slippage modeling
+- CCXTLiveBroker: real exchanges, live orders and balances
+- CCXTBackBroker: backtesting/paper trading with configurable costs
 
-#### CCXTBackBroker
-- Historical backtesting
-- Perfect execution simulation
-- Configurable slippage models
-- Performance optimization
-
-#### CCXTPaperBroker
-- Paper trading with live data
-- Risk-free strategy testing
-- Real market conditions simulation
+Paper trading uses the backtesting broker with live feeds (create via `BrokerFactory.create(mode='paper')`).
 
 ### 5. Strategies (Trading Logic)
 
@@ -150,11 +137,10 @@ class MyStrategy(bt.Strategy):
             self.buy(size=0.1)
 ```
 
-**Enhanced Features:**
-- OCO (One-Cancels-Other) bracket orders
-- Advanced risk management
-- Real-time performance monitoring
-- Multi-asset support
+Enhanced features
+- OCO bracket orders and risk helpers
+- Real‑time monitoring hooks
+- Multi‑asset support
 
 ## Data Flow Architecture
 
@@ -193,25 +179,13 @@ sequenceDiagram
     B->>ST: notify_order()
 ```
 
-## Threading and Concurrency
+## Concurrency Model
 
-Cracktrader uses a **hybrid async/sync** architecture:
+Hybrid sync/async design:
 
-### Main Thread (Synchronous)
-- Backtrader strategy execution
-- Indicator calculations
-- Analyzer processing
-
-### Background Threads (Asynchronous)
-- WebSocket data streams
-- REST API requests
-- Order status monitoring
-- Database operations
-
-### Thread Safety
-- Lock-free data structures where possible
-- Atomic operations for critical sections
-- Message queues for cross-thread communication
+- Main thread: strategy execution, indicators, analyzers
+- Background loop: exchange I/O (WebSocket/REST), order/balance updates
+- Thread‑safe queues and minimal locking between components
 
 ```python
 # Thread-safe store operations
@@ -225,38 +199,19 @@ class Strategy(bt.Strategy):
         latest_price = self.data.close[0]
 ```
 
-## Performance Optimizations
+## Performance
 
-### 1. Data Caching
-- **Historical Data**: Persistent storage with smart invalidation
-- **Market Data**: In-memory LRU caches for recent data
-- **Exchange Info**: Cached symbol information and trading rules
+- Caching for historical data (configurable location)
+- WebSocket reuse and HTTP session pooling
+- Built‑in rate limiting
+- Efficient data structures for in‑memory processing
 
-### 2. Connection Pooling
-- **WebSocket Reuse**: Single connection per exchange
-- **HTTP Session Pooling**: Persistent connections for REST calls
-- **Rate Limit Management**: Token bucket algorithm
+## Reliability
 
-### 3. Memory Management
-- **Circular Buffers**: Fixed-size data arrays for indicators
-- **Lazy Loading**: Data loaded on-demand
-- **Garbage Collection**: Explicit cleanup of unused objects
-
-## Error Handling and Recovery
-
-### 1. Connection Resilience
-- **Automatic Reconnection**: Exponential backoff for failed connections
-- **Heartbeat Monitoring**: Detect stale connections
-- **Fallback Mechanisms**: Switch to backup data sources
-
-### 2. Data Quality Assurance
-- **Gap Detection**: Identify missing data points
-- **Outlier Filtering**: Remove erroneous price data
-- **Validation Checks**: Ensure data consistency
-
-### 3. Order Safety
-- **Pre-flight Checks**: Validate orders before submission
-- **Status Monitoring**: Track order lifecycle
+- Automatic reconnection with backoff
+- Heartbeats and stream liveness checks
+- Data validation and outlier filtering
+- Pre‑flight order validation and lifecycle tracking
 - **Failure Recovery**: Handle partial fills and rejections
 
 ## Configuration Management
