@@ -4,14 +4,14 @@ Public documentation for CrackTrader - A cryptocurrency trading framework.
 
 ## View Documentation
 
-**Live Documentation**: https://lachlanbridges.github.io/cracktrader-docs/
+**Live Documentation**: https://cracktrader.github.io/docs/
 
 ## Local Development
 
 ### Setup
 ```bash
 # Clone repository
-git clone https://github.com/LachlanBridges/cracktrader-docs.git
+git clone https://github.com/cracktrader/cracktrader-docs.git
 cd cracktrader-docs
 
 # Install dependencies

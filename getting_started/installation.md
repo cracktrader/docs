@@ -10,7 +10,7 @@
 
 ```bash
 # Install from GitHub
-pip install git+https://github.com/LachlanBridges/cracktrader.git
+pip install git+https://github.com/cracktrader/cracktrader.git
 ```
 
 ### Development Installation
@@ -19,7 +19,7 @@ For developers who want to contribute or modify the code:
 
 ```bash
 # Clone the repository
-git clone https://github.com/LachlanBridges/cracktrader.git
+git clone https://github.com/cracktrader/cracktrader.git
 cd cracktrader
 
 # Development setup (recommended)
@@ -40,13 +40,13 @@ Cracktrader supports optional extras that can be installed alongside the core pa
 
 ```bash
 # Core installation (trading only)
-pip install git+https://github.com/LachlanBridges/cracktrader.git
+pip install git+https://github.com/cracktrader/cracktrader.git
 
 # With web interface
-pip install "git+https://github.com/LachlanBridges/cracktrader.git[web]"
+pip install "git+https://github.com/cracktrader/cracktrader.git[web]"
 
 # With multiple extras
-pip install "git+https://github.com/LachlanBridges/cracktrader.git[web,docs]"
+pip install "git+https://github.com/cracktrader/cracktrader.git[web,docs]"
 ```
 
 **Available Extras:**
@@ -155,7 +155,7 @@ sudo pip install cracktrader
 # Better: use virtual environment
 python -m venv .venv
 source .venv/bin/activate  # or `.venv\Scripts\activate` on Windows
-pip install git+https://github.com/LachlanBridges/cracktrader.git
+pip install git+https://github.com/cracktrader/cracktrader.git
 ```
 
 **Exchange connection issues:**
@@ -170,9 +170,9 @@ print(exchange.fetch_ticker('BTC/USDT'))
 
 ### Getting Help
 
-- **Documentation**: [https://lachlanbridges.github.io/cracktrader-docs/](https://lachlanbridges.github.io/cracktrader-docs/)
-- **Examples**: Browse examples in the [GitHub repository](https://github.com/LachlanBridges/cracktrader/tree/main/examples)
-- **Issues**: Report bugs or request features at [GitHub Issues](https://github.com/LachlanBridges/cracktrader/issues)
+- **Documentation**: [https://cracktrader.github.io/docs/](https://cracktrader.github.io/docs/)
+- **Examples**: Browse examples in the [GitHub repository](https://github.com/cracktrader/cracktrader/tree/main/examples)
+- **Issues**: Report bugs or request features at [GitHub Issues](https://github.com/cracktrader/cracktrader/issues)
 - **API Reference**: Available in the online documentation or run `make docs-serve` locally for development
 
 ## Next Steps

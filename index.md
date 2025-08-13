@@ -25,7 +25,7 @@ CrackTrader lets you build, test, and deploy algorithmic strategies across CCXT-
 ### 1. Install
 
 ```bash
-pip install git+https://github.com/LachlanBridges/cracktrader.git
+pip install git+https://github.com/cracktrader/cracktrader.git
 ```
 
 ### 2. Your First Strategy (backtest)

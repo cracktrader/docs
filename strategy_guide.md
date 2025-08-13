@@ -928,6 +928,6 @@ def test_strategy_integration():
 ---
 
 **Next Steps:**
-- [Data Feeds Guide](feeds.md) - Working with market data
-- [Broker Integration](brokers.md) - Order management and execution
-- [Testing Strategies](testing.md) - Comprehensive testing approaches
+- [Data Feeds Guide](core_concepts/feeds.md) - Working with market data
+- [Broker Integration](core_concepts/brokers.md) - Order management and execution
+- [Testing Strategies](advanced/testing.md) - Comprehensive testing approaches

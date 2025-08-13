@@ -257,4 +257,4 @@ data = CCXTDataFeed(
 
 ## Full Example Source
 
-The complete moving average crossover example is available in the [GitHub repository](https://github.com/LachlanBridges/cracktrader/blob/main/examples/moving_average_cross.py).
+The complete moving average crossover example is available in the [GitHub repository](https://github.com/cracktrader/cracktrader/blob/main/examples/moving_average_cross.py).

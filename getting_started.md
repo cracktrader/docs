@@ -101,10 +101,10 @@ web:
 
 ## What's Next?
 
-- **[Strategy Development](strategy_guide.md)** - Learn advanced strategy patterns
-- **[Data Feeds](feeds.md)** - Working with multiple data sources
-- **[Web API](gui.md)** - Building applications with the REST API
-- **[Testing](testing.md)** - Writing tests for your strategies
+- **[Core Concepts](core_concepts/architecture.md)** - Understand the framework architecture
+- **[Examples](examples/basic_strategy.md)** - See complete strategy implementations
+- **[Web API](reference/web_api.md)** - Building applications with the REST API
+- **[Testing](advanced/testing.md)** - Writing tests for your strategies
 
 ## Examples
 
@@ -117,4 +117,4 @@ Check out the `examples/` directory for complete implementations:
 
 ---
 
-**Having issues?** Check the [troubleshooting section](#common-issues) or open an issue on GitHub.
+**Having issues?** Check the [installation guide](getting_started/installation.md#troubleshooting) or open an issue on GitHub.

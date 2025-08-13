@@ -6,10 +6,10 @@ Get CrackTrader running in minutes.
 
 ```bash
 # Install from GitHub
-pip install git+https://github.com/LachlanBridges/cracktrader.git
+pip install git+https://github.com/cracktrader/cracktrader.git
 
 # With web interface
-pip install "git+https://github.com/LachlanBridges/cracktrader.git[web]"
+pip install "git+https://github.com/cracktrader/cracktrader.git[web]"
 
 # Development setup (if you've cloned the repo)
 pip install -e ".[dev]"
