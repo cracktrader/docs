@@ -59,24 +59,24 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Tutorials:
-      - Quickstart: tutorials/quickstart.md
-      - Install: tutorials/installation.md
-      - First Strategy: tutorials/first_strategy.md
-      - Basic Example: tutorials/basic_strategy.md
+      - Quickstart: getting_started/quickstart.md
+      - Install: getting_started/installation.md
+      - First Strategy: getting_started/first_strategy.md
+      - Basic Example: examples/basic_strategy.md
   - How-to:
-      - Configure the platform: how-to/configuration.md
-      - Strategy cookbook: how-to/strategy_guide.md
-      - Use the Web API: how-to/web_api.md
+      - Configure the platform: getting_started/configuration.md
+      - Strategy cookbook: strategy_guide.md
+      - Use the Web API: WEB_API.md
       - Backtrader compatibility: integrations/backtrader_compat.md
   - Explanations:
-      - Architecture: explanations/architecture.md
-      - Strategies: explanations/strategies.md
-      - Feeds: explanations/feeds.md
-      - Brokers: explanations/brokers.md
-      - Exchanges: explanations/exchanges.md
-      - Caching model: explanations/caching.md
+      - Architecture: core_concepts/architecture.md
+      - Strategies: core_concepts/strategies.md
+      - Feeds: core_concepts/feeds.md
+      - Brokers: core_concepts/brokers.md
+      - Exchanges: core_concepts/exchanges.md
+      - Caching model: core_concepts/caching.md
   - Reference:
-      - Web API Reference: reference/web_api.md
+      - API Reference: reference/web_api.md
       - Configuration reference: reference/configuration.md
   - Performance:
       - Overview: performance/overview.md
