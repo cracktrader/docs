@@ -5,6 +5,7 @@ Step-by-step guide to building your first CrackTrader strategy.
 ## What We'll Build
 
 A simple moving average crossover strategy that:
+
 - Buys when fast MA crosses above slow MA
 - Sells when fast MA crosses below slow MA
 - Uses OCO orders for risk management
@@ -154,7 +155,7 @@ broker = BrokerFactory.create(mode='paper', cash=10000)
 cerebro.setbroker(broker)
 ```
 
-Live trading (testnet or live):
+Live trading (sandbox/testnet or live):
 ```python
 from cracktrader.broker import BrokerFactory
 
@@ -163,7 +164,8 @@ broker = BrokerFactory.create(mode='live', store=store)
 cerebro.setbroker(broker)
 ```
 
-Note: CCXTStore uses a registry (singleton-like) keyed by exchange and settings. Creating a store with the same arguments returns the same instance, so your broker and data feed automatically share the connection.
+!!! info "Store Registry & Rate Limits"
+    CCXTStore uses a registry (singleton-like) keyed by exchange and settings. Creating a store with the same arguments returns the same instance, so your broker and data feed automatically share the connection. This also ensures rate limits are shared across all components using the same exchange connection.
 
 ## Step 4: Run the Strategy
 
@@ -190,6 +192,9 @@ Win rate: 58.3%
 ## Step 5: Optimization
 
 ### Test Different Parameters
+
+Backtrader's `optstrategy` runs multiple strategy instances with different parameter combinations in parallel, which is much more efficient than manually looping through each combination:
+
 ```python
 # Add optimization to run_strategy()
 cerebro.optstrategy(
@@ -197,6 +202,9 @@ cerebro.optstrategy(
     fast_period=range(5, 20, 5),    # Test 5, 10, 15
     slow_period=range(20, 50, 10)   # Test 20, 30, 40
 )
+
+# This tests 3 × 3 = 9 parameter combinations automatically
+# Results show which combination performed best
 ```
 
 ### Add More Indicators
@@ -236,10 +244,10 @@ data = CCXTDataFeed(
 
 ## Common Issues
 
-**No trades**: Check for enough historical data for MA calculation
-**Cache errors**: Ensure `./data` is writable
-**API errors**: Verify API keys in your config
-**Slow backtests**: Enable caching with `cache_enabled=True`
+- **No trades**: Check for enough historical data for MA calculation
+- **Cache errors**: Ensure `./data` is writable  
+- **API errors**: Verify API keys in your config
+- **Slow backtests**: Enable caching with `cache_enabled=True`
 
 ## Next Steps
 
@@ -249,6 +257,4 @@ data = CCXTDataFeed(
 
 ## Full Example Source
 
-The complete moving average crossover example is available here:
-
---8<-- "examples/moving_average_cross.py"
+The complete moving average crossover example is available in the [GitHub repository](https://github.com/LachlanBridges/cracktrader/blob/main/examples/moving_average_cross.py).

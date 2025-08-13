@@ -3,22 +3,19 @@
 ## Requirements
 
 - **Python 3.11+** (Python 3.12 recommended)
-- **Git** for version control
-- **Make** (optional, for development workflow)
 
 ## Quick Installation
 
 ### Basic Installation
 
 ```bash
-# Install from PyPI (when published)
-pip install cracktrader
-
-# Or install from GitHub
+# Install from GitHub
 pip install git+https://github.com/LachlanBridges/cracktrader.git
 ```
 
 ### Development Installation
+
+For developers who want to contribute or modify the code:
 
 ```bash
 # Clone the repository
@@ -33,34 +30,32 @@ pip install -e ".[dev,web,docs]"
 pre-commit install
 ```
 
+**Development Requirements:**
+- **Git** for version control
+- **Make** (optional, for development workflow)
+
 ## Installation Options
 
-Cracktrader provides several installation profiles for different use cases:
+Cracktrader supports optional extras that can be installed alongside the core package:
 
-### Core Trading (`pip install cracktrader`)
-- CCXT exchange integration
-- Backtrader compatibility
-- Basic data feeds and brokers
+```bash
+# Core installation (trading only)
+pip install git+https://github.com/LachlanBridges/cracktrader.git
 
-### Web Interface (`pip install "cracktrader[web]"`)
-- FastAPI REST API server
-- WebSocket real-time data streams
-- React dashboard frontend
+# With web interface
+pip install "git+https://github.com/LachlanBridges/cracktrader.git[web]"
 
-### Documentation (`pip install "cracktrader[docs]"`)
-- MkDocs-Material documentation system
-- API reference generation
-- Example notebooks
+# With multiple extras
+pip install "git+https://github.com/LachlanBridges/cracktrader.git[web,docs]"
+```
 
-### Development (`pip install "cracktrader[dev]"`)
-- Testing framework (pytest, coverage)
-- Code quality tools (ruff, black, mypy)
-- Pre-commit hooks
+**Available Extras:**
 
-### Performance Testing (`pip install "cracktrader[performance]"`)
-- Benchmark suite (pytest-benchmark)
-- Memory profiling
-- Airspeed Velocity integration
+- **`web`** - FastAPI REST API server, WebSocket streams, React dashboard
+- **`docs`** - MkDocs documentation system, API reference generation
+- **`dev`** - Testing framework, code quality tools, pre-commit hooks
+- **`performance`** - Benchmark suite, memory profiling tools
+- **`test`** - Testing dependencies only
 
 ## Verification
 
@@ -70,10 +65,16 @@ Test your installation:
 # Test basic functionality
 python -c "import cracktrader; print('Cracktrader installed successfully')"
 
-# Run example strategy
+# Test exchange connectivity
+python -c "import ccxt; print('CCXT working:', ccxt.exchanges[:5])"
+```
+
+**For Development Installation:**
+```bash
+# Run example strategy (requires cloned repository)
 python examples/basic_strategy.py
 
-# Check development tools (if installed)
+# Run tests
 make test
 ```
 
@@ -115,7 +116,9 @@ export CRACKTRADER_BINANCE_SECRET="your_secret"
 export CRACKTRADER_SANDBOX=true  # Use sandbox by default
 ```
 
-## Docker Installation
+<!-- ## Docker Installation
+
+⚠️ **Docker support is experimental and not fully tested**
 
 Run Cracktrader in a container:
 
@@ -129,6 +132,7 @@ docker run -v $(pwd)/strategies:/app/strategies cracktrader
 # Run with web interface
 docker run -p 8000:8000 cracktrader --enable-web
 ```
+-->
 
 ## Troubleshooting
 
@@ -149,9 +153,9 @@ pip install -e .
 sudo pip install cracktrader
 
 # Better: use virtual environment
-python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
-pip install cracktrader
+python -m venv .venv
+source .venv/bin/activate  # or `.venv\Scripts\activate` on Windows
+pip install git+https://github.com/LachlanBridges/cracktrader.git
 ```
 
 **Exchange connection issues:**
@@ -166,10 +170,10 @@ print(exchange.fetch_ticker('BTC/USDT'))
 
 ### Getting Help
 
-- **Documentation**: Full documentation (configure `site_url` when hosting)
-- **Examples**: Check the `examples/` directory
-- **Issues**: [GitHub Issues](https://github.com/your-username/cracktrader/issues)
-- **API Reference**: Run `make docs-serve` for local API docs
+- **Documentation**: [https://lachlanbridges.github.io/cracktrader-docs/](https://lachlanbridges.github.io/cracktrader-docs/)
+- **Examples**: Browse examples in the [GitHub repository](https://github.com/LachlanBridges/cracktrader/tree/main/examples)
+- **Issues**: Report bugs or request features at [GitHub Issues](https://github.com/LachlanBridges/cracktrader/issues)
+- **API Reference**: Available in the online documentation or run `make docs-serve` locally for development
 
 ## Next Steps
 
