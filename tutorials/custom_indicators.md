@@ -14,11 +14,11 @@ class MyStrategy(bt.Strategy):
         # Moving averages
         self.sma20 = SMA(self.data.close, period=20)
         self.ema12 = EMA(self.data.close, period=12)
-        
+
         # Oscillators
         self.rsi = RSI(self.data.close, period=14)
         self.macd = MACD(self.data.close)
-        
+
         # Volatility
         self.bbands = BollingerBands(self.data.close, period=20)
 ```
@@ -67,22 +67,22 @@ class CustomRSI(bt.Indicator):
         ('oversold', 30),
         ('overbought', 70),
     )
-    
+
     def __init__(self):
         # Calculate price changes
-        self.up = bt.If(self.data > self.data(-1), 
+        self.up = bt.If(self.data > self.data(-1),
                        self.data - self.data(-1), 0)
-        self.down = bt.If(self.data < self.data(-1), 
+        self.down = bt.If(self.data < self.data(-1),
                          self.data(-1) - self.data, 0)
-        
+
         # Calculate averages
         self.avg_up = SMA(self.up, period=self.params.period)
         self.avg_down = SMA(self.down, period=self.params.period)
-        
+
         # Calculate RSI
         rs = self.avg_up / self.avg_down
         self.lines.rsi = 100 - (100 / (1 + rs))
-        
+
         # Define oversold/overbought levels
         self.lines.oversold = self.params.oversold
         self.lines.overbought = self.params.overbought
@@ -91,7 +91,7 @@ class CustomRSI(bt.Indicator):
 class Strategy(bt.Strategy):
     def __init__(self):
         self.custom_rsi = CustomRSI(self.data.close)
-        
+
     def next(self):
         if self.custom_rsi.rsi < self.custom_rsi.oversold:
             print("RSI Oversold signal")
@@ -112,18 +112,18 @@ class MultiTimeframeMA(bt.Indicator):
         ('period_long', 50),
         ('timeframe_mult', 4),  # 4x higher timeframe
     )
-    
+
     def __init__(self):
         # Get higher timeframe data
         self.data_htf = self.data.resample(
             timeframe=self.data._timeframe,
             compression=self.params.timeframe_mult
         )
-        
+
         # Calculate moving averages
         self.lines.ma_short = SMA(self.data.close, period=self.params.period_short)
         self.lines.ma_long = SMA(self.data_htf.close, period=self.params.period_long)
-        
+
         # Generate signal when short-term MA crosses above long-term MA
         self.lines.signal = bt.If(
             self.lines.ma_short > self.lines.ma_long, 1,
@@ -145,20 +145,20 @@ class CryptoVolatilityIndex(bt.Indicator):
         ('threshold_low', 20),
         ('threshold_high', 80),
     )
-    
+
     def __init__(self):
         # Calculate hourly returns
         returns = (self.data.close / self.data.close(-1) - 1) * 100
-        
+
         # Calculate rolling volatility
         volatility = bt.indicators.StdDev(returns, period=self.params.period)
-        
+
         # Normalize to 0-100 scale
         vol_min = bt.indicators.Lowest(volatility, period=self.params.period * 7)
         vol_max = bt.indicators.Highest(volatility, period=self.params.period * 7)
-        
+
         self.lines.cvi = ((volatility - vol_min) / (vol_max - vol_min)) * 100
-        
+
         # Generate signals
         self.lines.volatility_signal = bt.If(
             self.lines.cvi < self.params.threshold_low, 1,  # Low vol - trend continuation
@@ -174,14 +174,14 @@ class FundingRateIndicator(bt.Indicator):
         ('extreme_positive', 0.1),  # 0.1% funding rate
         ('extreme_negative', -0.1),
     )
-    
+
     def __init__(self, funding_data):
         """
         Args:
             funding_data: Additional data feed with funding rates
         """
         self.lines.funding_rate = funding_data.close
-        
+
         # Generate signals based on extreme funding rates
         self.lines.funding_signal = bt.If(
             self.lines.funding_rate > self.params.extreme_positive, -1,  # Short bias
@@ -204,22 +204,22 @@ class CompositeSignal(bt.Indicator):
         ('ma_short', 20),
         ('ma_long', 50),
     )
-    
+
     def __init__(self):
         # Individual indicators
         self.rsi = RSI(self.data.close, period=self.params.rsi_period)
         self.ma_short = SMA(self.data.close, period=self.params.ma_short)
         self.ma_long = SMA(self.data.close, period=self.params.ma_long)
         self.macd = MACD(self.data.close)
-        
+
         # Combine signals
         rsi_bull = self.rsi < 30  # Oversold
         ma_bull = self.ma_short > self.ma_long  # Trend up
         macd_bull = self.macd.macd > self.macd.signal  # Momentum up
-        
+
         # Count bullish signals
         bull_count = rsi_bull + ma_bull + macd_bull
-        
+
         # Generate composite signal
         self.lines.signal = bt.If(bull_count >= 2, 1,
                                  bt.If(bull_count <= 1, -1, 0))
@@ -237,14 +237,14 @@ class FastSMA(bt.Indicator):
     """
     lines = ('sma',)
     params = (('period', 20),)
-    
+
     def __init__(self):
         self.addminperiod(self.params.period)
-        
+
     def next(self):
         # Use numpy for faster calculation on larger windows
         import numpy as np
-        data_slice = np.array([self.data.get(ago=i) 
+        data_slice = np.array([self.data.get(ago=i)
                               for i in range(self.params.period)])
         self.lines.sma[0] = np.mean(data_slice)
 ```
@@ -258,22 +258,22 @@ class MemoryEfficientIndicator(bt.Indicator):
     """
     lines = ('value',)
     params = (('period', 20),)
-    
+
     def __init__(self):
         self.data_buffer = []
         self.sum = 0.0
-        
+
     def next(self):
         # Add new value
         new_value = self.data[0]
         self.data_buffer.append(new_value)
         self.sum += new_value
-        
+
         # Remove old values to maintain window size
         if len(self.data_buffer) > self.params.period:
             old_value = self.data_buffer.pop(0)
             self.sum -= old_value
-            
+
         # Calculate average
         self.lines.value[0] = self.sum / len(self.data_buffer)
 ```

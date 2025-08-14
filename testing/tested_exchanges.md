@@ -8,7 +8,7 @@ These exchanges have been extensively tested with Cracktrader and are recommende
 
 ### **Binance** ⭐⭐⭐⭐⭐
 - **Spot Trading**: ✅ Full support
-- **Futures Trading**: ✅ Full support  
+- **Futures Trading**: ✅ Full support
 - **Margin Trading**: ✅ Full support
 - **WebSocket Streams**: ✅ All streams tested
 - **Order Types**: ✅ All supported types
@@ -16,7 +16,7 @@ These exchanges have been extensively tested with Cracktrader and are recommende
 
 ### **Coinbase Pro** ⭐⭐⭐⭐
 - **Spot Trading**: ✅ Full support
-- **WebSocket Streams**: ✅ All streams tested  
+- **WebSocket Streams**: ✅ All streams tested
 - **Order Types**: ✅ Market, limit, stop orders
 - **Special Features**: Advanced order routing
 
@@ -73,7 +73,7 @@ These exchanges have basic functionality tested but may require additional valid
 Cracktrader supports **400+ exchanges** through standard APIs. While not all have been extensively tested, most standard functionality should work. Supported exchanges include:
 
 - Bitstamp, Bittrex, Poloniex, HitBTC
-- Gemini, CEX.IO, BitMEX, Deribit  
+- Gemini, CEX.IO, BitMEX, Deribit
 - And many more regional and specialized exchanges
 
 ## Testing Methodology
@@ -88,7 +88,7 @@ Our testing approach includes:
 
 2. **Performance Testing**
    - Latency measurements
-   - Throughput testing  
+   - Throughput testing
    - Stress testing under load
 
 3. **Integration Testing**
@@ -106,7 +106,7 @@ Our testing approach includes:
 ### For Production Trading
 Use **thoroughly tested** exchanges (5-star rating) for live trading with real funds.
 
-### For Development & Testing  
+### For Development & Testing
 **Well tested** exchanges (3-4 stars) are suitable for development and paper trading.
 
 ### For Specific Use Cases

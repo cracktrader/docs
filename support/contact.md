@@ -7,19 +7,19 @@ We're here to help you succeed with Cracktrader. Get support, report issues, or 
 ### Technical Support
 For technical issues, configuration problems, or usage questions:
 
-📧 **Email**: support@cracktrader.com  
+📧 **Email**: support@cracktrader.com
 🕐 **Response Time**: Within 24 hours for priority issues
 
 ### Feature Requests
 Have ideas for new features or improvements?
 
-📧 **Email**: features@cracktrader.com  
+📧 **Email**: features@cracktrader.com
 📝 **Include**: Detailed description of the feature and your use case
 
 ### Bug Reports
 Found a bug? We want to fix it quickly:
 
-📧 **Email**: bugs@cracktrader.com  
+📧 **Email**: bugs@cracktrader.com
 📋 **Include**:
 - Steps to reproduce the issue
 - Expected vs. actual behavior
@@ -43,7 +43,7 @@ Include:
 ### Discord Server
 Join our community for:
 - Strategy discussions
-- Performance tips  
+- Performance tips
 - Community support
 - Product updates
 
@@ -63,7 +63,7 @@ Stay updated with:
 ### Enterprise Solutions
 For enterprise deployments, custom integrations, or bulk licensing:
 
-📧 **Email**: enterprise@cracktrader.com  
+📧 **Email**: enterprise@cracktrader.com
 📞 **Call**: Schedule a call through our website
 
 ### Partnerships
@@ -90,7 +90,7 @@ To help us assist you quickly, please include:
 - Cracktrader version
 - Exchange(s) being used
 
-### Problem Description  
+### Problem Description
 - What you're trying to accomplish
 - What you expected to happen
 - What actually happened
@@ -117,7 +117,7 @@ To help us assist you quickly, please include:
 
 For critical production issues affecting live trading:
 
-📧 **Emergency Email**: emergency@cracktrader.com  
+📧 **Emergency Email**: emergency@cracktrader.com
 📱 **Emergency Line**: +1-XXX-XXX-XXXX (24/7 for enterprise customers)
 
 *Critical issues are defined as complete system failures preventing all trading activity.*
