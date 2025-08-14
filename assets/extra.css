@@ -1,5 +1,144 @@
 /* Custom CSS for Cracktrader documentation */
 
+/* ===== CUSTOM THEME COLORS ===== */
+:root {
+  /* Custom orange palette */
+  --ct-orange-50: #fff7ed;
+  --ct-orange-100: #ffedd5;
+  --ct-orange-200: #fed7aa;
+  --ct-orange-300: #fdba74;
+  --ct-orange-400: #fb923c;
+  --ct-orange-500: #f97316;
+  --ct-orange-600: #ea580c;
+  --ct-orange-700: #c2410c;
+  --ct-orange-800: #9a3412;
+  --ct-orange-900: #7c2d12;
+
+  /* Custom grays for better contrast */
+  --ct-gray-50: #f9fafb;
+  --ct-gray-100: #f3f4f6;
+  --ct-gray-800: #1f2937;
+  --ct-gray-900: #111827;
+}
+
+/* Override Material theme colors */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #000000;
+  --md-primary-fg-color--light: #1a1a1a;
+  --md-primary-fg-color--dark: #000000;
+  --md-accent-fg-color: var(--ct-orange-500);
+  --md-accent-fg-color--transparent: var(--ct-orange-500);
+
+  /* Custom navigation colors */
+  --md-nav-color: #ffffff;
+  --md-footer-bg-color: #000000;
+  --md-footer-fg-color: #ffffff;
+
+  /* Header and sidebar backgrounds */
+  --md-default-bg-color: #0d1117;
+  --md-default-fg-color: #e6edf3;
+  --md-nav-bg-color: #161b22;
+
+  /* Link colors */
+  --md-typeset-a-color: var(--ct-orange-400);
+  --md-typeset-a-color--hover: var(--ct-orange-300);
+}
+
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #000000;
+  --md-primary-fg-color--light: #1a1a1a;
+  --md-primary-fg-color--dark: #000000;
+  --md-accent-fg-color: var(--ct-orange-600);
+  --md-accent-fg-color--transparent: var(--ct-orange-600);
+
+  /* Link colors for light mode */
+  --md-typeset-a-color: var(--ct-orange-700);
+  --md-typeset-a-color--hover: var(--ct-orange-600);
+}
+
+/* ===== LOGO STYLING ===== */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  width: auto;
+  height: 2.2rem;
+  max-width: 8rem;
+  filter: none; /* Keep original colors since our logo has orange accents */
+}
+
+/* Logo in navigation */
+.md-nav--primary .md-nav__title .md-nav__button img,
+.md-nav--primary .md-nav__title .md-nav__button svg {
+  width: auto;
+  height: 2rem;
+  max-width: 7rem;
+}
+
+/* Improve logo visibility on mobile */
+@media screen and (max-width: 76.1875em) {
+  .md-nav--primary .md-nav__title .md-nav__button img,
+  .md-nav--primary .md-nav__title .md-nav__button svg {
+    height: 1.8rem;
+    max-width: 6rem;
+  }
+}
+
+/* Ensure proper logo spacing */
+.md-header__button.md-logo {
+  margin-right: 0.5rem;
+}
+
+/* Logo hover effect */
+.md-header__button.md-logo:hover img,
+.md-header__button.md-logo:hover svg {
+  opacity: 0.8;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* ===== ENHANCED NAVIGATION ===== */
+.md-nav__item--active > .md-nav__link {
+  color: var(--ct-orange-500) !important;
+  font-weight: 600;
+}
+
+.md-nav__link:hover {
+  color: var(--ct-orange-400) !important;
+}
+
+/* ===== IMPROVED BUTTONS AND INTERACTIONS ===== */
+.md-button {
+  background-color: var(--ct-orange-600);
+  border-color: var(--ct-orange-600);
+  color: #ffffff;
+}
+
+.md-button:hover {
+  background-color: var(--ct-orange-700);
+  border-color: var(--ct-orange-700);
+}
+
+.md-button--primary {
+  background-color: var(--ct-orange-600);
+  border-color: var(--ct-orange-600);
+  color: #ffffff;
+}
+
+.md-button--primary:hover {
+  background-color: var(--ct-orange-700);
+  border-color: var(--ct-orange-700);
+}
+
+/* ===== SEARCH BAR STYLING ===== */
+.md-search__input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+.md-search__input:focus {
+  border-color: var(--ct-orange-500);
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
+}
+
+/* ===== CODE BLOCKS ===== */
 /* Force monospace font for architecture diagrams */
 .highlight pre code {
   font-family: 'Courier New', Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
@@ -21,6 +160,7 @@ pre code {
   border-radius: 0.2rem;
   margin: 1em 0;
   overflow: hidden;
+  border-left: 3px solid var(--ct-orange-500);
 }
 
 .highlight pre {
@@ -34,9 +174,79 @@ pre code {
   background-color: var(--md-code-bg-color);
 }
 
-/* Ensure consistent font rendering across browsers */
+/* ===== ADMONITIONS WITH ORANGE ACCENTS ===== */
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  border-color: var(--ct-orange-500);
+}
+
+.md-typeset .note > .admonition-title,
+.md-typeset .note > summary {
+  background-color: rgba(249, 115, 22, 0.1);
+  border-color: var(--ct-orange-500);
+}
+
+.md-typeset .note > .admonition-title::before,
+.md-typeset .note > summary::before {
+  background-color: var(--ct-orange-500);
+}
+
+/* ===== FOOTER CUSTOMIZATION ===== */
+.md-footer {
+  background-color: #000000;
+}
+
+.md-footer-meta {
+  background-color: rgba(0, 0, 0, 0.87);
+}
+
+.md-footer-meta__inner {
+  color: var(--ct-gray-100);
+}
+
+/* ===== TABLE STYLING ===== */
+.md-typeset table:not([class]) th {
+  background-color: var(--ct-orange-600);
+  color: #ffffff;
+}
+
+.md-typeset table:not([class]) tr:nth-child(2n) {
+  background-color: rgba(249, 115, 22, 0.05);
+}
+
+/* ===== ENSURE CONSISTENT FONT RENDERING ===== */
 @supports (font-variant-ligatures: none) {
   .highlight pre code {
     font-variant-ligatures: none;
   }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media screen and (max-width: 76.1875em) {
+  .md-nav--primary .md-nav__title {
+    background-color: var(--md-primary-fg-color);
+  }
+}
+
+/* ===== CUSTOM ANIMATIONS ===== */
+.md-nav__link:hover {
+  transition: color 0.2s ease-in-out;
+}
+
+.md-button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* ===== SIDEBAR IMPROVEMENTS ===== */
+.md-sidebar--primary {
+  border-right: 1px solid rgba(249, 115, 22, 0.1);
+}
+
+/* ===== CONTENT AREA IMPROVEMENTS ===== */
+.md-content {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.02) 0%, rgba(0, 0, 0, 0.02) 100%);
+}
+
+[data-md-color-scheme="slate"] .md-content {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(13, 17, 23, 0.5) 100%);
 }
