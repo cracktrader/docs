@@ -1,22 +1,22 @@
 # CrackTrader
 
-Professional crypto trading framework for traders and quants
+Professional cryptocurrency trading framework for algorithmic traders and quantitative analysts
 
-Connect to 100+ CCXT exchanges. Backtest with precision. Deploy with confidence.
+Trade across 400+ exchanges. Backtest with precision. Deploy with confidence.
 
 ---
 
 ## Overview
 
-CrackTrader lets you build, test, and deploy algorithmic strategies across CCXT-supported exchanges with native Backtrader compatibility. It’s designed for practitioners who care about execution quality, data integrity, and reproducibility.
+CrackTrader provides a unified platform to build, test, and deploy algorithmic trading strategies across 400+ cryptocurrency exchanges with seamless Backtrader integration. Built for professional traders who demand execution quality, data integrity, and reproducible results.
 
-## Key Benefits
+## Key Features
 
-- Fast development: Unified exchange layer via CCXT
-- Solid data: WebSocket streaming and historical caching
-- Reliable: Comprehensive tests and clear failure modes
-- Web-ready: REST API and dashboard integrations
-- Performance: Async pipeline with sub-minute timeframes
+- **Universal Exchange Access**: Trade on 400+ exchanges through a single, unified interface
+- **Real-Time Data Streams**: WebSocket feeds with historical backfill and intelligent caching
+- **Production Ready**: Comprehensive testing, robust error handling, and proven reliability
+- **Web Dashboard**: REST API with real-time monitoring and control interface
+- **High Performance**: Asynchronous architecture supporting sub-minute timeframes
 
 ---
 
@@ -31,12 +31,11 @@ pip install git+https://github.com/cracktrader/cracktrader.git
 ### 2. Your First Strategy (backtest)
 
 ```python
-import backtrader as bt
-from cracktrader import CCXTStore, CCXTDataFeed
+import cracktrader as ct
 
-class SimpleMovingAverage(bt.Strategy):
+class SimpleMovingAverage(ct.bt.Strategy):
     def __init__(self):
-        self.sma = bt.indicators.SMA(period=20)
+        self.sma = ct.indicators.SMA(self.data.close, period=20)
 
     def next(self):
         if not self.position and self.data.close[0] > self.sma[0]:
@@ -44,11 +43,11 @@ class SimpleMovingAverage(bt.Strategy):
         elif self.position and self.data.close[0] < self.sma[0]:
             self.sell()
 
-# Connect to an exchange (shared CCXT store)
-store = CCXTStore(exchange='binance', cache_enabled=True)
-data = CCXTDataFeed(store=store, symbol='BTC/USDT', ccxt_timeframe='1h')
+# Connect to exchange
+store = ct.CCXTStore(exchange='binance', cache_enabled=True)
+data = ct.CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='1h')
 
-cerebro = bt.Cerebro()
+cerebro = ct.Cerebro()
 cerebro.adddata(data)
 cerebro.addstrategy(SimpleMovingAverage)
 cerebro.run()
@@ -58,34 +57,36 @@ cerebro.run()
 
 ```python
 # Switch to live trading
-store = CCXTStore(
+store = ct.CCXTStore(
     exchange='binance',
     sandbox=False,
     config={'apiKey': '...', 'secret': '...'}
 )
 ```
 
-Use Backtrader’s broker for backtesting. Switch to `CCXTLiveBroker` for live execution. The store uses a registry so your broker and feeds share the same connection automatically.
+Use the built-in backtesting broker for strategy development. Switch to `CCXTLiveBroker` for live execution. The store automatically manages connections and ensures data consistency across components.
 
 ---
 
-## Explore the Docs
+## Navigation
 
-- Getting Started: [Quickstart](getting_started/quickstart.md), [Installation](getting_started/installation.md), [Configuration](getting_started/configuration.md), [First Strategy](getting_started/first_strategy.md)
-- How‑to: [Strategy Cookbook](strategy_guide.md), [Web API](WEB_API.md), [Backtrader Compatibility](integrations/backtrader_compat.md)
-- Concepts: [Architecture](core_concepts/architecture.md), [Strategies](core_concepts/strategies.md), [Feeds](core_concepts/feeds.md), [Brokers](core_concepts/brokers.md), [Exchanges](core_concepts/exchanges.md), [Caching](core_concepts/caching.md)
-- Reference: [Web API Reference](reference/web_api.md), [Configuration Reference](reference/configuration.md)
-- Development: [Performance](performance/overview.md), [Testing Methodology](testing/known_gaps.md), [Contributing](development/README.md)
+Use the navigation tabs above or explore key sections:
+
+**🚀 [Getting Started](getting_started/installation.md)** - Installation, configuration, and your first strategy  
+**🧠 [Understanding Cracktrader](core_concepts/architecture.md)** - Core concepts and system architecture  
+**📈 [Strategy Tutorials](tutorials/multi_exchange.md)** - Advanced trading strategies and techniques  
+**📚 [Reference](reference/core_classes.md)** - Complete API documentation and indicators  
+**⚡ [Developers](testing/tested_exchanges.md)** - Testing, performance, and support resources
 
 ---
 
-## For Traders & Quants
+## For Professional Traders
 
-- CCXT integration: Reliable connectivity, unified symbols, thorough order support
-- Backtrader native: Run existing strategies with minimal changes
-- Web API: FastAPI server plus dashboard for monitoring and control
-- Performance: Async streaming, caching, and sub‑minute intervals
-- Quality: Unit, integration, and end‑to‑end test coverage
+- **Multi-Exchange Trading**: Unified interface across 400+ exchanges with consistent symbol mapping
+- **Strategy Migration**: Run existing Backtrader strategies with minimal modifications
+- **Real-Time Monitoring**: FastAPI-powered dashboard with WebSocket streams and REST controls
+- **High-Frequency Capable**: Asynchronous data pipeline supporting sub-minute timeframes
+- **Enterprise Quality**: Comprehensive test coverage with unit, integration, and end-to-end validation
 
 ---
 
@@ -103,35 +104,39 @@ graph TB
     G[Web Dashboard] --> H[REST API]
     H --> B
 
-    subgraph "100+ Exchanges"
+    subgraph "400+ Exchanges"
         F1[Binance]
-        F2[Coinbase]
+        F2[Coinbase Pro]
         F3[Kraken]
         F4[Bybit]
+        F5[Bitfinex]
+        F6[KuCoin]
     end
 
     F --> F1
     F --> F2
     F --> F3
     F --> F4
+    F --> F5
+    F --> F6
 ```
 
-Data flows from exchanges through CCXT to your strategies. The web API provides real-time monitoring and control. See [Performance](performance/overview.md) for current characteristics and benchmarks.
+Data flows from exchanges through the unified interface to your strategies. The web API provides real-time monitoring and control. See [Performance](performance/overview.md) for current characteristics and benchmarks.
 
 ---
 
 ## Ready to Start?
 
-### New to Algorithmic Trading?
-→ [Quickstart Tutorial](getting_started/quickstart.md) - Learn the basics with guided examples
+### 🆕 New to Algorithmic Trading?
+Start with our [**Quickstart Guide**](getting_started/quickstart.md) - Learn the fundamentals with step-by-step examples
 
-### Experienced with Backtrader?
-→ [Migration Guide](integrations/backtrader_compat.md) - Adapt existing strategies in minutes
+### 📊 Experienced with Backtrader?  
+Check out [**Strategy Migration**](core_concepts/strategies.md) - Adapt existing strategies with minimal changes
 
-### Building for Production?
-→ [Architecture Guide](core_concepts/architecture.md) - Understand the system design
+### 🏗️ Building for Production?
+Review our [**Architecture Overview**](core_concepts/architecture.md) - Understand the system design and best practices
 
-### Need API Integration?
-→ [Web API Reference](reference/web_api.md) - Complete REST and WebSocket documentation
+### 🔌 Need API Integration?
+Explore the [**Web API Reference**](reference/web_api.md) - Complete REST and WebSocket documentation
 
 ---
