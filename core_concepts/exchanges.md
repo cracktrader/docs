@@ -1,19 +1,19 @@
-# Exchanges
+﻿# Exchanges
 
-CrackTrader connects to 100+ exchanges through CCXT. You configure one store per exchange and reuse it across feeds and brokers.
+CrackTrader connects to 100+ exchanges through CCXT. You configure one store per exchange and reuse it across feeds and brokers. In addition, Polymarket prediction markets are supported with the same high-level API.
 
 ## Supported Exchanges
 
 Popular exchanges:
-- Binance — spot, futures, margin
-- Coinbase — spot
-- Kraken — spot, futures
-- Bybit — futures, spot
-- OKX — spot, futures, margin
-- Bitget — spot, futures
-- Gate.io — spot, futures
+- Binance â€” spot, futures, margin
+- Coinbase â€” spot
+- Kraken â€” spot, futures
+- Bybit â€” futures, spot
+- OKX â€” spot, futures, margin
+- Bitget â€” spot, futures
+- Gate.io â€” spot, futures
 
-Full list: CCXT’s Supported Exchanges
+Full list: CCXTTs Supported Exchanges
 
 ## Exchange Configuration
 
@@ -47,7 +47,7 @@ store = CCXTStore(exchange='kraken', config=config)
 - Asset types: spot only
 - Timeframes: selected minutes/hours/days
 - Order types: market, limit, stop (varies)
-- WebSocket: real‑time data feeds
+- WebSocket: realâ€‘time data feeds
 
 ## Adding New Exchanges
 
@@ -164,7 +164,7 @@ cerebro.adddata(coinbase_data, name='coinbase_btc')
 - Kraken BTC/USD: 0.0001 BTC (example)
 
 ### API Limits
-- See the exchange’s documentation for current limits
+- See the exchangeâ€™s documentation for current limits
 
 ## Best Practices
 
@@ -192,3 +192,21 @@ logging.getLogger('ccxt').setLevel(logging.DEBUG)
 store = CCXTStore(config)
 # Will show detailed API requests/responses
 ```
+
+## Polymarket
+
+Use the same factory functions with exchange='polymarket':
+
+`python
+import cracktrader as ct
+
+market_id = 'pm_market_1'
+store = ct.Store(exchange='polymarket')
+feed = ct.Feed(symbol=market_id, exchange='polymarket')
+broker = ct.Broker(mode='paper', exchange='polymarket')
+`
+
+Notes:
+- The feed symbol is the Polymarket market_id.
+- Commission routing uses prediction commission info for instrument type prediction.
+- The Polymarket store manages its own background event loop like CCXT.
