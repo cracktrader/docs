@@ -1,120 +1,67 @@
 # Getting Started
 
-This page orients you to the fastest path based on your goal. For details, follow the linked guides.
+This quick tour introduces the Cracktrader core concepts and walks through a
+minimal strategy. For deeper guidance, check the dedicated tutorials under
+`getting_started/`.
 
-Quick Links
+## Installation
 
-- Quickstart: getting started in minutes
-- Installation: full setup options
-- First Strategy: stepâ€‘byâ€‘step tutorial
-- Configuration: exchange keys and settings
+```bash
+pip install cracktrader
+```
 
-Prerequisites
+Extras such as indicators and runnable examples now live in
+[`cracktrader-extras`](https://github.com/LachlanBridges/cracktrader-extras).
+Install it when you need the additional toolbox.
 
-- Python 3.11+ recommended (3.9+ supported)
-- pip and Git for development
+## Core ideas
 
-Quickstart
+Cracktrader exposes three factory functions:
 
-See Getting Started â†’ Quickstart for a minimal, copyâ€‘paste run.
+- `Store(exchange=...)` – shared connection state for an exchange
+- `Feed(symbol=..., exchange=..., store=...)` – Backtrader-compatible market data feed
+- `Broker(mode=..., exchange=..., store=...)` – order routing built on top of the store
 
-First Strategy (outline)
+All three components mirror the CCXT integration and work identically for
+Polymarket.
+
+## Minimal example
 
 ```python
 import backtrader as bt
-from datetime import datetime
-from cracktrader import Cerebro, CCXTStore, CCXTDataFeed
+from cracktrader import Broker, Cerebro, Feed, Store
 
-class MovingAverageCross(bt.Strategy):
-    params = (('fast_period', 10), ('slow_period', 30))
+class Momentum(bt.Strategy):
+    params = dict(period=10)
+
     def __init__(self):
-        fast = bt.indicators.SMA(self.data.close, period=self.p.fast_period)
-        slow = bt.indicators.SMA(self.data.close, period=self.p.slow_period)
-        self.crossover = bt.indicators.CrossOver(fast, slow)
+        close = self.datas[0].close
+        self.avg = bt.indicators.SimpleMovingAverage(close, period=self.p.period)
+
     def next(self):
-        if not self.position and self.crossover > 0:
+        price = self.data.close[0]
+        if price > self.avg[0] and not self.position:
             self.buy()
-        elif self.position and self.crossover < 0:
+        elif price < self.avg[0] and self.position:
             self.sell()
 
 cerebro = Cerebro()
-cerebro.addstrategy(MovingAverageCross)
+store = Store(exchange="polymarket")
+feed = Feed(symbol="POLYMARKET:MARKET_ID", exchange="polymarket", store=store, live=False)
+broker = Broker(mode="paper", exchange="polymarket", store=store)
 
-store = CCXTStore(exchange='binance')
-feed = CCXTDataFeed(
-    store=store,
-    symbol='BTC/USDT',
-    ccxt_timeframe='1h',
-    fromdate=datetime(2024, 1, 1),
-    todate=datetime(2024, 3, 1),
-)
 cerebro.adddata(feed)
-cerebro.broker.setcash(10000)
-cerebro.broker.setcommission(commission=0.001)
-cerebro.run()
+cerebro.setbroker(broker)
+cerebro.addstrategy(Momentum)
+results = cerebro.run()
 ```
 
-Paper and Live
+The store is cached internally, so subsequent calls to `Feed` or `Broker` with
+the same exchange reuse the existing connection automatically.
 
-- Paper: keep Backtrader broker, use live data feed
-- Live: attach `BrokerFactory.create(mode='live', store=store)` and provide API keys
+## Next steps
 
-Troubleshooting
-
-- Import errors: run `pip install -e .`
-- No data: check symbol format and timeframe support
-- Exchange auth: verify API key/secret and permissions
-
-```yaml
-logging:
-  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-  console_enabled: true
-  file_enabled: true
-  json_enabled: false  # Set true for structured logs
-  log_dir: "logs"
-  max_file_size: 10485760  # 10MB
-  backup_count: 5
-```
-
-### Trading Configuration
-
-```yaml
-trading:
-  default_exchange: "binance"
-  default_timeframe: "1h" 
-  sandbox_mode: true
-  commission_rate: 0.001  # 0.1%
-  slippage_rate: 0.0001   # 0.01%
-```
-
-### Web Configuration
-
-```yaml
-web:
-  host: "0.0.0.0"
-  port: 8000
-  cors_enabled: true
-  cors_origins: ["http://localhost:3000"]
-  debug: false
-  workers: 1
-```
-
-## What's Next?
-
-- **[Core Concepts](core_concepts/architecture.md)** - Understand the framework architecture
-- **[Examples](examples/basic_strategy.md)** - See complete strategy implementations
-- **[Web API](reference/web_api.md)** - Building applications with the REST API
-- **[Testing](advanced/testing.md)** - Writing tests for your strategies
-
-## Examples
-
-Check out the `examples/` directory for complete implementations:
-
-- `basic_backtest.py` - Simple backtest example
-- `live_data_feed.py` - Real-time data consumption
-- `logging_and_monitoring_demo.py` - Production monitoring setup
-- `web_api_example.py` - Complete API workflow
-
----
-
-**Having issues?** Check the [installation guide](getting_started/installation.md#troubleshooting) or open an issue on GitHub.
+- Explore the `getting_started/quickstart.md` guide for a ready-to-run script.
+- Review the [Exchange Concepts](core_concepts/exchanges.md) page to understand
+  how store caching and routing work.
+- Install `cracktrader-extras` for community indicators and examples.
