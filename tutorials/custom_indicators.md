@@ -1,5 +1,7 @@
 # Custom Indicators
 
+> **Note:** Indicator imports shown below require the optional cracktrader-extras package. Use `cracktrader.load("cracktrader.plugins.indicators")` to access them.
+
 Cracktrader provides transparent access to all Backtrader indicators through the `cracktrader.indicators` module, and allows you to create custom indicators for specialized trading strategies.
 
 ## Using Standard Indicators

@@ -1,5 +1,7 @@
 # Risk Management
 
+> **Note:** Indicator imports shown below require the optional cracktrader-extras package. Use `cracktrader.load("cracktrader.plugins.indicators")` to access them.
+
 Comprehensive risk management is crucial for successful cryptocurrency trading. Cracktrader provides extensive tools and patterns for managing various types of trading risk.
 
 ## Overview

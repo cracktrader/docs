@@ -1,5 +1,7 @@
 # Multi-Asset Strategies
 
+> **Note:** Indicator imports shown below require the optional cracktrader-extras package. Use `cracktrader.load("cracktrader.plugins.indicators")` to access them.
+
 Trade multiple cryptocurrencies simultaneously to create diversified portfolios, correlation strategies, and advanced trading systems.
 
 ## Overview

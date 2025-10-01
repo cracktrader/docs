@@ -1,5 +1,7 @@
 # Indicators Reference
 
+> **Note:** Indicator helpers now live in the optional cracktrader-extras package. Install it and fetch implementations via cracktrader.load("cracktrader.plugins.indicators"). The extras package restores the `cracktrader.indicators` namespace used in the examples below.
+
 Complete reference for all available indicators in Cracktrader. Access indicators through `cracktrader.indicators` or `ct.indicators`.
 
 ## Quick Start
