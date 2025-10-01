@@ -231,19 +231,19 @@ def run_paper_trading(strategy_class, **params):
 
 ### Moving Average Crossover
 
---8<-- "examples/moving_average_cross.py"
+--8<-- "../cracktrader-extras/src/cracktrader_extras/examples/moving_average_cross.py"
 
 ### Mean Reversion
 
---8<-- "examples/mean_reversion.py"
+--8<-- "../cracktrader-extras/src/cracktrader_extras/examples/mean_reversion.py"
 
 ### Backtesting Wrapper
 
---8<-- "examples/basic_backtest.py"
+--8<-- "../cracktrader-extras/src/cracktrader_extras/examples/basic_backtest.py"
 
 ### Live Data Feed Utility
 
---8<-- "examples/live_data_feed.py"
+--8<-- "../cracktrader-extras/src/cracktrader_extras/examples/live_data_feed.py"
 
 ### Usage
 
@@ -931,3 +931,5 @@ def test_strategy_integration():
 - [Data Feeds Guide](core_concepts/feeds.md) - Working with market data
 - [Broker Integration](core_concepts/brokers.md) - Order management and execution
 - [Testing Strategies](advanced/testing.md) - Comprehensive testing approaches
+
+

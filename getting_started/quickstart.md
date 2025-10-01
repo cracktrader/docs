@@ -131,7 +131,7 @@ All indicators work the same way - they analyze price data and provide signals f
 
 ```bash
 # Run basic example
-python examples/basic_strategy.py
+python -m cracktrader_extras.examples.basic_strategy
 
 # Run performance test
 python performance/bench.py
@@ -223,3 +223,4 @@ results = cerebro.run()    # Real trades with real money!
 
 !!! warning "Live Trading"
     Live trading uses real money. Always test thoroughly in sandbox/paper mode first!
+

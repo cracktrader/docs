@@ -72,7 +72,7 @@ python -c "import ccxt; print('CCXT working:', ccxt.exchanges[:5])"
 **For Development Installation:**
 ```bash
 # Run example strategy (requires cloned repository)
-python examples/basic_strategy.py
+python -m cracktrader_extras.examples.basic_strategy
 
 # Run tests
 make test
@@ -180,3 +180,4 @@ print(exchange.fetch_ticker('BTC/USDT'))
 - [**Quickstart Guide**](quickstart.md) - Build your first strategy
 - [**Configuration**](configuration.md) - Advanced setup options
 - [**Core Concepts**](../core_concepts/architecture.md) - Understanding the framework
+

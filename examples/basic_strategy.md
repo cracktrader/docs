@@ -4,12 +4,12 @@ A complete, runnable moving-average crossover strategy. This page includes the s
 
 ## Source
 
---8<-- "examples/moving_average_cross.py"
+--8<-- "../../cracktrader-extras/src/cracktrader_extras/examples/moving_average_cross.py"
 
 ## Run It
 
 ```bash
-python examples/moving_average_cross.py
+python -m cracktrader_extras.examples.moving_average_cross
 ```
 
 ## Notes
@@ -39,3 +39,4 @@ def next(self):
 - [Live Trading](live_trading.md) - Deploy to production
 - [Web Dashboard](web_dashboard.md) - Monitor with web interface
 - [Performance Guide](../performance/overview.md) - Optimize for speed
+

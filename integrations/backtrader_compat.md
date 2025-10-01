@@ -1,5 +1,7 @@
 # Backtrader Compatibility Guide
 
+> **Note:** Indicator imports shown below require the optional cracktrader-extras package. Use `cracktrader.load("cracktrader.plugins.indicators")` to access them.
+
 Cracktrader is built on top of Backtrader, providing full compatibility with existing Backtrader strategies while adding cryptocurrency trading capabilities. This guide covers supported features, differences, and migration patterns.
 
 ## Overview
@@ -573,10 +575,11 @@ store = CCXTStore(
 
 **Migration Support:**
 - **Issues**: Report migration problems on GitHub
-- **Examples**: See `examples/migration/` for complete migration examples
+- **Examples**: See `cracktrader_extras/examples` for complete migration examples
 - **Community**: Join discussions for migration tips and best practices
 
 **Next Steps:**
 - [Data Feeds Guide](feeds.md) - CCXT data integration
 - [Strategy Development](strategy_guide.md) - Advanced strategy patterns
 - [Testing Guide](testing.md) - Testing migrated strategies
+
