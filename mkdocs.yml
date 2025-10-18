@@ -1,4 +1,4 @@
-site_name: Cracktrader Documentation
+﻿site_name: Cracktrader Documentation
 site_description: A modern cryptocurrency trading framework that bridges CCXT and Backtrader
 site_url: https://your-domain.com/cracktrader-docs  # Update with your VPS domain
 
@@ -76,6 +76,7 @@ nav:
   - Reference:
       - Web API Reference: reference/web_api.md
       - Configuration Reference: reference/configuration.md
+      - Entry Points & API Freeze: reference/entry_points.md
   - Development:
       - Performance:
           - Overview: performance/overview.md
