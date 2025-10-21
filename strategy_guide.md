@@ -931,5 +931,3 @@ def test_strategy_integration():
 - [Data Feeds Guide](core_concepts/feeds.md) - Working with market data
 - [Broker Integration](core_concepts/brokers.md) - Order management and execution
 - [Testing Strategies](advanced/testing.md) - Comprehensive testing approaches
-
-

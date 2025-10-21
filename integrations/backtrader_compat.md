@@ -582,4 +582,3 @@ store = CCXTStore(
 - [Data Feeds Guide](feeds.md) - CCXT data integration
 - [Strategy Development](strategy_guide.md) - Advanced strategy patterns
 - [Testing Guide](testing.md) - Testing migrated strategies
-

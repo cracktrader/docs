@@ -180,4 +180,3 @@ print(exchange.fetch_ticker('BTC/USDT'))
 - [**Quickstart Guide**](quickstart.md) - Build your first strategy
 - [**Configuration**](configuration.md) - Advanced setup options
 - [**Core Concepts**](../core_concepts/architecture.md) - Understanding the framework
-

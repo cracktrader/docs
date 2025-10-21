@@ -17,4 +17,3 @@
 | `mock_store` | function | Simulates exchange store methods |
 | `setup_broker` | function | Live or back broker factory |
 | `simulate_order_fill` | function | Simulate exchange fill |
-

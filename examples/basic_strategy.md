@@ -39,4 +39,3 @@ def next(self):
 - [Live Trading](live_trading.md) - Deploy to production
 - [Web Dashboard](web_dashboard.md) - Monitor with web interface
 - [Performance Guide](../performance/overview.md) - Optimize for speed
-

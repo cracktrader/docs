@@ -223,4 +223,3 @@ results = cerebro.run()    # Real trades with real money!
 
 !!! warning "Live Trading"
     Live trading uses real money. Always test thoroughly in sandbox/paper mode first!
-

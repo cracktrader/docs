@@ -16,4 +16,3 @@ Avoid mocking:
 ## Bad Examples
 - Mocking `Position` updates
 - Mocking `CCXTOrder.update()` directly
-
