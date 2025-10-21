@@ -23,28 +23,18 @@ Leverage allows you to control larger positions with smaller amounts of capital,
 ```python
 import cracktrader as ct
 
-# Configure leverage for different exchanges
-binance_config = {
-    'apiKey': 'your_api_key',
-    'secret': 'your_secret',
-    'options': {
-        'defaultType': 'future',  # Enable futures for leverage
-        'leverage': 3,            # 3x leverage
-    }
-}
+# Create a session with leverage enabled in the store options
+binance_session = ct.exchange(
+    'binance',
+    instrument_type='future',
+    store_kwargs={'config': {'options': {'leverage': 3}}}
+)
 
-kraken_config = {
-    'apiKey': 'your_api_key', 
-    'secret': 'your_secret',
-    'options': {
-        'leverage': 2,            # 2x leverage
-        'margin': True,           # Enable margin trading
-    }
-}
-
-# Create leveraged stores
-binance_store = ct.CCXTStore(exchange='binance', config=binance_config)
-kraken_store = ct.CCXTStore(exchange='kraken', config=kraken_config)
+kraken_session = ct.exchange(
+    'kraken',
+    instrument_type='margin',
+    store_kwargs={'config': {'options': {'leverage': 2}}}
+)
 ```
 
 ## Conservative Leverage Strategy
@@ -148,10 +138,9 @@ class ConservativeLeverageStrategy(ct.bt.Strategy):
 
 # Setup strategy
 cerebro = ct.Cerebro()
-data = ct.CCXTDataFeed(store=binance_store, symbol='BTC/USDT', timeframe='15m')
-cerebro.adddata(data)
+feed = binance_session.feed(symbol='BTC/USDT', timeframe='15m')
+cerebro.adddata(feed)
 cerebro.addstrategy(ConservativeLeverageStrategy)
-cerebro.setbroker(ct.CCXTLiveBroker(store=binance_store))
 ```
 
 ## Advanced Leverage Management

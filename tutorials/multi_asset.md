@@ -20,33 +20,17 @@ Multi-asset trading allows you to:
 import cracktrader as ct
 from cracktrader.indicators import SMA, RSI, Correlation
 
-# Create store
-store = ct.CCXTStore(
-    exchange='binance',
-    config={
-        'apiKey': 'your_api_key',
-        'secret': 'your_secret',
-        'sandbox': True,
-    }
-)
+# Create a session for the exchange
+session = ct.exchange('binance', mode='paper')
 
 # Create cerebro
 cerebro = ct.Cerebro()
 
-# Add multiple data feeds
+# Add multiple data feeds from the same session
 symbols = ['BTC/USDT', 'ETH/USDT', 'ADA/USDT', 'LINK/USDT', 'DOT/USDT']
-
 for symbol in symbols:
-    data = ct.CCXTDataFeed(
-        store=store,
-        symbol=symbol,
-        timeframe='1h'
-    )
-    cerebro.adddata(data, name=symbol.replace('/', '_'))
-
-# Add broker
-broker = ct.CCXTLiveBroker(store=store)
-cerebro.setbroker(broker)
+    feed = session.feed(symbol=symbol, timeframe='1h')
+    cerebro.adddata(feed, name=symbol.replace('/', '_'))
 ```
 
 ## Portfolio Momentum Strategy

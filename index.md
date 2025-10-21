@@ -43,12 +43,14 @@ class SimpleMovingAverage(ct.bt.Strategy):
         elif self.position and self.data.close[0] < self.sma[0]:
             self.sell()
 
-# Connect to exchange
-store = ct.CCXTStore(exchange='binance', cache_enabled=True)
-data = ct.CCXTDataFeed(store=store, symbol='BTC/USDT', timeframe='1h')
+# Create a session for Binance in backtest mode
+session = ct.exchange('binance', mode='backtest')
+
+# Get a data feed from the session
+feed = session.feed(symbol='BTC/USDT', timeframe='1h')
 
 cerebro = ct.Cerebro()
-cerebro.adddata(data)
+cerebro.adddata(feed)
 cerebro.addstrategy(SimpleMovingAverage)
 cerebro.run()
 ```
@@ -56,15 +58,16 @@ cerebro.run()
 ### 3. Go Live (when ready)
 
 ```python
-# Switch to live trading
-store = ct.CCXTStore(
-    exchange='binance',
-    sandbox=False,
-    config={'apiKey': '...', 'secret': '...'}
+# Switch to live trading with your API keys
+session = ct.exchange(
+    'binance',
+    mode='live',
+    apiKey='YOUR_API_KEY',
+    secret='YOUR_SECRET'
 )
 ```
 
-Use the built-in backtesting broker for strategy development. Switch to `CCXTLiveBroker` for live execution. The store automatically manages connections and ensures data consistency across components.
+The session helper automatically manages connections and ensures data consistency across components.
 
 ---
 
@@ -97,7 +100,7 @@ graph TB
     A[Trading Strategies] --> B[Cerebro Engine]
     B --> C[Data Feeds]
     B --> D[Brokers]
-    C --> E[CCXT Store]
+    C --> E[Exchange Sessions]
     D --> E
     E --> F[Exchanges]
 

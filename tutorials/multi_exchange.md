@@ -17,45 +17,28 @@ Multi-exchange trading allows you to:
 ```python
 import cracktrader as ct
 
-# Create store instances for different exchanges
-binance_store = ct.CCXTStore(
-    exchange='binance',
-    config={
-        'apiKey': 'your_binance_key',
-        'secret': 'your_binance_secret',
-        'sandbox': True,  # Use testnet
-    }
+# Create session instances for different exchanges
+binance_session = ct.exchange(
+    'binance',
+    mode='paper',
+    apiKey='your_binance_key',
+    secret='your_binance_secret'
 )
 
-coinbase_store = ct.CCXTStore(
-    exchange='coinbasepro',
-    config={
-        'apiKey': 'your_coinbase_key',
-        'secret': 'your_coinbase_secret',
-        'passphrase': 'your_passphrase',
-        'sandbox': True,  # Use sandbox
-    }
+coinbase_session = ct.exchange(
+    'coinbasepro',
+    mode='paper',
+    apiKey='your_coinbase_key',
+    secret='your_coinbase_secret',
+    passphrase='your_passphrase'
 )
 
-# Create cerebro and add brokers
+# Create cerebro
 cerebro = ct.Cerebro()
 
-# Add brokers for each exchange
-binance_broker = ct.CCXTLiveBroker(store=binance_store)
-coinbase_broker = ct.CCXTLiveBroker(store=coinbase_store)
-
 # Add data feeds from both exchanges
-btc_binance = ct.CCXTDataFeed(
-    store=binance_store,
-    symbol='BTC/USDT',
-    timeframe='1m'
-)
-
-btc_coinbase = ct.CCXTDataFeed(
-    store=coinbase_store,
-    symbol='BTC-USD',
-    timeframe='1m'
-)
+btc_binance = binance_session.feed(symbol='BTC/USDT', timeframe='1m')
+btc_coinbase = coinbase_session.feed(symbol='BTC-USD', timeframe='1m')
 
 cerebro.adddata(btc_binance, name='BTC_BINANCE')
 cerebro.adddata(btc_coinbase, name='BTC_COINBASE')
@@ -74,10 +57,6 @@ class ArbitrageStrategy(ct.bt.Strategy):
         # Get data feeds
         self.binance_data = self.datas[0]  # BTC_BINANCE
         self.coinbase_data = self.datas[1]  # BTC_COINBASE
-        
-        # Track positions on each exchange
-        self.binance_broker = self.broker  # Default broker
-        self.coinbase_broker = None  # Set via strategy parameter
         
         # Price difference indicator
         self.price_diff = (self.coinbase_data.close - self.binance_data.close) / self.binance_data.close
@@ -109,44 +88,44 @@ cerebro.run()
 
 ## Exchange-Specific Configuration
 
-Different exchanges have different requirements and features:
+Pass exchange-specific options directly to the `ct.exchange` helper:
 
 ### Binance Configuration
 ```python
-binance_config = {
-    'apiKey': 'your_api_key',
-    'secret': 'your_secret',
-    'sandbox': True,
-    'options': {
-        'defaultType': 'spot',  # spot, margin, future
-        'adjustForTimeDifference': True,
-    },
-    'rateLimit': 1200,  # Requests per minute
-}
+binance_session = ct.exchange(
+    'binance',
+    mode='paper',
+    instrument_type='future',
+    store_kwargs={
+        'config': {
+            'options': {'adjustForTimeDifference': True},
+            'rateLimit': 1200
+        }
+    }
+)
 ```
 
 ### Coinbase Pro Configuration
 ```python
-coinbase_config = {
-    'apiKey': 'your_api_key', 
-    'secret': 'your_secret',
-    'passphrase': 'your_passphrase',
-    'sandbox': True,
-    'urls': {
-        'api': 'https://api-public.sandbox.pro.coinbase.com',
+coinbase_session = ct.exchange(
+    'coinbasepro',
+    mode='paper',
+    store_kwargs={
+        'config': {
+            'urls': {'api': 'https://api-public.sandbox.pro.coinbase.com'}
+        }
     }
-}
+)
 ```
 
 ### Kraken Configuration
 ```python
-kraken_config = {
-    'apiKey': 'your_api_key',
-    'secret': 'your_secret',
-    'options': {
-        'leverage': 2,  # For margin trading
-    }
-}
+kraken_session = ct.exchange(
+    'kraken',
+    mode='paper',
+    instrument_type='margin',
+    store_kwargs={'config': {'options': {'leverage': 2}}}
+)
 ```
 
 ## Risk Management
@@ -186,24 +165,7 @@ class MultiExchangeRiskManager:
 ## Best Practices
 
 ### 1. Test in Sandbox First
-Always test multi-exchange strategies in sandbox/testnet mode:
-
-```python
-# Enable sandbox for all exchanges
-config_template = {
-    'sandbox': True,
-    'enableRateLimit': True,
-}
-
-exchanges = ['binance', 'coinbasepro', 'kraken']
-stores = {}
-
-for exchange in exchanges:
-    stores[exchange] = ct.CCXTStore(
-        exchange=exchange,
-        config={**config_template, **exchange_specific_config[exchange]}
-    )
-```
+Always test multi-exchange strategies in sandbox/testnet mode by setting `mode='paper'` or `mode='sandbox'`.
 
 ### 2. Handle Different Symbol Formats
 Different exchanges use different symbol formats:
@@ -229,10 +191,10 @@ def get_symbol_for_exchange(exchange, base, quote):
 Check exchange status before placing orders:
 
 ```python
-def check_exchange_status(store):
+def check_exchange_status(session):
     """Check if exchange is operational"""
     try:
-        status = store.exchange.fetch_status()
+        status = session.store.exchange.fetch_status()
         return status['status'] == 'ok'
     except Exception as e:
         ct.get_logger().error(f"Exchange status check failed: {e}")
@@ -240,19 +202,7 @@ def check_exchange_status(store):
 ```
 
 ### 4. Handle Rate Limits
-Different exchanges have different rate limits:
-
-```python
-rate_limits = {
-    'binance': {'requests_per_minute': 1200, 'weight_per_minute': 6000},
-    'coinbasepro': {'requests_per_second': 10},
-    'kraken': {'requests_per_minute': 60},
-}
-
-# Configure rate limiting in stores
-for exchange, store in stores.items():
-    store.configure_rate_limit(rate_limits[exchange])
-```
+Rate limits are handled automatically by the underlying store, but you can override them if needed.
 
 ## Common Patterns
 

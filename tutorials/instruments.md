@@ -14,46 +14,19 @@ Different instruments offer unique opportunities:
 
 ## Instrument Configuration
 
-Configure different instruments through the store:
+Configure different instruments by passing the `instrument_type` to the session helper:
 
 ```python
 import cracktrader as ct
 
-# Spot trading (default)
-spot_store = ct.CCXTStore(
-    exchange='binance',
-    config={
-        'apiKey': 'your_api_key',
-        'secret': 'your_secret',
-        'options': {
-            'defaultType': 'spot',
-        }
-    }
-)
+# Spot trading session (default)
+spot_session = ct.exchange('binance', instrument_type='spot')
 
-# Futures trading
-futures_store = ct.CCXTStore(
-    exchange='binance',
-    config={
-        'apiKey': 'your_api_key',
-        'secret': 'your_secret',
-        'options': {
-            'defaultType': 'future',
-        }
-    }
-)
+# Futures trading session
+futures_session = ct.exchange('binance', instrument_type='future')
 
-# Margin trading
-margin_store = ct.CCXTStore(
-    exchange='kraken',
-    config={
-        'apiKey': 'your_api_key',
-        'secret': 'your_secret',
-        'options': {
-            'leverage': 2,  # 2x leverage
-        }
-    }
-)
+# Margin trading session
+margin_session = ct.exchange('kraken', instrument_type='margin', store_kwargs={'config': {'leverage': 2}})
 ```
 
 ## Spot Trading
@@ -82,17 +55,12 @@ class SpotTradingStrategy(ct.bt.Strategy):
             if self.data.close[0] < self.position.price * (1 - self.params.stop_loss):
                 self.close()
 
-# Create spot data feed
-spot_data = ct.CCXTDataFeed(
-    store=spot_store,
-    symbol='BTC/USDT',
-    timeframe='1h'
-)
+# Create spot data feed from the session
+spot_feed = spot_session.feed(symbol='BTC/USDT', timeframe='1h')
 
 cerebro = ct.Cerebro()
-cerebro.adddata(spot_data)
+cerebro.adddata(spot_feed)
 cerebro.addstrategy(SpotTradingStrategy)
-cerebro.setbroker(ct.CCXTLiveBroker(store=spot_store))
 ```
 
 ## Futures Trading
@@ -136,16 +104,11 @@ class FuturesStrategy(ct.bt.Strategy):
             if self.data.close[0] <= self.stop_price:
                 self.close()
 
-# Futures data feed
-futures_data = ct.CCXTDataFeed(
-    store=futures_store,
-    symbol='BTC/USDT',  # Perpetual futures
-    timeframe='15m'
-)
+# Futures data feed from the session
+futures_feed = futures_session.feed(symbol='BTC/USDT', timeframe='15m')
 
-cerebro.adddata(futures_data)
+cerebro.adddata(futures_feed)
 cerebro.addstrategy(FuturesStrategy)
-cerebro.setbroker(ct.CCXTLiveBroker(store=futures_store))
 ```
 
 ## Margin Trading
@@ -193,15 +156,10 @@ class MarginTradingStrategy(ct.bt.Strategy):
                 self.close()
 
 # Margin trading setup
-margin_data = ct.CCXTDataFeed(
-    store=margin_store,
-    symbol='BTC/USD',
-    timeframe='1h'
-)
+margin_feed = margin_session.feed(symbol='BTC/USD', timeframe='1h')
 
-cerebro.adddata(margin_data)
+cerebro.adddata(margin_feed)
 cerebro.addstrategy(MarginTradingStrategy)
-cerebro.setbroker(ct.CCXTLiveBroker(store=margin_store))
 ```
 
 ## Multi-Instrument Strategy
@@ -264,12 +222,12 @@ class MultiInstrumentStrategy(ct.bt.Strategy):
 cerebro = ct.Cerebro()
 
 # Add spot data
-spot_data = ct.CCXTDataFeed(store=spot_store, symbol='BTC/USDT', timeframe='1h')
-cerebro.adddata(spot_data, name='spot')
+spot_feed = spot_session.feed(symbol='BTC/USDT', timeframe='1h')
+cerebro.adddata(spot_feed, name='spot')
 
 # Add futures data  
-futures_data = ct.CCXTDataFeed(store=futures_store, symbol='BTC/USDT', timeframe='1h')
-cerebro.adddata(futures_data, name='futures')
+futures_feed = futures_session.feed(symbol='BTC/USDT', timeframe='1h')
+cerebro.adddata(futures_feed, name='futures')
 
 cerebro.addstrategy(MultiInstrumentStrategy)
 ```

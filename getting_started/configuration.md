@@ -75,31 +75,7 @@ export COINBASE_SECRET="your_secret"
 export COINBASE_PASSPHRASE="your_passphrase"
 ```
 
-## Store Configuration
 
-```python
-from cracktrader import CCXTStore
-
-# Basic configuration
-store = CCXTStore(exchange='binance', sandbox=True)
-
-# With caching enabled
-store = CCXTStore(
-    exchange='binance',
-    sandbox=True,
-    cache_enabled=True,
-    cache_dir="./trading_data"
-)
-
-# With CCXT-specific settings
-store = CCXTStore(
-    exchange='binance',
-    sandbox=True,
-    config={'enableRateLimit': True, 'rateLimit': 1200},
-    cache_enabled=True,
-    cache_dir="./data"
-)
-```
 
 ## Cache Configuration
 
