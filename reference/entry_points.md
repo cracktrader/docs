@@ -71,7 +71,7 @@ results = cerebro.run()
 Two concrete subclasses must ship with the helper:
 
 - `CCXTSession`: default for any exchange handled by the CCXT stack. It manages sandbox/live toggles, timeframe defaults, and passes through CCXT-specific kwargs.
-- `PolymarketSession`: tailored for prediction markets. It prefers prediction-mode defaults (`granularity="tick"`, `instrument_type="prediction"`), exposes `discover_event_markets(...)` and `feeds_for_event(...)` helpers alongside `feed_binary(...)`, and still delegates to `.feed` internally.
+- `PolymarketSession`: tailored for prediction markets. It prefers prediction-mode defaults (`granularity="tick"`, `instrument_type="prediction"`), exposes `discover_event_markets(...)` and `feeds_for_event(...)` helpers alongside `feed_binary(...)`, and still delegates to `.feed` internally. Metadata is hydrated lazily—sessions fetch only the requested events, persist them under `~/.cache/cracktrader/polymarket`, and spin up a background refresh so the complete catalogue arrives without blocking user flows.
 
 Third-party integrations can register additional sessions via:
 

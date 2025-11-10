@@ -208,5 +208,6 @@ broker = ct.Broker(mode='paper', exchange='polymarket')
 
 Notes:
 - The feed symbol is the Polymarket market_id.
+- Metadata is fetched on demand for the markets you touch and cached under `~/.cache/cracktrader/polymarket`, so single-event scripts no longer wait for the entire catalogue to download.
 - Commission routing uses prediction commission info for instrument type prediction.
-- The Polymarket store manages its own background event loop like CCXT.
+- The Polymarket store manages its own background event loop like CCXT and refreshes its full metadata dump in the background when network access is enabled.
