@@ -1,6 +1,6 @@
 # Architecture Overview
 
-Cracktrader is built for modularity, performance, and reliability. This overview shows how strategies, feeds, brokers, and the CCXT store work together.
+Cracktrader is built for modularity, performance, and reliability. This overview shows how strategies, feeds, brokers, and the stores (CCXT or Polymarket) work together.
 
 ## High-Level Architecture
 
@@ -59,7 +59,7 @@ graph TB
 
 ### 1. Cerebro (Execution)
 
-Backtrader’s Cerebro runs your strategy, routes data, and manages the broker.
+Backtrader's Cerebro runs your strategy, routes data, and manages the broker.
 
 - Strategy orchestration and lifecycle
 - Feed ↔ strategy ↔ broker data flow
@@ -73,21 +73,19 @@ cerebro.setbroker(broker)
 cerebro.run()
 ```
 
-### 2. CCXT Store (Integration)
+### 2. Store (Integration)
 
-The CCXTStore centralizes exchange connectivity and shared resources.
+The store centralizes exchange connectivity and shared resources. CCXTStore handles crypto exchanges; PolymarketStore handles prediction markets with the same factory/session API.
 
-- Unified interface to 100+ exchanges
+- Unified interface to 100+ exchanges (CCXT) plus Polymarket
 - WebSocket/REST connection management
 - Historical data caching
-- Built‑in rate limiting
+- Built-in rate limiting
 
 ```python
-store = CCXTStore(
-    exchange='binance',
-    sandbox=True,
-    cache_enabled=True
-)
+store = ct.Store(exchange='binance', sandbox=True)
+# or Polymarket with the same API surface
+pm_store = ct.Store(exchange='polymarket', enable_network=True)
 ```
 
 Key features
@@ -98,7 +96,7 @@ Key features
 
 ### 3. Data Feeds (Market Data)
 
-CCXTDataFeed provides real‑time and historical OHLCV data.
+CCXTDataFeed provides real-time and historical OHLCV data. PolymarketDataFeed mirrors the surface for prediction markets.
 
 - Timeframes: seconds to monthly
 - Live streaming via WebSocket
@@ -106,12 +104,16 @@ CCXTDataFeed provides real‑time and historical OHLCV data.
 - Validation and gap detection
 
 ```python
-feed = CCXTDataFeed(
+feed = ct.Feed(
     store=store,
     symbol='BTC/USDT',
     ccxt_timeframe='1h',
-    live=True
+    live=True,
 )
+
+# Session helper reuses stores automatically
+session = ct.exchange('polymarket', mode='paper')
+pm_feed = session.feed(symbol='PM:some-market:yes', granularity='1m')
 ```
 
 ### 4. Brokers (Execution)
@@ -139,8 +141,8 @@ class MyStrategy(bt.Strategy):
 
 Enhanced features
 - OCO bracket orders and risk helpers
-- Real‑time monitoring hooks
-- Multi‑asset support
+- Real-time monitoring hooks
+- Multi-asset support
 
 ## Data Flow Architecture
 
@@ -185,7 +187,7 @@ Hybrid sync/async design:
 
 - Main thread: strategy execution, indicators, analyzers
 - Background loop: exchange I/O (WebSocket/REST), order/balance updates
-- Thread‑safe queues and minimal locking between components
+- Thread-safe queues and minimal locking between components
 
 ```python
 # Thread-safe store operations
@@ -203,15 +205,15 @@ class Strategy(bt.Strategy):
 
 - Caching for historical data (configurable location)
 - WebSocket reuse and HTTP session pooling
-- Built‑in rate limiting
-- Efficient data structures for in‑memory processing
+- Built-in rate limiting
+- Efficient data structures for in-memory processing
 
 ## Reliability
 
 - Automatic reconnection with backoff
 - Heartbeats and stream liveness checks
 - Data validation and outlier filtering
-- Pre‑flight order validation and lifecycle tracking
+- Pre-flight order validation and lifecycle tracking
 - **Failure Recovery**: Handle partial fills and rejections
 
 ## Configuration Management
