@@ -25,7 +25,7 @@ graph TB
     end
 
     subgraph "Integration Layer"
-        ST[CCXT Store]
+        ST[Store (CCXT / Polymarket)]
         WS[WebSocket Streams]
         API[REST API]
     end
