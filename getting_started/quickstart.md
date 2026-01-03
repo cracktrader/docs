@@ -98,6 +98,24 @@ cerebro.run(runonce=False)
 !!! warning "Live Trading"
     Live trading uses real money. Always test thoroughly in paper mode first!
 
+## Prediction Markets (Polymarket, Kalshi)
+
+Prediction markets use the same `ct.exchange(...).feed()/broker()` workflow.
+
+```python
+import cracktrader as ct
+
+# Polymarket
+pm = ct.exchange("polymarket", mode="paper", enable_network=True)
+pm_feed = pm.feed(symbol="PM:demo-event:yes", granularity="1m", live=False)
+pm_broker = pm.broker()  # paper broker by default
+
+# Kalshi (scaffold)
+kalshi = ct.exchange("kalshi", mode="paper", enable_network=False)
+kalshi_feed = kalshi.feed(symbol="K:TEST", live=False)
+kalshi_broker = kalshi.broker()
+```
+
 ## Next Steps
 
 - [First Strategy Tutorial](first_strategy.md) - Step-by-step guide

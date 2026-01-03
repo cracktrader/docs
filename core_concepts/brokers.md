@@ -2,6 +2,21 @@
 
 CrackTrader brokers execute orders and track portfolio state. Use backtesting for research and the live broker for production.
 
+## Prediction Market Brokers (Polymarket, Kalshi)
+
+Prediction markets are treated as **spot-like** for validation/balances while routing commission to
+`PredictionCommInfo` automatically (0 fees by default).
+
+```python
+import cracktrader as ct
+
+pm = ct.exchange("polymarket", enable_network=False)
+pm_broker = pm.broker(mode="paper")  # routes to PolymarketBackBroker
+
+kalshi = ct.exchange("kalshi", enable_network=False)
+kalshi_broker = kalshi.broker(mode="paper")  # routes to KalshiBackBroker
+```
+
 ## Broker Types
 
 ### Backtesting (CCXTBackBroker)

@@ -197,17 +197,40 @@ store = CCXTStore(config)
 
 Use the same factory functions with exchange='polymarket':
 
-`python
+```python
 import cracktrader as ct
 
-market_id = 'pm_market_1'
-store = ct.Store(exchange='polymarket')
-feed = ct.Feed(symbol=market_id, exchange='polymarket')
-broker = ct.Broker(mode='paper', exchange='polymarket')
-`
+market_symbol = "PM:demo-event:yes"
+store = ct.Store(exchange="polymarket")
+feed = ct.Feed(exchange="polymarket", store=store, symbol=market_symbol)
+broker = ct.Broker(mode="paper", exchange="polymarket", store=store)
+```
+
+Preferred (session helper):
+
+```python
+import cracktrader as ct
+
+session = ct.exchange("polymarket", enable_network=True)
+feed = session.feed(symbol="PM:demo-event:yes", granularity="1m", live=False)
+broker = session.broker(mode="paper")
+```
 
 Notes:
-- The feed symbol is the Polymarket market_id.
+- The feed symbol is typically `PM:<event-slug>:<outcome>` (for example `PM:demo-event:yes`). You can also pass a `reference=` slug/URL and an `outcome=` via the factory.
 - Metadata is fetched on demand for the markets you touch and cached under `~/.cache/cracktrader/polymarket`, so single-event scripts no longer wait for the entire catalogue to download.
 - Commission routing uses prediction commission info for instrument type prediction.
 - The Polymarket store manages its own background event loop like CCXT and refreshes its full metadata dump in the background when network access is enabled.
+
+## Kalshi
+
+Kalshi is wired as a prediction-market exchange scaffold (store/feed/broker/session). The live
+connectivity layer can be implemented later without changing the factory surface.
+
+```python
+import cracktrader as ct
+
+session = ct.exchange("kalshi")
+feed = session.feed(symbol="K:TEST", live=False)
+broker = session.broker(mode="paper")
+```

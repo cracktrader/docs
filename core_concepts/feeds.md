@@ -33,6 +33,26 @@ Cracktrader's data feeds system provides unified access to real-time and histori
 
 ## Basic Usage
 
+## Prediction Market Feeds (Polymarket, Kalshi)
+
+Cracktrader exposes prediction venues through the same `Feed`/session API as CCXT exchanges.
+
+```python
+import cracktrader as ct
+
+# Polymarket: canonical symbol form is PM:<event-slug>:<outcome>
+pm = ct.exchange("polymarket", enable_network=True)
+pm_feed = pm.feed(symbol="PM:demo-event:yes", granularity="1m", live=False)
+
+# Kalshi (scaffold): symbol format depends on your future adapter; tests use K:...
+kalshi = ct.exchange("kalshi")
+kalshi_feed = kalshi.feed(symbol="K:TEST", live=False)
+```
+
+Notes:
+- Data names follow `exchange__instrument_type__symbol` (e.g. `polymarket__prediction__PM:...`).
+- Polymarket defaults to tick-style updates unless you set `granularity` to a timeframe (e.g. `1m`, `1h`).
+
 ### Historical Data Feed
 
 ```python

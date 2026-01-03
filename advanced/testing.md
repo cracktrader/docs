@@ -98,6 +98,29 @@ def setup_test_logging():
     logging.getLogger('cracktrader').setLevel(logging.WARNING)
 ```
 
+## Mocking Policy (Factories, Not Monkeypatches)
+
+Cracktrader aims to keep unit tests **exchange-agnostic** by default. The preferred pattern is:
+
+- Use **mock store fixtures** (not ad-hoc monkeypatching) that implement the minimal store surface.
+- Run **shared contract tests** against each exchange integration by swapping fixtures (CCXT vs Polymarket vs Kalshi, etc.).
+
+### Base mock store
+
+The shared foundation lives in `tests/fixtures/base_mock_store.py` (`BaseMockStore`).
+Exchange-specific stores extend it and only override what differs, for example:
+
+- `tests/fixtures/order_lifecycle_mock_store.py` (shared in-memory order CRUD + fees)
+- `tests/fixtures/mock_store.py` (CCXT-style)
+- `tests/fixtures/polymarket_mock_store.py`
+- `tests/fixtures/kalshi_mock_store.py`
+
+### Contract tests
+
+Where possible, broker and feed tests should be parametrized over an exchange and reuse the same helpers
+(for example `tests/utils.py::simulate_order_fill`). Exchange-specific tests should be narrow and labeled
+accordingly (e.g. Polymarket CLOB time-in-force rules).
+
 ## Unit Testing
 
 ### Testing Strategies
