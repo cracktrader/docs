@@ -7,7 +7,7 @@ supported, where it lives, and what is missing.
 Decisions captured for implementation:
 - Dataset resolution uses the existing `LocalDataStore` in `src/cracktrader/data/local_store.py`.
 - Run registry / artifact root is configurable (default path TBD by the evaluator config).
-- `evaluate()` will live under a new `cracktrader.research` module (no CLI surface yet).
+- `evaluate()` lives under the top-level `research.dsl_evaluator` package (no CLI surface yet).
 
 Legend:
 - Status: Yes / Partial / No
@@ -82,4 +82,3 @@ Legend:
 | Per-split metrics | No | N/A | Requires evaluation orchestrator. | Medium |
 | Regime segmented metrics | No | N/A | Requires regime segmentation. | Medium |
 | Failure classification hooks | No | N/A | No FailureCapsule or classifier implementation. | Medium |
-
