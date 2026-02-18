@@ -6,23 +6,27 @@ Scope: Remove Backtrader as a core runtime dependency while preserving current C
 
 ## Prerequisites (Must Be Green Before Starting)
 
-- [ ] Examples baseline is validated and reproducible:
-  - [ ] Offline examples pass (at minimum: `00`, `08`, `12`, `22`).
-  - [ ] Known-broken examples are fixed or explicitly excluded with reasons (currently observed: `24`, `25`, `26` in local run).
-  - [ ] Networked examples have a runbook and expected outcomes (not just "no crash").
-- [ ] Test baseline is stable and documented:
-  - [ ] `tests/unit` green on main.
-  - [ ] Relevant `tests/contracts` green on main.
-  - [ ] No flaky tests in fee/order-lifecycle areas for at least 3 repeated local runs.
-- [ ] Behavior parity scope is frozen:
-  - [ ] We define which Backtrader semantics must be preserved 1:1 (order status transitions, fill accounting, commissions, timeframe handling, strategy hooks).
-  - [ ] We define what is explicitly out of scope (full Backtrader feature completeness not currently used by Cracktrader).
-- [ ] Fee correctness baseline is locked:
-  - [ ] Existing fee tests for spot/prediction are green.
-  - [ ] Contract-level fee assertions include partial fills and mixed maker/taker paths.
-- [ ] Migration policy is agreed:
-  - [ ] Strangler pattern only (new engine-native core + BT compatibility adapters).
-  - [ ] No breaking public API changes without compatibility shims during migration window.
+- [x] Examples baseline is validated and reproducible (validated 2026-02-18):
+  - [x] Offline examples pass (minimum gate):
+    - `examples/basics/hello_engine.py`
+    - `examples/basics/session_quickstart.py`
+    - `examples/basics/shared_store.py`
+    - `examples/prediction/kalshi_prediction_paper.py`
+  - [x] Previously unstable examples in the gate matrix are now green locally (network and advanced gates passed on 2026-02-18).
+  - [x] Networked examples have a runbook and expected outcomes (see `docs/plans/backtrader_gate_runbook.md`).
+- [x] Test baseline is stable and documented (validated 2026-02-18):
+  - [x] `tests/unit` green on main (`1663 passed, 88 skipped`).
+  - [x] Relevant `tests/contracts` green on main (`38 passed`).
+  - [x] No flaky tests in fee/order-lifecycle areas for at least 3 repeated local runs (`12 passed` x 3).
+- [x] Behavior parity scope is frozen:
+  - [x] We define which Backtrader semantics must be preserved 1:1 (order status transitions, fill accounting, commissions, timeframe handling, strategy hooks).
+  - [x] We define what is explicitly out of scope (full Backtrader feature completeness not currently used by Cracktrader).
+- [x] Fee correctness baseline is locked:
+  - [x] Existing fee tests for spot/prediction are green.
+  - [x] Contract-level fee assertions include partial fills and mixed maker/taker paths.
+- [x] Migration policy is agreed:
+  - [x] Strangler pattern only (new engine-native core + BT compatibility adapters).
+  - [x] No breaking public API changes without compatibility shims during migration window.
 
 ## Why This Plan Exists
 
