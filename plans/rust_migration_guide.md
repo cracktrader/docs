@@ -188,6 +188,18 @@ If Rust extension is unavailable, default run executes Python-only. To include R
 3. Compare with previous baseline; note deltas in PR summary.
 4. If parity breaks, fix parity first before optimizing throughput.
 
+### One-shot parity gate
+
+Run the full Rust parity gate with one command:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/run_rust_parity_gate.py
+```
+
+Useful options:
+- `--skip-install` (when the Rust wheel is already installed)
+- `--skip-benchmark` (for quick local test-only validation)
+
 ## 9) Risk Register
 
 1. Python<->Rust boundary overhead hides gains.
