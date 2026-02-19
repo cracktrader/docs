@@ -18,7 +18,7 @@ Scope: Remove Backtrader as a core runtime dependency while preserving current C
 - Phase 9 (Packaging and Deprecation): Not Started
 
 Latest local validation snapshot (2026-02-19):
-- `tests/unit`: `1860 passed, 88 skipped`
+- `tests/unit`: `1862 passed, 88 skipped`
 - `tests/contracts`: `38 passed`
 - fee contracts: `tests/contracts/test_fees.py` -> `3 passed`
 
@@ -27,6 +27,7 @@ Latest feed-core slice (2026-02-19):
 - Added native feed-port primitives (`FeedPort`, `FeedCursor`, `InMemoryFeedPort`, `InMemoryFeedCursor`) as groundwork for BT `DataBase` replacement.
 - Added `BacktraderFeedCursor` and rewired sync adapter ingest batching to read BT bars through feed-port cursor boundary.
 - Added `NativeFeedAdapter` to ingest directly from native `FeedPort` batches without Backtrader feed classes.
+- Added `NativeEngineRuntime` as a native-first entrypoint that runs `EngineRunner` from `FeedPort` via `NativeFeedAdapter`.
 
 ## Prerequisites (Must Be Green Before Starting)
 
