@@ -196,6 +196,9 @@ If Rust extension is unavailable, default run executes Python-only. To include R
 4. Tooling friction (wheel/build/install).
 - Mitigation: `scripts/install_rust_backend.py` as standard dev entrypoint.
 
+5. Logging drift obscures parity debugging.
+- Mitigation: keep shared log event categories and level intent parity (`DEBUG`/`INFO`/`WARNING`/`ERROR`) across Python and Rust, while allowing implementation-specific message text.
+
 ## 10) FAQ
 
 ### Do strategy authors need to rewrite in Rust?
