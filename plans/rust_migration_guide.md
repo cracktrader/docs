@@ -162,6 +162,12 @@ Use `scripts/benchmark_engine_backends.py` for apples-to-apples backend comparis
 
 Baseline snapshots are stored in `performance/baselines/`.
 
+### Baseline update command
+
+```powershell
+.\.venv\Scripts\python.exe scripts/benchmark_engine_backends.py --iterations 10 --warmup 3 --bars 128 --json-out performance/reports/engine_backend_compare.json --baseline-json performance/baselines/engine_backend_compare_baseline.json --update-baseline --force-baseline-overwrite
+```
+
 If Rust extension is unavailable, default run executes Python-only. To include Rust:
 
 ```powershell
