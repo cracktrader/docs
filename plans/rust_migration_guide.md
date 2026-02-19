@@ -154,6 +154,14 @@ Use `scripts/benchmark_engine_backends.py` for apples-to-apples backend comparis
 .\.venv\Scripts\python.exe scripts/benchmark_engine_backends.py --iterations 10 --warmup 3 --bars 128 --json-out performance/reports/engine_backend_compare.json
 ```
 
+### Baseline compare command
+
+```powershell
+.\.venv\Scripts\python.exe scripts/benchmark_engine_backends.py --iterations 10 --warmup 3 --bars 128 --json-out performance/reports/engine_backend_compare.json --baseline-json performance/baselines/engine_backend_compare_baseline.json --max-slowdown-ratio 1.10
+```
+
+Baseline snapshots are stored in `performance/baselines/`.
+
 If Rust extension is unavailable, default run executes Python-only. To include Rust:
 
 ```powershell
@@ -165,6 +173,7 @@ If Rust extension is unavailable, default run executes Python-only. To include R
 - Report both absolute latency and speedup ratio.
 - Require parity (cash/value alignment) before treating speedup as valid.
 - Use at least 5 measured iterations and warmup >= 1.
+- Fail comparison if Rust mean latency regresses beyond `--max-slowdown-ratio` against baseline.
 
 ## 8) Developer Workflow
 
