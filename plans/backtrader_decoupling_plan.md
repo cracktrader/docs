@@ -10,7 +10,7 @@ Scope: Remove Backtrader as a core runtime dependency while preserving current C
 - Phase 1 (Engine-Native Domain Types): Done
 - Phase 2 (Fee/Commission Decoupling): In Progress
 - Phase 3 (Broker Core Decoupling): In Progress
-- Phase 4 (Feed Core Decoupling): Not Started
+- Phase 4 (Feed Core Decoupling): In Progress
 - Phase 5 (Strategy Runtime Decoupling): Not Started
 - Phase 6 (Indicators/Analyzers Decoupling): Not Started
 - Phase 7 (Cerebro Compatibility Isolation): In Progress
@@ -18,9 +18,13 @@ Scope: Remove Backtrader as a core runtime dependency while preserving current C
 - Phase 9 (Packaging and Deprecation): Not Started
 
 Latest local validation snapshot (2026-02-19):
-- `tests/unit`: `1760 passed, 88 skipped`
+- `tests/unit`: `1855 passed, 88 skipped`
 - `tests/contracts`: `38 passed`
 - fee contracts: `tests/contracts/test_fees.py` -> `3 passed`
+
+Latest feed-core slice (2026-02-19):
+- Extracted engine-native candle payload normalization helper (`FeedCandleCore`).
+- Added native feed-port primitives (`FeedPort`, `FeedCursor`, `InMemoryFeedPort`, `InMemoryFeedCursor`) as groundwork for BT `DataBase` replacement.
 
 ## Prerequisites (Must Be Green Before Starting)
 
