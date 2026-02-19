@@ -4,6 +4,24 @@ Date: 2026-02-18
 Status: Draft implementation plan  
 Scope: Remove Backtrader as a core runtime dependency while preserving current Cracktrader behavior, fee correctness, and user-facing workflows.
 
+## Progress Snapshot (2026-02-19)
+
+- Phase 0 (Stabilize Baseline and Gates): Done
+- Phase 1 (Engine-Native Domain Types): Done
+- Phase 2 (Fee/Commission Decoupling): In Progress
+- Phase 3 (Broker Core Decoupling): In Progress
+- Phase 4 (Feed Core Decoupling): Not Started
+- Phase 5 (Strategy Runtime Decoupling): Not Started
+- Phase 6 (Indicators/Analyzers Decoupling): Not Started
+- Phase 7 (Cerebro Compatibility Isolation): In Progress
+- Phase 8 (Native-First Tests): Not Started
+- Phase 9 (Packaging and Deprecation): Not Started
+
+Latest local validation snapshot (2026-02-19):
+- `tests/unit`: `1760 passed, 88 skipped`
+- `tests/contracts`: `38 passed`
+- fee contracts: `tests/contracts/test_fees.py` -> `3 passed`
+
 ## Prerequisites (Must Be Green Before Starting)
 
 - [x] Examples baseline is validated and reproducible (validated 2026-02-18):
