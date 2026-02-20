@@ -115,6 +115,7 @@ Latest hard-cut updates (2026-02-20):
       - `src/cracktrader/broker/polymarket_broker.py`
     - removed direct `backtrader` dependency from pegged strategy runtime helper:
       - `src/cracktrader/strategy/pegged_order_manager.py` now uses native order-type mapping (`OrderType` -> BT bridge helper) and generic order typing.
+    - removed direct `bt.Order` status branching from `src/cracktrader/strategy/base.py` by using native status parsing (`parse_order_status` / `OrderStatus`) in strategy order notifications.
 
 Latest local validation snapshot (2026-02-20):
 - `tests/unit`: `1888 passed, 88 skipped`
