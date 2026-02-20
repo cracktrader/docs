@@ -121,6 +121,9 @@ Latest hard-cut updates (2026-02-20):
       - exported native strategy types from:
         - `src/cracktrader/strategy/__init__.py`
         - `src/cracktrader/__init__.py`
+    - added Backtrader compatibility adapter for native strategies:
+      - `src/cracktrader/strategy/backtrader_adapter.py` (`BacktraderStrategyAdapter`) to run native `on_start`/`on_bar`/`on_stop` hooks inside BT strategy lifecycle.
+      - exported from `src/cracktrader/strategy/__init__.py`.
 
 Latest local validation snapshot (2026-02-20):
 - `tests/unit`: `1888 passed, 88 skipped`
