@@ -18,7 +18,7 @@ Scope: Remove Backtrader as a core runtime dependency while preserving current C
 - Phase 9 (Packaging and Deprecation): Not Started
 
 Latest local validation snapshot (2026-02-20):
-- `tests/unit`: `1885 passed, 88 skipped`
+- `tests/unit`: `1888 passed, 88 skipped`
 - `tests/contracts`: `38 passed`
 - fee contracts: `tests/contracts/test_fees.py` -> `3 passed`
 
@@ -40,6 +40,7 @@ Latest feed-core slice (2026-02-19):
 - Added `BacktraderIngestFeedPort` and routed `BacktraderSyncAdapter.ingest_generator` through `NativeFeedAdapter`, reducing direct feed-loop orchestration inside BT compatibility adapter.
 - Updated `CerebroEngineRuntime` non-vectorized sync path to delegate through `NativeEngineRuntime` with `BacktraderIngestFeedPort` instead of constructing/running `EngineRunner` directly.
 - Added native broker object protocol support for `run_native(...)` (`broker` object with `on_start`/`on_step`/`on_stop`) while preserving callback mode.
+- Added native observer object protocol support for `run_native(...)` (`observer` object with `on_start`/`on_step`/`on_stop`) while preserving callback observer mode.
 
 ## Status Audit (2026-02-20)
 
