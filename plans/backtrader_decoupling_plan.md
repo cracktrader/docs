@@ -18,7 +18,7 @@ Scope: Remove Backtrader as a core runtime dependency while preserving current C
 - Phase 9 (Packaging and Deprecation): Not Started
 
 Latest local validation snapshot (2026-02-20):
-- `tests/unit`: `1881 passed, 88 skipped`
+- `tests/unit`: `1882 passed, 88 skipped`
 - `tests/contracts`: `38 passed`
 - fee contracts: `tests/contracts/test_fees.py` -> `3 passed`
 
@@ -38,6 +38,7 @@ Latest feed-core slice (2026-02-19):
 - Added non-running-loop fallback in `run_native_ohlcv_store(...)` to consume direct store OHLCV queues (`_ohlcv_queue`) when stream workers are unavailable.
 - Added session-backed example `examples/basics/native_ohlcv_store_runtime.py` to exercise native runtime from a real session/store object.
 - Added `BacktraderIngestFeedPort` and routed `BacktraderSyncAdapter.ingest_generator` through `NativeFeedAdapter`, reducing direct feed-loop orchestration inside BT compatibility adapter.
+- Updated `CerebroEngineRuntime` non-vectorized sync path to delegate through `NativeEngineRuntime` with `BacktraderIngestFeedPort` instead of constructing/running `EngineRunner` directly.
 
 ## Status Audit (2026-02-20)
 
