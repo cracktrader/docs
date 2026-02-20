@@ -113,6 +113,8 @@ Latest hard-cut updates (2026-02-20):
       - `src/cracktrader/broker/kalshi_live_broker.py`
       - `src/cracktrader/broker/polymarket_live_broker.py`
       - `src/cracktrader/broker/polymarket_broker.py`
+    - removed direct `backtrader` dependency from pegged strategy runtime helper:
+      - `src/cracktrader/strategy/pegged_order_manager.py` now uses native order-type mapping (`OrderType` -> BT bridge helper) and generic order typing.
 
 Latest local validation snapshot (2026-02-20):
 - `tests/unit`: `1888 passed, 88 skipped`
