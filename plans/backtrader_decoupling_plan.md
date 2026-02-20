@@ -18,7 +18,7 @@ Scope: Remove Backtrader as a core runtime dependency while preserving current C
 - Phase 9 (Packaging and Deprecation): Not Started
 
 Latest local validation snapshot (2026-02-19):
-- `tests/unit`: `1867 passed, 88 skipped`
+- `tests/unit`: `1873 passed, 88 skipped`
 - `tests/contracts`: `38 passed`
 - fee contracts: `tests/contracts/test_fees.py` -> `3 passed`
 
@@ -30,6 +30,47 @@ Latest feed-core slice (2026-02-19):
 - Added `NativeEngineRuntime` as a native-first entrypoint that runs `EngineRunner` from `FeedPort` via `NativeFeedAdapter`.
 - Added `CracktraderEngine.run_native(...)` and a basic native feed-port example to establish a concrete user-facing non-`bt.DataBase` run path.
 - Added native strategy protocol support for `run_native(...)` (`strategy` object with `on_start`/`on_bar`/`on_stop`) while keeping callback mode.
+- Added `StoreQueueFeedCursor` for native consumption of store/stream queue data (including stop sentinel handling and monotonic timestamp filtering).
+- Added `PollingFeedPort` to keep non-exhausted cursors active across empty polls and support queue-backed feed paths in native runtime.
+
+## Status Audit (2026-02-20)
+
+### Branch and Validation Status
+
+- Active decoupling branch: `feature/feed-core-decoupling`.
+- Branch divergence vs `origin/main`: `0 behind`, `116 ahead`.
+- Worktree state: clean.
+- Latest local gates:
+  - `tests/unit`: `1867 passed, 88 skipped`
+  - `tests/contracts/test_fees.py`: `3 passed`
+
+### What Is Completed So Far
+
+- Feed-core native foundation exists:
+  - Native candle normalization core.
+  - Native feed-port and cursor interfaces.
+  - Backtrader feed cursor boundary used by sync adapter ingest.
+  - Native feed adapter and native engine runtime entrypoint.
+  - Public `CracktraderEngine.run_native(...)` path.
+  - Native strategy object protocol (`on_start`/`on_bar`/`on_stop`).
+- Broker-core has been substantially extracted into engine-native modules with compatibility wrappers retained.
+- Fee and broker regression gates are stable on current branch.
+
+### Remaining Program-Level Work
+
+- Phase 2 (fees) and Phase 3 (broker): complete remaining exit-criteria hardening and native-first parity closure.
+- Phase 4 (feeds): finish migrating production feed behavior (queueing/reordering/live-vs-historical boundaries/timeframe plumbing) into native feed core with BT kept as an adapter.
+- Phase 5 (strategy runtime): continue lifting runtime callbacks/notifications to native contracts with BT strategy bridge as compatibility path.
+- Phase 6 (indicators/analyzers): introduce native interfaces and remove BT types from core runtime paths.
+- Phase 7 (Cerebro isolation): reduce `ct.Cerebro` to compatibility facade over native orchestrator paths.
+- Phase 8 (native-first tests): migrate contracts/fixtures to assert native domain behavior first; retain a smaller BT compatibility suite.
+- Phase 9 (packaging/deprecation): move Backtrader to optional extra and publish migration notes.
+
+### Current Priority Queue
+
+1. Complete next Phase 4 slice with a native store/queue-backed feed cursor path.
+2. Push that path through one real runtime flow (not only in-memory demo feeds).
+3. Then continue Phase 7 by increasing delegation from Cerebro compatibility runtime to native runtime/adapters.
 
 ## Prerequisites (Must Be Green Before Starting)
 
