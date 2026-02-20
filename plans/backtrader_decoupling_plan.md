@@ -127,6 +127,9 @@ Latest hard-cut updates (2026-02-20):
     - isolated BT strategy classes into explicit compatibility module:
       - added `src/cracktrader/strategy/compat.py` (BT-bound `Strategy` / `StrategyBase`).
       - converted `src/cracktrader/strategy/base.py` to a stable re-export shim (no direct BT import), reducing core/module-level BT coupling.
+    - isolated Backtrader enum/timeframe mapping logic from core domain:
+      - added `src/cracktrader/engine/domain_bt.py` for BT mapping helpers.
+      - converted `src/cracktrader/engine/domain.py` mapping functions to delegate into `domain_bt`, removing direct BT import logic from domain core module.
 
 Latest local validation snapshot (2026-02-20):
 - `tests/unit`: `1888 passed, 88 skipped`
