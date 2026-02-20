@@ -109,6 +109,10 @@ Latest hard-cut updates (2026-02-20):
     - removed remaining `bt.Order.Market` default-order fallback usage from broker order factories:
       - `src/cracktrader/broker/universal_broker_base.py`
       - `src/cracktrader/broker/ccxt_broker_base.py`
+    - removed remaining direct `backtrader` imports from broker live/polymarket modules:
+      - `src/cracktrader/broker/kalshi_live_broker.py`
+      - `src/cracktrader/broker/polymarket_live_broker.py`
+      - `src/cracktrader/broker/polymarket_broker.py`
 
 Latest local validation snapshot (2026-02-20):
 - `tests/unit`: `1888 passed, 88 skipped`
