@@ -18,7 +18,7 @@ Scope: Remove Backtrader as a core runtime dependency while preserving current C
 - Phase 9 (Packaging and Deprecation): Not Started
 
 Latest local validation snapshot (2026-02-20):
-- `tests/unit`: `1877 passed, 88 skipped`
+- `tests/unit`: `1879 passed, 88 skipped`
 - `tests/contracts`: `38 passed`
 - fee contracts: `tests/contracts/test_fees.py` -> `3 passed`
 
@@ -34,6 +34,9 @@ Latest feed-core slice (2026-02-19):
 - Added `PollingFeedPort` to keep non-exhausted cursors active across empty polls and support queue-backed feed paths in native runtime.
 - Added `StreamingSubsystemFeedCursor` for direct consumption of `StreamingFeedSubsystem` (`get_data`/`is_active`) in native runtime loops.
 - Added `CracktraderEngine.run_native_ohlcv_store(...)` to run native engine flow directly from store OHLCV stream subsystem via polling feed port.
+- Added idle-poll controls on native feed ingest (`idle_sleep_s`, `max_idle_polls`) so polling ports can tolerate short empty windows before terminating.
+- Added non-running-loop fallback in `run_native_ohlcv_store(...)` to consume direct store OHLCV queues (`_ohlcv_queue`) when stream workers are unavailable.
+- Added session-backed example `examples/basics/native_ohlcv_store_runtime.py` to exercise native runtime from a real session/store object.
 
 ## Status Audit (2026-02-20)
 
