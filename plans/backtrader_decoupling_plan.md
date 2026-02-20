@@ -17,8 +17,8 @@ Scope: Remove Backtrader as a core runtime dependency while preserving current C
 - Phase 8 (Native-First Tests): Not Started
 - Phase 9 (Packaging and Deprecation): Not Started
 
-Latest local validation snapshot (2026-02-19):
-- `tests/unit`: `1873 passed, 88 skipped`
+Latest local validation snapshot (2026-02-20):
+- `tests/unit`: `1877 passed, 88 skipped`
 - `tests/contracts`: `38 passed`
 - fee contracts: `tests/contracts/test_fees.py` -> `3 passed`
 
@@ -32,6 +32,8 @@ Latest feed-core slice (2026-02-19):
 - Added native strategy protocol support for `run_native(...)` (`strategy` object with `on_start`/`on_bar`/`on_stop`) while keeping callback mode.
 - Added `StoreQueueFeedCursor` for native consumption of store/stream queue data (including stop sentinel handling and monotonic timestamp filtering).
 - Added `PollingFeedPort` to keep non-exhausted cursors active across empty polls and support queue-backed feed paths in native runtime.
+- Added `StreamingSubsystemFeedCursor` for direct consumption of `StreamingFeedSubsystem` (`get_data`/`is_active`) in native runtime loops.
+- Added `CracktraderEngine.run_native_ohlcv_store(...)` to run native engine flow directly from store OHLCV stream subsystem via polling feed port.
 
 ## Status Audit (2026-02-20)
 
