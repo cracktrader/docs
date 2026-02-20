@@ -199,6 +199,7 @@ Run the full Rust parity gate with one command:
 Useful options:
 - `--skip-install` (when the Rust wheel is already installed)
 - `--skip-benchmark` (for quick local test-only validation)
+- `--with-integration` (adds `tests/integration/core/test_engine_backend_integration.py --sandbox`)
 
 ## 9) Risk Register
 
