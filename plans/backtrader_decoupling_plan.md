@@ -124,6 +124,9 @@ Latest hard-cut updates (2026-02-20):
     - added Backtrader compatibility adapter for native strategies:
       - `src/cracktrader/strategy/backtrader_adapter.py` (`BacktraderStrategyAdapter`) to run native `on_start`/`on_bar`/`on_stop` hooks inside BT strategy lifecycle.
       - exported from `src/cracktrader/strategy/__init__.py`.
+    - isolated BT strategy classes into explicit compatibility module:
+      - added `src/cracktrader/strategy/compat.py` (BT-bound `Strategy` / `StrategyBase`).
+      - converted `src/cracktrader/strategy/base.py` to a stable re-export shim (no direct BT import), reducing core/module-level BT coupling.
 
 Latest local validation snapshot (2026-02-20):
 - `tests/unit`: `1888 passed, 88 skipped`
