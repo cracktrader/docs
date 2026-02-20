@@ -1,8 +1,8 @@
 # Backtrader Decoupling Plan
 
 Date: 2026-02-18  
-Status: Draft implementation plan  
-Scope: Remove Backtrader as a core runtime dependency while preserving current Cracktrader behavior, fee correctness, and user-facing workflows.
+Status: Active implementation  
+Scope: Remove Backtrader as a core runtime dependency with hard cuts (no Cerebro compatibility preservation).
 
 ## Progress Snapshot (2026-02-19)
 
@@ -13,9 +13,29 @@ Scope: Remove Backtrader as a core runtime dependency while preserving current C
 - Phase 4 (Feed Core Decoupling): In Progress
 - Phase 5 (Strategy Runtime Decoupling): Not Started
 - Phase 6 (Indicators/Analyzers Decoupling): Not Started
-- Phase 7 (Cerebro Compatibility Isolation): In Progress
+- Phase 7 (Cerebro Compatibility Isolation): Done (hard removal)
 - Phase 8 (Native-First Tests): Not Started
 - Phase 9 (Packaging and Deprecation): Not Started
+
+Latest hard-cut updates (2026-02-20):
+- Top-level `cracktrader` API no longer exports `Cerebro` / `AsyncCerebro`.
+- `CracktraderEngine` is now native-only for execution entrypoints:
+  - `run()` and `run_async()` hard-fail with guidance to use native runtime methods.
+  - `run_native(...)` and `run_native_ohlcv_store(...)` remain as the supported paths.
+- `experiments/runner.py` no longer depends on `ct.Cerebro`:
+  - parameter-space expansion is implemented locally,
+  - runtime uses `bt.Cerebro` directly where compatibility runtime is still needed.
+- Shared test helpers were updated to remove top-level `AsyncCerebro` imports.
+- Compatibility runtime modules removed:
+  - deleted `src/cracktrader/cerebro.py`
+  - deleted `src/cracktrader/async_cerebro.py`
+  - `src/cracktrader/engine_runtime.py` now contains only native `CracktraderEngine` logic.
+- Removed compatibility-only test surface tied to `CracktraderCerebro` / `AsyncCerebro`:
+  - deleted `tests/unit/cerebro/*`
+  - deleted `tests/unit/engine/test_cerebro_engine_runtime.py`
+  - deleted `tests/contracts/engine/test_sync_async_parity.py`
+  - deleted `tests/integration/compatibility/test_cerebro_compatibility.py`
+  - deleted async verification scripts under `tests/verification/verify_async_*.py` and `verify_native_async.py`.
 
 Latest local validation snapshot (2026-02-20):
 - `tests/unit`: `1888 passed, 88 skipped`
