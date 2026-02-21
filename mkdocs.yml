@@ -64,7 +64,6 @@ nav:
   - How-to:
       - Web Hooks: webhooks.md
       - Strategy Cookbook: strategy_guide.md
-      - Legacy Migration Notes: integrations/backtrader_compat.md
   - Concepts:
       - Architecture: core_concepts/architecture.md
       - Strategies: core_concepts/strategies.md

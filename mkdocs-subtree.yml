@@ -67,7 +67,6 @@ nav:
       - Configure the platform: getting_started/configuration.md
       - Strategy cookbook: strategy_guide.md
       - Use the Web API: WEB_API.md
-      - Legacy migration notes: integrations/backtrader_compat.md
   - Explanations:
       - Architecture: core_concepts/architecture.md
       - Strategies: core_concepts/strategies.md
