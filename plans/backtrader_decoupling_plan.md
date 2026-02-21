@@ -1,21 +1,40 @@
 # Backtrader Decoupling Plan
 
 Date: 2026-02-18  
-Status: Active implementation  
+Status: Active implementation (final cleanup)  
 Scope: Remove Backtrader as a core runtime dependency with hard cuts (no Cerebro compatibility preservation).
 
-## Progress Snapshot (2026-02-19)
+## Progress Snapshot (2026-02-21)
 
 - Phase 0 (Stabilize Baseline and Gates): Done
 - Phase 1 (Engine-Native Domain Types): Done
-- Phase 2 (Fee/Commission Decoupling): In Progress
-- Phase 3 (Broker Core Decoupling): In Progress
+- Phase 2 (Fee/Commission Decoupling): Done
+- Phase 3 (Broker Core Decoupling): Done (native core + legacy bridges retained where needed)
 - Phase 4 (Feed Core Decoupling): Done
-- Phase 5 (Strategy Runtime Decoupling): Not Started
-- Phase 6 (Indicators/Analyzers Decoupling): Not Started
+- Phase 5 (Strategy Runtime Decoupling): In Progress (native runtime is primary; compatibility strategy surfaces still being trimmed)
+- Phase 6 (Indicators/Analyzers Decoupling): In Progress
 - Phase 7 (Cerebro Compatibility Isolation): Done (hard removal)
-- Phase 8 (Native-First Tests): Not Started
-- Phase 9 (Packaging and Deprecation): Not Started
+- Phase 8 (Native-First Tests): In Progress
+- Phase 9 (Packaging and Deprecation): In Progress
+
+## Current Status (2026-02-21)
+
+- Direct `backtrader` imports are removed from runtime and test code paths.
+- Top-level `ct.Cerebro` / `ct.AsyncCerebro` are removed.
+- Research backtest runner path (`research/ema_rta/ema_rta_runner.py`) now runs through native engine entrypoints.
+- Native indicators (`CTEMA`, `CTATR`) are restored as native implementations.
+- Native analyzer observer path is wired into runtime and used by the EMA RTA runner.
+- Latest non-live gate: `1788 passed, 123 skipped, 42 deselected`.
+
+## Remaining Work (Final Program Tail)
+
+1. Finish semantic cleanup of stale "Backtrader compatibility" wording in remaining runtime comments/docstrings where no runtime coupling exists.
+2. Complete final native-first test migration cleanup:
+   - prune or rewrite any remaining legacy-compatibility-only assertions that no longer protect real behavior.
+   - keep strict import guards that prevent `backtrader` regressions.
+3. Final packaging/deprecation cut:
+   - verify dependency/docs surfaces reflect native-only runtime.
+   - produce final migration notes for removed compatibility entrypoints.
 
 Latest hard-cut updates (2026-02-20):
 - Top-level `cracktrader` API no longer exports `Cerebro` / `AsyncCerebro`.
