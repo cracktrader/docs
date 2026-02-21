@@ -6,6 +6,16 @@
 - Scope: Define a Rust-first execution core while preserving Python strategy authoring
 - Non-goal: Immediate implementation details for every backend adapter
 
+## Current Implementation Pointer (2026-02-19)
+
+The initial scaffold for this architecture is tracked in:
+
+- `docs/plans/rust_pr1_scaffold_plan.md`
+- `docs/plans/rust_migration_guide.md`
+
+That PR-1 scope adds backend selection plumbing and a Rust core bridge while
+keeping Backtrader adapters and strategy runtime behavior unchanged.
+
 ---
 
 ## 1. Executive Summary
