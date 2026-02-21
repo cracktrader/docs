@@ -76,6 +76,6 @@ pytest tests/unit/feed/test_sub_minute_timeframes.py -v -s
 
 - **Feeds**: Support 1s, 10s, 30s, 1m+ timeframes with tick reordering
 - **Brokers**: Paper and live trading with CCXT integration
-- **Cerebro**: Full Backtrader compatibility including `preload=True`
+- **Engine**: Native-first runtime entrypoints (`run_native*`)
 - **Testing**: 19,200+ test lines vs 7,400 source lines
 - **Quality**: Comprehensive linting, formatting, security scanning

@@ -1,5 +1,5 @@
 ﻿site_name: Cracktrader Documentation
-site_description: A modern cryptocurrency trading framework that bridges CCXT and Backtrader
+site_description: A modern trading framework with native CCXT and prediction-market support
 site_url: https://your-domain.com/cracktrader-docs  # Update with your VPS domain
 
 repo_name: cracktrader
@@ -64,7 +64,6 @@ nav:
   - How-to:
       - Web Hooks: webhooks.md
       - Strategy Cookbook: strategy_guide.md
-      - Backtrader Compatibility: integrations/backtrader_compat.md
   - Concepts:
       - Architecture: core_concepts/architecture.md
       - Strategies: core_concepts/strategies.md

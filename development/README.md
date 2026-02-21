@@ -45,7 +45,7 @@ Cracktrader is a high-performance cryptocurrency trading framework:
 - **19,200+ lines** of comprehensive tests
 - **100+ exchanges** supported via CCXT
 - **Sub-minute timeframes** (1s, 10s, 30s) with tick reordering
-- **Full Backtrader compatibility** including analyzers and optimization
+- **Native-first runtime** with analyzer and strategy protocols
 
 ## Performance Benchmarks
 

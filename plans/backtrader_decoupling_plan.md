@@ -1,8 +1,221 @@
 # Backtrader Decoupling Plan
 
 Date: 2026-02-18  
-Status: Draft implementation plan  
-Scope: Remove Backtrader as a core runtime dependency while preserving current Cracktrader behavior, fee correctness, and user-facing workflows.
+Status: Active implementation (final cleanup)  
+Scope: Remove Backtrader as a core runtime dependency with hard cuts (no Cerebro compatibility preservation).
+
+## Progress Snapshot (2026-02-21)
+
+- Phase 0 (Stabilize Baseline and Gates): Done
+- Phase 1 (Engine-Native Domain Types): Done
+- Phase 2 (Fee/Commission Decoupling): Done
+- Phase 3 (Broker Core Decoupling): Done (native core + legacy bridges retained where needed)
+- Phase 4 (Feed Core Decoupling): Done
+- Phase 5 (Strategy Runtime Decoupling): In Progress (native runtime is primary; compatibility strategy surfaces still being trimmed)
+- Phase 6 (Indicators/Analyzers Decoupling): In Progress
+- Phase 7 (Cerebro Compatibility Isolation): Done (hard removal)
+- Phase 8 (Native-First Tests): In Progress
+- Phase 9 (Packaging and Deprecation): In Progress
+
+## Current Status (2026-02-21)
+
+- Direct `backtrader` imports are removed from runtime and test code paths.
+- Top-level `ct.Cerebro` / `ct.AsyncCerebro` are removed.
+- Research backtest runner path (`research/ema_rta/ema_rta_runner.py`) now runs through native engine entrypoints.
+- Native indicators (`CTEMA`, `CTATR`) are restored as native implementations.
+- Native analyzer observer path is wired into runtime and used by the EMA RTA runner.
+- Latest non-live gate: `1788 passed, 123 skipped, 42 deselected`.
+
+## Remaining Work (Final Program Tail)
+
+1. Finish semantic cleanup of stale "Backtrader compatibility" wording in remaining runtime comments/docstrings where no runtime coupling exists.
+2. Complete final native-first test migration cleanup:
+   - prune or rewrite any remaining legacy-compatibility-only assertions that no longer protect real behavior.
+   - keep strict import guards that prevent `backtrader` regressions.
+3. Final packaging/deprecation cut:
+   - verify dependency/docs surfaces reflect native-only runtime.
+   - produce final migration notes for removed compatibility entrypoints.
+
+Latest hard-cut updates (2026-02-20):
+- Top-level `cracktrader` API no longer exports `Cerebro` / `AsyncCerebro`.
+- `CracktraderEngine` is now native-only for execution entrypoints:
+  - `run()` and `run_async()` hard-fail with guidance to use native runtime methods.
+  - `run_native(...)` and `run_native_ohlcv_store(...)` remain as the supported paths.
+- `experiments/runner.py` no longer depends on `ct.Cerebro`:
+  - parameter-space expansion is implemented locally,
+  - runtime uses `bt.Cerebro` directly where compatibility runtime is still needed.
+- Shared test helpers were updated to remove top-level `AsyncCerebro` imports.
+- Compatibility runtime modules removed:
+  - deleted `src/cracktrader/cerebro.py`
+  - deleted `src/cracktrader/async_cerebro.py`
+  - `src/cracktrader/engine_runtime.py` now contains only native `CracktraderEngine` logic.
+- Removed compatibility-only test surface tied to `CracktraderCerebro` / `AsyncCerebro`:
+  - deleted `tests/unit/cerebro/*`
+  - deleted `tests/unit/engine/test_cerebro_engine_runtime.py`
+  - deleted `tests/contracts/engine/test_sync_async_parity.py`
+  - deleted `tests/integration/compatibility/test_cerebro_compatibility.py`
+  - deleted async verification scripts under `tests/verification/verify_async_*.py` and `verify_native_async.py`.
+- Feed-core decoupling follow-up:
+  - added `src/cracktrader/feeds/contracts.py` protocol layer (`SyncFeedLike`, `FeedRef`) to reduce direct `bt.DataBase`/`AbstractDataBase` type coupling at runtime boundaries.
+  - migrated `src/cracktrader/feeds/adapter.py` and `src/cracktrader/strategy/pegged_order_manager.py` to use feed protocols instead of BT concrete feed typing.
+  - cleaned stale runtime docstrings/comments referencing removed `AsyncCerebro`/`CracktraderCerebro`.
+  - extracted queue/sanitization behavior into native `src/cracktrader/feeds/core.py` (`FeedQueueCore`) and delegated enqueue paths from:
+    - `src/cracktrader/feeds/base.py`
+    - `src/cracktrader/feeds/ccxt.py`
+  - extracted candle parsing/state into native `FeedBarStateCore` (also in `src/cracktrader/feeds/core.py`) and delegated `_set_candle(...)` parsing paths from:
+    - `src/cracktrader/feeds/base.py`
+    - `src/cracktrader/feeds/ccxt.py`
+    - `src/cracktrader/feeds/async_base.py`
+  - extracted Backtrader line assignment into native `FeedLineWriterCore` (in `src/cracktrader/feeds/core.py`) and delegated line write paths from:
+    - `src/cracktrader/feeds/base.py`
+    - `src/cracktrader/feeds/ccxt.py`
+    - `src/cracktrader/feeds/async_base.py`
+  - extracted load/lifecycle state into native `FeedLoadStateCore` (in `src/cracktrader/feeds/core.py`) and delegated `CCXTDataFeed._load()` historical drain + replay-cache control flow.
+  - introduced composed `FeedRuntimeCore` (in `src/cracktrader/feeds/core.py`) that unifies queue, bar parsing, line writing, and load-state cores; delegated runtime flow from:
+    - `src/cracktrader/feeds/base.py`
+    - `src/cracktrader/feeds/ccxt.py`
+  - moved additional `_load()` decision helpers into `FeedRuntimeCore` (historical step status, queue pop helper, and to-date cutoff check) and simplified `CCXTDataFeed._load()` control flow around those helpers.
+  - moved reorder/idle helper logic into `FeedRuntimeCore` (`should_flush_reorder_buffer`, `sort_reorder_buffer`, `build_idle_candle`) and updated `CCXTDataFeed` to delegate these decisions.
+  - moved live-branch control helpers into `FeedRuntimeCore` (`should_start_live_watch_after_history`, `queue_empty_should_wait`, `live_poll_sleep_seconds`) and updated `CCXTDataFeed._load()` to delegate these branch decisions.
+  - added `FeedRuntimeCore.load_step(...)` orchestrator for historical/replay/queue/todate paths and delegated `CCXTDataFeed._load()` main flow to this core method.
+  - added `FeedRuntimeCore.queue_empty_step(...)` orchestrator for queue-empty fallback (idle injection, reorder flush/retry, live poll sleep) and delegated this branch from `CCXTDataFeed._load()`.
+  - migrated `CTAsyncFeedBase` enqueue/candle mapping to `FeedRuntimeCore` (`sanitize`, `parse_bar`, `apply_bar`) so async feed base shares the same native core boundary as sync feeds.
+  - introduced `FeedDriver` protocol in `src/cracktrader/feeds/contracts.py` and migrated engine feed-port typing (`BacktraderFeedCursor` / `BacktraderIngestFeedPort`) to this interface to further reduce BT-shaped type assumptions at ingestion boundaries.
+  - added non-BT `NativeFeedDriver` (`src/cracktrader/feeds/native_driver.py`) and validated ingestion through `BacktraderIngestFeedPort` using protocol-based `set_index` hooks (no `bt.DataBase` inheritance required).
+  - introduced generic feed-driver ingest aliases (`FeedDriverCursor`, `FeedDriverIngestPort`) in `src/cracktrader/engine/feed_port.py` so native runtime entrypoints can avoid BT-specific naming and assumptions.
+  - removed BT-named ingest types from engine feed-port surface (`BacktraderFeedCursor` / `BacktraderIngestFeedPort`); engine ingestion now uses `FeedDriverCursor` / `FeedDriverIngestPort` only.
+  - added `CracktraderEngine.run_native_feed_driver(...)` to run native engine flow directly from one or more protocol-compatible feed drivers.
+  - added `NativeCCXTFeedDriver` (`src/cracktrader/feeds/native_ccxt.py`) and `CracktraderEngine.run_native_ccxt_feed(...)` as native-first CCXT feed runtime path without `bt.DataBase` inheritance.
+  - hard-switched default CCXT feed surface to native driver:
+    - `ct.Feed(exchange=<ccxt>, ...)` now returns `NativeCCXTFeedDriver`
+    - `ct.CCXTDataFeed` now aliases `NativeCCXTFeedDriver`
+    - `cracktrader.exchanges.ccxt.feed.CCXTDataFeed` now aliases `NativeCCXTFeedDriver`
+    - `src/cracktrader/feeds/ccxt.py` is now a native-first shim with no Backtrader import.
+  - migrated `src/cracktrader/feeds/kalshi.py` to a native feed-driver scaffold (`KalshiDataFeed` now extends `NativeFeedDriver`, no `CTFeedBase` / `bt.DataBase` dependency).
+  - migrated `src/cracktrader/feeds/custom.py` to native feed implementation (no `CTFeedBase` / Backtrader inheritance).
+  - replaced `src/cracktrader/feeds/async_base.py` and `src/cracktrader/feeds/async_ccxt.py` with native async feed implementations (no Backtrader imports).
+  - replaced `src/cracktrader/feeds/base.py` with native queue/line base (`CTFeedBase` no longer inherits `bt.DataBase`).
+  - removed Backtrader imports from Polymarket feed stack:
+    - `src/cracktrader/polymarket/feed/base.py`
+    - `src/cracktrader/polymarket/feed/outcomes.py`
+  - final feed-area scan now returns no `backtrader` imports under:
+    - `src/cracktrader/feeds/*`
+    - `src/cracktrader/polymarket/feed/*`
+  - broker/runtime decoupling follow-up:
+    - introduced native position model `src/cracktrader/engine/position.py` (`Position` with `update`/`clone` semantics).
+    - migrated `src/cracktrader/broker/position_tracker.py` to use native `Position` instead of `bt.Position`.
+    - migrated `src/cracktrader/broker/universal_broker_base.py` position fallback/update paths to use native `Position` factories (`BrokerPositionCore` boundaries no longer require `bt.Position`).
+    - exported native `Position` from `src/cracktrader/engine/__init__.py`.
+    - introduced native broker scaffold `src/cracktrader/broker/native_base.py` to replace required `bt.BrokerBase` lifecycle/params/comminfo behavior.
+    - removed `bt.BrokerBase` inheritance from:
+      - `src/cracktrader/broker/universal_broker_base.py`
+      - `src/cracktrader/broker/composite_broker.py`
+    - broker-area `bt.BrokerBase` inheritance usage is now eliminated in `src/cracktrader/broker/*` (remaining BT coupling is order classes/constants and strategy/runtime compatibility edges).
+    - introduced native order scaffold `src/cracktrader/broker/base_order.py` (`BaseOrder`) with:
+      - order lifecycle methods (`submit`, `accept`, `reject`, `cancel`, `completed`, `alive`)
+      - execution ledger (`executed` + `exbits`) compatible with existing broker/order tests.
+    - migrated `src/cracktrader/broker/ccxt_order.py` from `bt.Order` inheritance to native `BaseOrder` inheritance.
+    - removed direct Backtrader imports from `src/cracktrader/broker/ccxt_order.py` and preserved compatibility status/type constants via engine-domain mappers.
+    - removed direct `bt.Order` constant branching/imports from broker runtime modules:
+      - `src/cracktrader/broker/async_broker.py`
+      - `src/cracktrader/broker/ccxt_live_broker.py`
+      - `src/cracktrader/broker/ccxt_simulation_broker.py`
+      - `src/cracktrader/broker/base_back_broker.py`
+      - `src/cracktrader/broker/kalshi_simulation_broker.py`
+      - `src/cracktrader/broker/polymarket_simulation_broker.py`
+    - added enforcement test to prevent regressions:
+      - `tests/unit/broker/test_broker_no_bt_order_constants.py`
+    - removed remaining `bt.Order.Market` default-order fallback usage from broker order factories:
+      - `src/cracktrader/broker/universal_broker_base.py`
+      - `src/cracktrader/broker/ccxt_broker_base.py`
+    - removed remaining direct `backtrader` imports from broker live/polymarket modules:
+      - `src/cracktrader/broker/kalshi_live_broker.py`
+      - `src/cracktrader/broker/polymarket_live_broker.py`
+      - `src/cracktrader/broker/polymarket_broker.py`
+    - removed direct `backtrader` dependency from pegged strategy runtime helper:
+      - `src/cracktrader/strategy/pegged_order_manager.py` now uses native order-type mapping (`OrderType` -> BT bridge helper) and generic order typing.
+    - removed direct `bt.Order` status branching from `src/cracktrader/strategy/base.py` by using native status parsing (`parse_order_status` / `OrderStatus`) in strategy order notifications.
+    - introduced native strategy base surface (non-BT runtime):
+      - added `src/cracktrader/strategy/native.py` with `NativeStrategyProtocol` and `NativeStrategyBase`.
+      - exported native strategy types from:
+        - `src/cracktrader/strategy/__init__.py`
+        - `src/cracktrader/__init__.py`
+    - added Backtrader compatibility adapter for native strategies:
+      - `src/cracktrader/strategy/backtrader_adapter.py` (`BacktraderStrategyAdapter`) to run native `on_start`/`on_bar`/`on_stop` hooks inside BT strategy lifecycle.
+      - exported from `src/cracktrader/strategy/__init__.py`.
+    - isolated BT strategy classes into explicit compatibility module:
+      - added `src/cracktrader/strategy/compat.py` (BT-bound `Strategy` / `StrategyBase`).
+      - converted `src/cracktrader/strategy/base.py` to a stable re-export shim (no direct BT import), reducing core/module-level BT coupling.
+    - isolated Backtrader enum/timeframe mapping logic from core domain:
+      - added `src/cracktrader/engine/domain_bt.py` for BT mapping helpers.
+      - converted `src/cracktrader/engine/domain.py` mapping functions to delegate into `domain_bt`, removing direct BT import logic from domain core module.
+
+Latest local validation snapshot (2026-02-20):
+- `tests/unit`: `1888 passed, 88 skipped`
+- `tests/contracts`: `38 passed`
+- fee contracts: `tests/contracts/test_fees.py` -> `3 passed`
+
+Latest feed-core slice (2026-02-19):
+- Extracted engine-native candle payload normalization helper (`FeedCandleCore`).
+- Added native feed-port primitives (`FeedPort`, `FeedCursor`, `InMemoryFeedPort`, `InMemoryFeedCursor`) as groundwork for BT `DataBase` replacement.
+- Added `BacktraderFeedCursor` and rewired sync adapter ingest batching to read BT bars through feed-port cursor boundary.
+- Added `NativeFeedAdapter` to ingest directly from native `FeedPort` batches without Backtrader feed classes.
+- Added `NativeEngineRuntime` as a native-first entrypoint that runs `EngineRunner` from `FeedPort` via `NativeFeedAdapter`.
+- Added `CracktraderEngine.run_native(...)` and a basic native feed-port example to establish a concrete user-facing non-`bt.DataBase` run path.
+- Added native strategy protocol support for `run_native(...)` (`strategy` object with `on_start`/`on_bar`/`on_stop`) while keeping callback mode.
+- Added `StoreQueueFeedCursor` for native consumption of store/stream queue data (including stop sentinel handling and monotonic timestamp filtering).
+- Added `PollingFeedPort` to keep non-exhausted cursors active across empty polls and support queue-backed feed paths in native runtime.
+- Added `StreamingSubsystemFeedCursor` for direct consumption of `StreamingFeedSubsystem` (`get_data`/`is_active`) in native runtime loops.
+- Added `CracktraderEngine.run_native_ohlcv_store(...)` to run native engine flow directly from store OHLCV stream subsystem via polling feed port.
+- Added idle-poll controls on native feed ingest (`idle_sleep_s`, `max_idle_polls`) so polling ports can tolerate short empty windows before terminating.
+- Added non-running-loop fallback in `run_native_ohlcv_store(...)` to consume direct store OHLCV queues (`_ohlcv_queue`) when stream workers are unavailable.
+- Added session-backed example `examples/basics/native_ohlcv_store_runtime.py` to exercise native runtime from a real session/store object.
+- Added `BacktraderIngestFeedPort` and routed `BacktraderSyncAdapter.ingest_generator` through `NativeFeedAdapter`, reducing direct feed-loop orchestration inside BT compatibility adapter.
+- Updated `CerebroEngineRuntime` non-vectorized sync path to delegate through `NativeEngineRuntime` with `BacktraderIngestFeedPort` instead of constructing/running `EngineRunner` directly.
+- Added native broker object protocol support for `run_native(...)` (`broker` object with `on_start`/`on_step`/`on_stop`) while preserving callback mode.
+- Added native observer object protocol support for `run_native(...)` (`observer` object with `on_start`/`on_step`/`on_stop`) while preserving callback observer mode.
+
+## Status Audit (2026-02-20)
+
+### Branch and Validation Status
+
+- Active decoupling branch: `feature/feed-core-decoupling`.
+- Branch divergence vs `origin/main`: `0 behind`, `116 ahead`.
+- Worktree state: clean.
+- Latest local gates:
+  - `tests/unit`: `1867 passed, 88 skipped`
+  - `tests/contracts/test_fees.py`: `3 passed`
+
+### What Is Completed So Far
+
+- Feed-core native foundation exists:
+  - Native candle normalization core.
+  - Native feed-port and cursor interfaces.
+  - Backtrader feed cursor boundary used by sync adapter ingest.
+  - Native feed adapter and native engine runtime entrypoint.
+  - Public `CracktraderEngine.run_native(...)` path.
+  - Native strategy object protocol (`on_start`/`on_bar`/`on_stop`).
+- Broker-core has been substantially extracted into engine-native modules with compatibility wrappers retained.
+- Fee and broker regression gates are stable on current branch.
+
+### Remaining Program-Level Work
+
+- Phase 2 (fees) and Phase 3 (broker): complete remaining exit-criteria hardening and native-first parity closure.
+- Phase 4 (feeds): finish migrating production feed behavior (queueing/reordering/live-vs-historical boundaries/timeframe plumbing) into native feed core with BT kept as an adapter.
+- Feed decoupling status:
+  - complete for feed modules and feed runtime boundaries.
+  - remaining Backtrader coupling is outside feed core (broker/runtime compatibility layers).
+- Phase 5 (strategy runtime): continue lifting runtime callbacks/notifications to native contracts with BT strategy bridge as compatibility path.
+- Phase 6 (indicators/analyzers): introduce native interfaces and remove BT types from core runtime paths.
+- Phase 7 (Cerebro isolation): reduce `ct.Cerebro` to compatibility facade over native orchestrator paths.
+- Phase 8 (native-first tests): migrate contracts/fixtures to assert native domain behavior first; retain a smaller BT compatibility suite.
+- Phase 9 (packaging/deprecation): remove Backtrader from core install path and publish migration notes for native APIs.
+
+### Current Priority Queue
+
+1. Complete next Phase 4 slice with a native store/queue-backed feed cursor path.
+2. Push that path through one real runtime flow (not only in-memory demo feeds).
+3. Then continue Phase 7 by increasing delegation from Cerebro compatibility runtime to native runtime/adapters.
 
 ## Progress Snapshot (2026-02-19)
 
@@ -282,11 +495,11 @@ Exit criteria:
 ### Phase 9: Packaging and Deprecation
 
 Objective:
-- Make Backtrader optional.
+- Remove Backtrader from the core runtime install.
 
 Work:
-- Move Backtrader from core dependencies to optional extra.
-- Add clear runtime errors when BT compatibility APIs are invoked without extra installed.
+- Remove Backtrader from core dependencies once remaining BT-bound modules are deleted/replaced.
+- Hard-fail any legacy BT compatibility API entrypoints with migration guidance until they are removed.
 - Publish migration notes with examples for native APIs.
 
 Deliverables:
@@ -294,8 +507,8 @@ Deliverables:
 - Migration guide and release notes.
 
 Exit criteria:
-- `pip install cracktrader` works without Backtrader.
-- `pip install cracktrader[backtrader]` enables compatibility layer.
+- `pip install cracktrader` works and runs native runtime flows without Backtrader installed.
+- No supported runtime path requires Backtrader.
 
 ## Validation Strategy Per Phase
 
