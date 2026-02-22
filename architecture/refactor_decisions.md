@@ -193,3 +193,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Adds immediate, low-cost coverage for one key market-data contract guarantee while staying aligned with current runtime architecture.
 - **Impact radius:** `tests/contracts/test_market_data_contracts.py`.
 - **Follow-ups:** Add malformed-data and out-of-order tick contract assertions with explicit expected handling policy.
+
+## 2026-02-22 - [Phase 5 / P5-S3] Route NativeCCXTFeedDriver through MarketDataFeed contract when available
+- **Status:** decided
+- **Context:** `NativeCCXTFeedDriver` still directly used legacy store OHLCV registration/start/stop methods, bypassing the new `market_data_feed` contract.
+- **Decision:** Prefer `store.market_data_feed` (`register_ohlcv_callback`, `start_ohlcv`, `stop_ohlcv`) when available, with fallback to legacy store methods for compatibility.
+- **Alternatives considered:**
+  - Keep feed driver on legacy methods until complete market-data refactor.
+  - Break compatibility and require `market_data_feed` unconditionally.
+- **Why this choice:** Moves one active feed path onto the new contract without breaking existing stores.
+- **Impact radius:** `src/cracktrader/feeds/native_ccxt.py`, `tests/unit/feeds/test_native_ccxt_market_data_feed.py`.
+- **Follow-ups:** Apply the same routing pattern to other feed drivers that consume OHLCV streams.
