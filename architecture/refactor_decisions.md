@@ -325,3 +325,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Delivers the Phase 7 S3 capability-cleanup objective with minimal runtime risk and stronger contract enforcement for future adapter onboarding.
 - **Impact radius:** `src/cracktrader/exchanges/adapters/base.py`, `src/cracktrader/exchanges/adapters/ccxt.py`, `src/cracktrader/exchanges/adapters/polymarket.py`, `src/cracktrader/exchanges/adapters/kalshi.py`, `tests/contracts/adapters/test_exchange_adapter_contract.py`, `docs/architecture/adapter_onboarding_checklist.md`.
 - **Follow-ups:** Expand adapter contracts for reconnect replay behavior when explicit replay semantics are implemented in live transport layers.
+
+## 2026-02-22 - [Phase 8 / P8-S3 follow-up] Expand event normalization parity contracts to fill/timer paths
+- **Status:** decided
+- **Context:** Initial P8-S3 parity coverage validated order/bar normalization only; fill/timer normalization remained unasserted in Python/Rust parity contracts.
+- **Decision:** Extend `test_python_rust_event_normalization_parity.py` with fill and timer parity assertions using deterministic timestamps.
+- **Alternatives considered:**
+  - Leave fill/timer parity untested until Rust-enabled CI run.
+  - Add parity through integration tests only.
+- **Why this choice:** Keeps parity guarantees close to the normalization seam and increases confidence before Rust-enabled execution environments run the full contract matrix.
+- **Impact radius:** `tests/contracts/engine/test_python_rust_event_normalization_parity.py`.
+- **Follow-ups:** Run parity contracts in Rust-enabled environment and address any runtime binding deltas if surfaced.
