@@ -94,3 +94,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Aligns simulation broker semantics under one policy seam while keeping market-specific differences explicit (`_execution_policy_supports_order_type`, `_execution_policy_market_trigger`, and pre-process expiry hook).
 - **Impact radius:** `src/cracktrader/broker/polymarket_simulation_broker.py`, `src/cracktrader/broker/kalshi_simulation_broker.py`, `src/cracktrader/broker/execution_policy.py`, `tests/contracts/test_execution_policy_contracts.py`.
 - **Follow-ups:** Phase 2 live-mode fallback cleanup and explicit config controls for any simulated behavior in live brokers.
+
+## 2026-02-22 - [Phase 2 / P2-S3] Make live local simulation fallback explicit
+- **Status:** decided
+- **Context:** `PolymarketLiveBroker` and `KalshiLiveBroker` could silently simulate local fills/cancels when exchange async transport was missing.
+- **Decision:** Add `allow_live_simulation_fallback` control and default fallback behavior to disabled in `live` mode (enabled only when explicit, or by default in `sandbox` mode).
+- **Alternatives considered:**
+  - Preserve implicit fallback behavior in all modes.
+  - Remove fallback entirely and hard-fail whenever transport is unavailable.
+- **Why this choice:** Keeps a safe testing/sandbox path while preventing accidental simulated execution in live mode.
+- **Impact radius:** `src/cracktrader/broker/polymarket_live_broker.py`, `src/cracktrader/broker/kalshi_live_broker.py`, `tests/unit/broker/test_prediction_live_broker_submission.py`.
+- **Follow-ups:** Add mode-parity coverage for live-vs-sandbox fallback expectations in integration matrix tests.
