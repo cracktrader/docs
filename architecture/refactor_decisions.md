@@ -292,3 +292,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Establishes the seam-first backend wiring now, preserves Python fallback behavior, and creates parity enforcement hooks for environments where Rust extension is enabled.
 - **Impact radius:** `src/cracktrader/engine/rust_bridge.py`, `src/cracktrader/engine/runner.py`, `src/cracktrader/engine/__init__.py`, `rust/cracktrader_engine/src/python.rs`, `rust/cracktrader_engine/src/lib.rs`, `tests/unit/engine/test_rust_bridge_smoke.py`, `tests/unit/engine/test_runner.py`, `tests/contracts/engine/test_python_rust_sequencer_parity.py`.
 - **Follow-ups:** Run full Rust parity suites in an environment with compiled `cracktrader_rust` extension and continue Phase 8 with invariant extraction (`P8-S2`).
+
+## 2026-02-22 - [Phase 8 / P8-S2] Add invariant backend bridge and Rust invariant checker surface
+- **Status:** decided
+- **Context:** Invariant enforcement remained Python-only (`InvariantChecker`) while Phase 8 required backend parity expansion beyond the core/sequencer path.
+- **Decision:** Add `build_invariant_checker` and `_RustInvariantCheckerAdapter` in `engine/rust_bridge.py`, wire `EngineRunner` with optional `invariant_backend` selection while preserving explicit `invariant_checker=` override, add `RustInvariantChecker` in Rust extension bindings, and add Python/Rust invariant parity contract coverage (auto-skip without Rust extension).
+- **Alternatives considered:**
+  - Keep invariant checks Python-only until all Rust parity infra is available.
+  - Add bridge helper only without Rust extension class surface.
+- **Why this choice:** Keeps seam-first backend wiring consistent with P8-S1 and creates a concrete invariant boundary for parity testing while preserving current Python fallback and strict-mode behavior.
+- **Impact radius:** `src/cracktrader/engine/rust_bridge.py`, `src/cracktrader/engine/runner.py`, `src/cracktrader/engine/__init__.py`, `rust/cracktrader_engine/src/python.rs`, `rust/cracktrader_engine/src/lib.rs`, `tests/unit/engine/test_rust_bridge_smoke.py`, `tests/unit/engine/test_runner.py`, `tests/contracts/engine/test_python_rust_invariants_parity.py`.
+- **Follow-ups:** In Rust-enabled CI, run full invariant parity matrix and tune/align any rule-order or context-shape differences before promoting Rust invariant backend outside contracts.
