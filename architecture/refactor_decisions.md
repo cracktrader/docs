@@ -138,3 +138,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Delivers a real adapter seam with minimal blast radius and proves one runtime path consumes normalized adapter outputs.
 - **Impact radius:** `src/cracktrader/exchanges/events.py`, `src/cracktrader/exchanges/adapters/base.py`, `src/cracktrader/exchanges/adapters/ccxt.py`, `src/cracktrader/exchanges/adapters/__init__.py`, `src/cracktrader/broker/ccxt_live_broker.py`, `tests/contracts/adapters/test_exchange_adapter_contract.py`, `tests/unit/broker/test_ccxt_live_broker_submission.py`.
 - **Follow-ups:** Expand adapter usage beyond submission/cancel path and add adapter implementations for Polymarket/Kalshi.
+
+## 2026-02-22 - [Phase 4 / P4-S3] Route CCXT live balance updates through adapter normalization
+- **Status:** decided
+- **Context:** Submit/cancel and order submission callbacks were adapter-backed, but balance updates still applied raw exchange payloads directly in `CCXTLiveBroker`.
+- **Decision:** Normalize balance updates via `exchange_adapter.normalize_balance_event` before applying broker balance snapshots, and add contract assertion that adapter normalization is invoked when adapter exists.
+- **Alternatives considered:**
+  - Keep raw balance payload handling in broker until full adapter rollout.
+  - Move all balance update handling into adapter callbacks in one step.
+- **Why this choice:** Extends adapter consumption to another high-value live path with low risk and clear test coverage.
+- **Impact radius:** `src/cracktrader/broker/ccxt_live_broker.py`, `tests/unit/broker/test_ccxt_live_broker_submission.py`, `tests/contracts/test_balances.py`.
+- **Follow-ups:** Add normalized order-stream update path via adapter (not just submission callback) in subsequent slices.
