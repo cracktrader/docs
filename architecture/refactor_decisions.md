@@ -303,3 +303,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Keeps seam-first backend wiring consistent with P8-S1 and creates a concrete invariant boundary for parity testing while preserving current Python fallback and strict-mode behavior.
 - **Impact radius:** `src/cracktrader/engine/rust_bridge.py`, `src/cracktrader/engine/runner.py`, `src/cracktrader/engine/__init__.py`, `rust/cracktrader_engine/src/python.rs`, `rust/cracktrader_engine/src/lib.rs`, `tests/unit/engine/test_rust_bridge_smoke.py`, `tests/unit/engine/test_runner.py`, `tests/contracts/engine/test_python_rust_invariants_parity.py`.
 - **Follow-ups:** In Rust-enabled CI, run full invariant parity matrix and tune/align any rule-order or context-shape differences before promoting Rust invariant backend outside contracts.
+
+## 2026-02-22 - [Phase 8 / P8-S3] Add event normalization backend bridge and Rust normalizer surface
+- **Status:** decided
+- **Context:** Event normalization helpers (`normalize_bar_event`, `normalize_order_event`, etc.) were Python-only and Phase 8 called for selective extraction of pure normalization logic.
+- **Decision:** Add `build_event_normalizer` in `engine/rust_bridge.py` with Python and Rust adapter implementations, expose `RustEventNormalizer` in Rust bindings, and add Python/Rust normalization parity contracts for order/bar normalization paths (auto-skip without Rust extension).
+- **Alternatives considered:**
+  - Keep normalization helpers Python-only and defer extraction.
+  - Move normalization logic directly into runtime call sites without bridge seam.
+- **Why this choice:** Provides a minimal pure-logic extraction seam with no transport coupling and preserves canonical `EngineEvent` shape while enabling parity validation.
+- **Impact radius:** `src/cracktrader/engine/rust_bridge.py`, `src/cracktrader/engine/__init__.py`, `rust/cracktrader_engine/src/python.rs`, `rust/cracktrader_engine/src/lib.rs`, `tests/unit/engine/test_rust_bridge_smoke.py`, `tests/contracts/engine/test_python_rust_event_normalization_parity.py`.
+- **Follow-ups:** Expand parity coverage to fill/timer normalization and run full Rust-enabled parity suite in CI.
