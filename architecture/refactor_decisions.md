@@ -248,3 +248,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Moves an active runtime path onto the contract seam now while preserving existing strategy object APIs and avoiding a high-blast-radius runner rewrite.
 - **Impact radius:** `src/cracktrader/strategy/adapters/native.py`, `src/cracktrader/strategy/adapters/__init__.py`, `src/cracktrader/engine/native_strategy.py`, `tests/unit/strategy/test_native_strategy_adapter.py`, `tests/unit/engine/test_native_runtime.py`.
 - **Follow-ups:** Expand contract adapters for additional runtime paths and callback forms in later slices.
+
+## 2026-02-22 - [Phase 6 / P6-S3] Add strategy determinism contract and reduce one private feed test dependency
+- **Status:** decided
+- **Context:** Phase 6 required explicit determinism contract coverage and at least one step away from private-internals dependence in touched tests.
+- **Decision:** Add `tests/contracts/test_strategy_determinism_contract.py` to assert identical strategy output for identical `StrategyInput` on the native strategy adapter path. Add public `NativeCCXTFeedDriver.ingest_ohlcv(...)` and migrate selected tests to that public API (while keeping reconnection edge-case internals path unchanged to preserve behavior).
+- **Alternatives considered:**
+  - Defer determinism contract to engine parity phase.
+  - Keep all feed tests on `_enqueue` only.
+- **Why this choice:** Enforces Phase 6 determinism intent now with low overhead and reduces one private test dependency without broad feed runtime redesign.
+- **Impact radius:** `tests/contracts/test_strategy_determinism_contract.py`, `src/cracktrader/feeds/native_ccxt.py`, `tests/unit/feeds/test_native_ccxt_market_data_feed.py`, `tests/integration/trading/test_live_mode_integration.py`.
+- **Follow-ups:** Continue migrating additional test paths off private feed/store internals as public harness methods become available.
