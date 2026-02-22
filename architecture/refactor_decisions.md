@@ -237,3 +237,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Matches Phase 6 slice ordering (contracts first, adapters later) and enforces deterministic envelope shape early without broad runtime rewrites.
 - **Impact radius:** `src/cracktrader/strategy/contracts.py`, `src/cracktrader/strategy/__init__.py`, `tests/unit/strategy/test_strategy_contracts.py`.
 - **Follow-ups:** Wire native runtime callback paths through adapter(s) that translate existing strategy callbacks to `StrategyInput -> StrategyOutput` in `P6-S2`.
+
+## 2026-02-22 - [Phase 6 / P6-S2] Route native strategy runtime through StrategyInput/StrategyOutput adapter
+- **Status:** decided
+- **Context:** `NativeStrategyCallbackAdapter` still invoked `on_bar(events, core)` directly and returned raw intents without passing through the new deterministic IO envelope.
+- **Decision:** Add `NativeStrategyContractAdapter` in `src/cracktrader/strategy/adapters/native.py`, and update `engine/native_strategy.py` to build `StrategyInput` per step and convert adapter `StrategyOutput` back to runner callback intents.
+- **Alternatives considered:**
+  - Keep direct callback invocation until a broader runner signature change.
+  - Replace runtime callback signatures immediately with `StrategyInput -> StrategyOutput` (broad rewrite).
+- **Why this choice:** Moves an active runtime path onto the contract seam now while preserving existing strategy object APIs and avoiding a high-blast-radius runner rewrite.
+- **Impact radius:** `src/cracktrader/strategy/adapters/native.py`, `src/cracktrader/strategy/adapters/__init__.py`, `src/cracktrader/engine/native_strategy.py`, `tests/unit/strategy/test_native_strategy_adapter.py`, `tests/unit/engine/test_native_runtime.py`.
+- **Follow-ups:** Expand contract adapters for additional runtime paths and callback forms in later slices.
