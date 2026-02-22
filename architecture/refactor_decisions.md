@@ -127,3 +127,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Delivers staged migration semantics without forcing production behavior changes, while enabling strict invariant enforcement in tests.
 - **Impact radius:** `src/cracktrader/state/account_state.py`, `src/cracktrader/broker/universal_broker_base.py`, `tests/contracts/state/test_account_state_contracts.py`.
 - **Follow-ups:** Evaluate promotion of mirror-write mode to default in selected modes once adapter/state parity coverage is broader.
+
+## 2026-02-22 - [Phase 4 / P4-S1,P4-S2] Define adapter contract and add CCXT adapter path
+- **Status:** decided
+- **Context:** Exchange transport and normalization were broker-local, and adapter contract scaffolds were still placeholders.
+- **Decision:** Introduce `ExchangeAdapter` protocol, canonical exchange event DTOs, and a thin `CCXTExchangeAdapter`; then route CCXT live submit/cancel transport and submission event normalization through the adapter.
+- **Alternatives considered:**
+  - Keep broker-local transport logic until all adapters are implemented.
+  - Build a wide adapter abstraction with all exchanges in one pass.
+- **Why this choice:** Delivers a real adapter seam with minimal blast radius and proves one runtime path consumes normalized adapter outputs.
+- **Impact radius:** `src/cracktrader/exchanges/events.py`, `src/cracktrader/exchanges/adapters/base.py`, `src/cracktrader/exchanges/adapters/ccxt.py`, `src/cracktrader/exchanges/adapters/__init__.py`, `src/cracktrader/broker/ccxt_live_broker.py`, `tests/contracts/adapters/test_exchange_adapter_contract.py`, `tests/unit/broker/test_ccxt_live_broker_submission.py`.
+- **Follow-ups:** Expand adapter usage beyond submission/cancel path and add adapter implementations for Polymarket/Kalshi.
