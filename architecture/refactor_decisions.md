@@ -105,3 +105,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Keeps a safe testing/sandbox path while preventing accidental simulated execution in live mode.
 - **Impact radius:** `src/cracktrader/broker/polymarket_live_broker.py`, `src/cracktrader/broker/kalshi_live_broker.py`, `tests/unit/broker/test_prediction_live_broker_submission.py`.
 - **Follow-ups:** Add mode-parity coverage for live-vs-sandbox fallback expectations in integration matrix tests.
+
+## 2026-02-22 - [Phase 3 / P3-S1] Introduce AccountState read-through wrapper and mismatch diagnostics
+- **Status:** decided
+- **Context:** Account balances were tracked directly in broker internals without a canonical reconciliation-aware wrapper.
+- **Decision:** Add `AccountState` with normalized read-through snapshots and mode-aware mismatch diagnostics, then wire it into `UniversalBrokerBase._on_balance_update` without changing balance mutation authority.
+- **Alternatives considered:**
+  - Delay account state work until after adapter rollout.
+  - Make `AccountState` write-authoritative immediately.
+- **Why this choice:** Matches Phase 3 Stage A/B goals: create a coherent read-through view and comparison signals first, without destabilizing existing accounting behavior.
+- **Impact radius:** `src/cracktrader/state/account_state.py`, `src/cracktrader/state/__init__.py`, `src/cracktrader/broker/universal_broker_base.py`, `tests/contracts/state/test_account_state_contracts.py`.
+- **Follow-ups:** Add mirror-write mode behind config and promote mismatch policies toward stricter enforcement in tests.
