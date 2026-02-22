@@ -149,3 +149,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Extends adapter consumption to another high-value live path with low risk and clear test coverage.
 - **Impact radius:** `src/cracktrader/broker/ccxt_live_broker.py`, `tests/unit/broker/test_ccxt_live_broker_submission.py`, `tests/contracts/test_balances.py`.
 - **Follow-ups:** Add normalized order-stream update path via adapter (not just submission callback) in subsequent slices.
+
+## 2026-02-22 - [Phase 4 / P4-S3] Route CCXT live order-stream updates through adapter normalization
+- **Status:** decided
+- **Context:** CCXT live order submission callback used adapter normalization, but streaming order updates still entered broker lifecycle as raw payloads.
+- **Decision:** Add `CCXTLiveBroker._on_order_update` override that normalizes via `exchange_adapter.normalize_order_event` and forwards normalized payload to `UniversalBrokerBase._on_order_update`.
+- **Alternatives considered:**
+  - Keep raw order-stream payload handling until all exchange adapters exist.
+  - Rewrite full broker update pipeline around adapter event objects now.
+- **Why this choice:** Completes adapter normalization on the active CCXT live order-update path with minimal code movement and direct test coverage.
+- **Impact radius:** `src/cracktrader/broker/ccxt_live_broker.py`, `tests/unit/broker/test_ccxt_live_broker_submission.py`.
+- **Follow-ups:** Reuse the same pattern when wiring Polymarket/Kalshi adapters in later phases.
