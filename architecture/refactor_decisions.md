@@ -259,3 +259,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Enforces Phase 6 determinism intent now with low overhead and reduces one private test dependency without broad feed runtime redesign.
 - **Impact radius:** `tests/contracts/test_strategy_determinism_contract.py`, `src/cracktrader/feeds/native_ccxt.py`, `tests/unit/feeds/test_native_ccxt_market_data_feed.py`, `tests/integration/trading/test_live_mode_integration.py`.
 - **Follow-ups:** Continue migrating additional test paths off private feed/store internals as public harness methods become available.
+
+## 2026-02-22 - [Phase 7 / P7-S1] Add Polymarket adapter and route live submit/cancel through adapter seam
+- **Status:** decided
+- **Context:** Adapter contract rollout covered CCXT paths, while Polymarket live broker still called store transport directly without adapter normalization seam.
+- **Decision:** Implement `PolymarketExchangeAdapter`, add adapter contract tests, export adapter in exchange adapter package, and route `PolymarketLiveBroker` submit/cancel dispatch and submission normalization through `exchange_adapter`.
+- **Alternatives considered:**
+  - Delay Polymarket adapter until Kalshi adapter lands.
+  - Add adapter type branches inside shared broker base before concrete adapter implementation.
+- **Why this choice:** Delivers one real Polymarket path through adapter seam now with low migration risk and immediately reuses existing adapter contract pattern.
+- **Impact radius:** `src/cracktrader/exchanges/adapters/polymarket.py`, `src/cracktrader/exchanges/adapters/__init__.py`, `src/cracktrader/broker/polymarket_live_broker.py`, `tests/contracts/adapters/test_exchange_adapter_contract.py`, `tests/unit/broker/test_prediction_live_broker_submission.py`.
+- **Follow-ups:** Extend Polymarket adapter consumption to order-stream/balance normalization and apply same pattern to Kalshi (`P7-S2`).
