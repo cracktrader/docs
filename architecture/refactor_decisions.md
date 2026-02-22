@@ -182,3 +182,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Provides an explicit seam for Phase 5 consolidation with minimal runtime disruption and preserves existing store method behavior.
 - **Impact radius:** `src/cracktrader/store/market_data_feed.py`, `src/cracktrader/store/base_store.py`, `tests/contracts/test_market_data_contracts.py`.
 - **Follow-ups:** Extend contract coverage to sequencing/monotonicity guarantees and malformed-data handling.
+
+## 2026-02-22 - [Phase 5 / P5-S2] Add OHLCV callback monotonicity contract coverage
+- **Status:** decided
+- **Context:** MarketDataFeed contract existed, but sequencing/ordering behavior was not yet asserted in contract tests.
+- **Decision:** Add contract test asserting OHLCV callback delivery order is monotonic for ordered input ticks, using the active OHLCV router callback path.
+- **Alternatives considered:**
+  - Defer monotonicity assertions to integration-only tests.
+  - Introduce a broader event-sequencer abstraction first.
+- **Why this choice:** Adds immediate, low-cost coverage for one key market-data contract guarantee while staying aligned with current runtime architecture.
+- **Impact radius:** `tests/contracts/test_market_data_contracts.py`.
+- **Follow-ups:** Add malformed-data and out-of-order tick contract assertions with explicit expected handling policy.
