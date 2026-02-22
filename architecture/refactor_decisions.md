@@ -270,3 +270,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Delivers one real Polymarket path through adapter seam now with low migration risk and immediately reuses existing adapter contract pattern.
 - **Impact radius:** `src/cracktrader/exchanges/adapters/polymarket.py`, `src/cracktrader/exchanges/adapters/__init__.py`, `src/cracktrader/broker/polymarket_live_broker.py`, `tests/contracts/adapters/test_exchange_adapter_contract.py`, `tests/unit/broker/test_prediction_live_broker_submission.py`.
 - **Follow-ups:** Extend Polymarket adapter consumption to order-stream/balance normalization and apply same pattern to Kalshi (`P7-S2`).
+
+## 2026-02-22 - [Phase 7 / P7-S2] Add Kalshi adapter and route live submit/cancel through adapter seam
+- **Status:** decided
+- **Context:** Kalshi live broker still used direct store transport paths and lacked a dedicated exchange adapter implementation aligned with the adapter contract suite.
+- **Decision:** Implement `KalshiExchangeAdapter`, export it, extend adapter contract tests, and route `KalshiLiveBroker` submit/cancel and submission normalization through `exchange_adapter`.
+- **Alternatives considered:**
+  - Keep Kalshi on store-direct paths while only Polymarket uses adapter seams.
+  - Create a shared prediction adapter first and delay concrete Kalshi implementation.
+- **Why this choice:** Keeps Polymarket/Kalshi adapter rollout symmetric and enforces one contract-tested seam per exchange before broader capability cleanup.
+- **Impact radius:** `src/cracktrader/exchanges/adapters/kalshi.py`, `src/cracktrader/exchanges/adapters/__init__.py`, `src/cracktrader/broker/kalshi_live_broker.py`, `tests/contracts/adapters/test_exchange_adapter_contract.py`, `tests/unit/broker/test_prediction_live_broker_submission.py`.
+- **Follow-ups:** Expand both prediction adapters to balance/order-stream normalization coverage and consolidate capability matrix in `P7-S3`.
