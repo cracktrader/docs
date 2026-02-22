@@ -171,3 +171,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Evidence shows runtime already uses `OHLCVCandleRouter`; immediate wiring/removal would create avoidable risk before explicit consolidation work.
 - **Impact radius:** `docs/architecture/ohlcv_subsystem_decision.md`, `src/cracktrader/store/subsystems/ohlcv_subsystem.py`, `tests/unit/store/test_ohlcv_subsystem_role.py`.
 - **Follow-ups:** During Phase 5 consolidation, merge useful behavior or deprecate/remove subsystem with replacement tests.
+
+## 2026-02-22 - [Phase 5 / P5-S2] Introduce MarketDataFeed contract wrapper
+- **Status:** decided
+- **Context:** Market data APIs were available through `BaseStore` methods, but there was no explicit feed contract object for normalized OHLCV interactions.
+- **Decision:** Add `MarketDataFeed` protocol and `StoreMarketDataFeed` wrapper, expose it as `BaseStore.market_data_feed`, and add contract tests asserting contract surface and behavior.
+- **Alternatives considered:**
+  - Keep only direct `BaseStore` methods.
+  - Introduce a larger event/stream abstraction in one pass.
+- **Why this choice:** Provides an explicit seam for Phase 5 consolidation with minimal runtime disruption and preserves existing store method behavior.
+- **Impact radius:** `src/cracktrader/store/market_data_feed.py`, `src/cracktrader/store/base_store.py`, `tests/contracts/test_market_data_contracts.py`.
+- **Follow-ups:** Extend contract coverage to sequencing/monotonicity guarantees and malformed-data handling.
