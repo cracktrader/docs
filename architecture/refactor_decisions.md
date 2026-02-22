@@ -83,3 +83,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Kept Phase 1 scope focused on execution seam extraction while still documenting benchmark command outcomes.
 - **Impact radius:** benchmark command paths only (`scripts/benchmark_engine_backends.py`, `performance/automation/run_benchmarks.py`), no production behavior changes.
 - **Follow-ups:** Fix benchmark runner paths/engine API mismatch in a dedicated perf-infra slice, then re-run smoke baseline for Phase 1-delivered broker changes.
+
+## 2026-02-22 - [Phase 2 / P2-S1] Migrate Polymarket and Kalshi simulation brokers to shared policy
+- **Status:** decided
+- **Context:** `PolymarketSimulationBroker` and `KalshiSimulationBroker` still had broker-local pending-order loops and trigger logic, causing mode drift risk and duplicated semantics.
+- **Decision:** Set `SimulatedExecutionPolicy` as default for both brokers and delegate pending-order and trigger/limit checks to policy methods, while preserving broker-specific behavior through explicit hooks.
+- **Alternatives considered:**
+  - Leave prediction brokers on broker-local loops until a larger prediction-market rewrite.
+  - Move all prediction-specific behavior into policy with broker-type branching.
+- **Why this choice:** Aligns simulation broker semantics under one policy seam while keeping market-specific differences explicit (`_execution_policy_supports_order_type`, `_execution_policy_market_trigger`, and pre-process expiry hook).
+- **Impact radius:** `src/cracktrader/broker/polymarket_simulation_broker.py`, `src/cracktrader/broker/kalshi_simulation_broker.py`, `src/cracktrader/broker/execution_policy.py`, `tests/contracts/test_execution_policy_contracts.py`.
+- **Follow-ups:** Phase 2 live-mode fallback cleanup and explicit config controls for any simulated behavior in live brokers.
