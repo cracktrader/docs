@@ -160,3 +160,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Completes adapter normalization on the active CCXT live order-update path with minimal code movement and direct test coverage.
 - **Impact radius:** `src/cracktrader/broker/ccxt_live_broker.py`, `tests/unit/broker/test_ccxt_live_broker_submission.py`.
 - **Follow-ups:** Reuse the same pattern when wiring Polymarket/Kalshi adapters in later phases.
+
+## 2026-02-22 - [Phase 5 / P5-S1] OHLCVSubsystem runtime-role decision
+- **Status:** decided
+- **Context:** Market-data ownership consolidation required an explicit decision on whether `OHLCVSubsystem` is active runtime behavior or legacy overlap.
+- **Decision:** Retain `OHLCVSubsystem` as legacy/test utility for now; active runtime path remains `BaseStore -> MarketDataSubsystem -> OHLCVCandleRouter`.
+- **Alternatives considered:**
+  - Wire `OHLCVSubsystem` into runtime immediately.
+  - Remove `OHLCVSubsystem` now.
+- **Why this choice:** Evidence shows runtime already uses `OHLCVCandleRouter`; immediate wiring/removal would create avoidable risk before explicit consolidation work.
+- **Impact radius:** `docs/architecture/ohlcv_subsystem_decision.md`, `src/cracktrader/store/subsystems/ohlcv_subsystem.py`, `tests/unit/store/test_ohlcv_subsystem_role.py`.
+- **Follow-ups:** During Phase 5 consolidation, merge useful behavior or deprecate/remove subsystem with replacement tests.
