@@ -226,3 +226,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Keeps live stream processing resilient and matches contract-level expectation that malformed candles are ignored.
 - **Impact radius:** `src/cracktrader/store/subsystems/ohlcv_candle_router.py`, `tests/contracts/test_market_data_contracts.py`.
 - **Follow-ups:** Add metrics/counters for dropped malformed candles if observability is needed.
+
+## 2026-02-22 - [Phase 6 / P6-S1] Introduce deterministic StrategyInput and StrategyOutput contracts
+- **Status:** decided
+- **Context:** Strategy runtime paths used callback signatures directly (`events, core -> intents`) without explicit deterministic IO envelopes or stable keys.
+- **Decision:** Add `StrategyInput` and `StrategyOutput` dataclasses in `src/cracktrader/strategy/contracts.py` with required deterministic keys (`run_id`, `step_id`) and event-sequence identity (`event_seq`), plus immutable metadata/diagnostics normalization.
+- **Alternatives considered:**
+  - Delay contracts until adapter wiring (`P6-S2`) and define fields implicitly.
+  - Add contracts with mutable dict/list payloads and defer immutability concerns.
+- **Why this choice:** Matches Phase 6 slice ordering (contracts first, adapters later) and enforces deterministic envelope shape early without broad runtime rewrites.
+- **Impact radius:** `src/cracktrader/strategy/contracts.py`, `src/cracktrader/strategy/__init__.py`, `tests/unit/strategy/test_strategy_contracts.py`.
+- **Follow-ups:** Wire native runtime callback paths through adapter(s) that translate existing strategy callbacks to `StrategyInput -> StrategyOutput` in `P6-S2`.
