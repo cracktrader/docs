@@ -347,3 +347,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Keeps benchmark tooling aligned with current native-only runtime architecture and restores cross-platform execution without reintroducing legacy API surface.
 - **Impact radius:** `src/cracktrader/engine/benchmark.py`, `performance/automation/run_benchmarks.py`, `tests/unit/engine/test_benchmark_runtime_api.py`, `tests/unit/engine/test_run_benchmarks_automation.py`.
 - **Follow-ups:** Execute full Rust parity/perf gate in Rust-enabled environment and tune baseline thresholds as needed.
+
+## 2026-02-22 - [Parity Gate] Fix Rust invariant binding type mismatch and run full gate
+- **Status:** decided
+- **Context:** Rust backend install failed during parity-gate setup due to a PyO3 type mismatch in `RustInvariantChecker` transition parsing (`PyObject` vs `Bound<PyAny>`), blocking Rust-enabled contract and benchmark validation.
+- **Decision:** Bind transition `PyObject` values to `Bound<PyAny>` before calling transition helper readers, then rerun `scripts/install_rust_backend.py` and full `scripts/run_rust_parity_gate.py`.
+- **Alternatives considered:**
+  - Disable invariant transition checks in Rust checker temporarily.
+  - Skip Rust gate and defer fix to a later pass.
+- **Why this choice:** Smallest targeted fix that restores build correctness and unlocks full parity/perf verification immediately.
+- **Impact radius:** `rust/cracktrader_engine/src/python.rs`; verification commands `scripts/install_rust_backend.py` and `scripts/run_rust_parity_gate.py`.
+- **Follow-ups:** Optional cleanup for remaining Rust compile warnings (`RustEngineError` unused, intent fields currently unused).
