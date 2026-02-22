@@ -116,3 +116,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Matches Phase 3 Stage A/B goals: create a coherent read-through view and comparison signals first, without destabilizing existing accounting behavior.
 - **Impact radius:** `src/cracktrader/state/account_state.py`, `src/cracktrader/state/__init__.py`, `src/cracktrader/broker/universal_broker_base.py`, `tests/contracts/state/test_account_state_contracts.py`.
 - **Follow-ups:** Add mirror-write mode behind config and promote mismatch policies toward stricter enforcement in tests.
+
+## 2026-02-22 - [Phase 3 / P3-S2] Add mirror-write mode and test hard-fail mismatch policy
+- **Status:** decided
+- **Context:** Phase 3 needed Stage B/C behavior: optional mirror writes and strict mismatch enforcement in tests.
+- **Decision:** Add broker-level `account_state_mirror_write` and `account_state_mismatch_policy` controls, update local balance mutation paths (`setcash`, `_set_cash`, `_adjust_balances_on_fill`) to mirror through `AccountState` when enabled, and raise `AssertionError` on mismatches when policy is `raise`.
+- **Alternatives considered:**
+  - Keep compare-only behavior and delay mirror writes to a later phase.
+  - Always enforce hard-fail mismatches in all modes.
+- **Why this choice:** Delivers staged migration semantics without forcing production behavior changes, while enabling strict invariant enforcement in tests.
+- **Impact radius:** `src/cracktrader/state/account_state.py`, `src/cracktrader/broker/universal_broker_base.py`, `tests/contracts/state/test_account_state_contracts.py`.
+- **Follow-ups:** Evaluate promotion of mirror-write mode to default in selected modes once adapter/state parity coverage is broader.
