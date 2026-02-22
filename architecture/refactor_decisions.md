@@ -215,3 +215,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Uses existing queue-core semantics with the least code and aligns with current expected contract behavior.
 - **Impact radius:** `src/cracktrader/feeds/native_ccxt.py`, `tests/unit/feeds/test_native_ccxt_market_data_feed.py`, integration behavior in `tests/integration/core/test_feed_store_integration.py`.
 - **Follow-ups:** If future requirements need late-tick acceptance, gate it behind explicit config (e.g., reorder buffer policy).
+
+## 2026-02-22 - [Phase 5] Harden OHLCV callback handling for malformed payloads
+- **Status:** decided
+- **Context:** Market data contract tests showed malformed OHLCV rows could raise in `OHLCVCandleRouter` and break callback flow.
+- **Decision:** Catch parse errors in OHLCV router callback path and skip malformed candles, preserving stream continuity.
+- **Alternatives considered:**
+  - Let exceptions propagate and fail fast.
+  - Add validation earlier in streaming feed layer only.
+- **Why this choice:** Keeps live stream processing resilient and matches contract-level expectation that malformed candles are ignored.
+- **Impact radius:** `src/cracktrader/store/subsystems/ohlcv_candle_router.py`, `tests/contracts/test_market_data_contracts.py`.
+- **Follow-ups:** Add metrics/counters for dropped malformed candles if observability is needed.
