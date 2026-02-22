@@ -61,3 +61,25 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Keeps the shared loop centralized now while preserving CCXT-specific semantics via explicit broker hook points, avoiding policy-level type branches.
 - **Impact radius:** `src/cracktrader/broker/ccxt_simulation_broker.py`, `src/cracktrader/broker/execution_policy.py`, `tests/contracts/test_execution_policy_contracts.py`.
 - **Follow-ups:** Continue Phase 1 by extracting trigger/fill/price helpers into policy-facing contracts only where duplication can be removed without behavior drift.
+
+## 2026-02-22 - [Phase 1 / P1-S4] Strengthen execution policy contracts and complete extraction
+- **Status:** decided
+- **Context:** Pending-order looping was shared, but trigger/limit/stop/fill-price semantics remained duplicated across `BaseBackBroker` and `CCXTSimulationBroker`.
+- **Decision:** Move those semantics into `SimulatedExecutionPolicy` (`evaluate_order_trigger`, `limit_crossed`, `stop_triggered`, `determine_fill_price`) and keep broker-specific differences in explicit hooks (market timing and expiry pre-processing).
+- **Alternatives considered:**
+  - Leave trigger/price duplication in broker classes until Phase 2.
+  - Move all broker-specific behavior into policy with broker-type branching.
+- **Why this choice:** Completes Phase 1 extraction for the two target brokers while preserving behavior and avoiding brittle type-conditional logic inside policy code.
+- **Impact radius:** `src/cracktrader/broker/execution_policy.py`, `src/cracktrader/broker/base_back_broker.py`, `src/cracktrader/broker/ccxt_simulation_broker.py`, `tests/contracts/test_execution_policy_contracts.py`.
+- **Follow-ups:** Phase 2 rollout for remaining simulation brokers (`polymarket`, `kalshi`) using the same hook model.
+
+## 2026-02-22 - [Phase 1] Perf smoke checkpoint and blockers
+- **Status:** provisional
+- **Context:** Phase 1 touched broker execution hot paths, so perf smoke was required.
+- **Decision:** Attempted existing benchmark entrypoints and recorded failures due to pre-existing tooling issues.
+- **Alternatives considered:**
+  - Skip perf smoke entirely.
+  - Repair benchmark tooling inside this slice.
+- **Why this choice:** Kept Phase 1 scope focused on execution seam extraction while still documenting benchmark command outcomes.
+- **Impact radius:** benchmark command paths only (`scripts/benchmark_engine_backends.py`, `performance/automation/run_benchmarks.py`), no production behavior changes.
+- **Follow-ups:** Fix benchmark runner paths/engine API mismatch in a dedicated perf-infra slice, then re-run smoke baseline for Phase 1-delivered broker changes.
