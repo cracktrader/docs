@@ -204,3 +204,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Moves one active feed path onto the new contract without breaking existing stores.
 - **Impact radius:** `src/cracktrader/feeds/native_ccxt.py`, `tests/unit/feeds/test_native_ccxt_market_data_feed.py`.
 - **Follow-ups:** Apply the same routing pattern to other feed drivers that consume OHLCV streams.
+
+## 2026-02-22 - [Bugfix] Drop out-of-order ticks in NativeCCXTFeedDriver queue path
+- **Status:** decided
+- **Context:** Integration test `test_out_of_order_tick_handling` showed out-of-order ticks were still queued and loaded (`3` instead of expected `2`).
+- **Decision:** Enable monotonic timestamp enforcement in `NativeCCXTFeedDriver` queue runtime (`enforce_monotonic_ts=True`) and add unit regression coverage.
+- **Alternatives considered:**
+  - Add bespoke ordering logic in `drain_queue`.
+  - Enable reordering by default instead of dropping late ticks.
+- **Why this choice:** Uses existing queue-core semantics with the least code and aligns with current expected contract behavior.
+- **Impact radius:** `src/cracktrader/feeds/native_ccxt.py`, `tests/unit/feeds/test_native_ccxt_market_data_feed.py`, integration behavior in `tests/integration/core/test_feed_store_integration.py`.
+- **Follow-ups:** If future requirements need late-tick acceptance, gate it behind explicit config (e.g., reorder buffer policy).
