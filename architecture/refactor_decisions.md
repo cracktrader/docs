@@ -314,3 +314,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Provides a minimal pure-logic extraction seam with no transport coupling and preserves canonical `EngineEvent` shape while enabling parity validation.
 - **Impact radius:** `src/cracktrader/engine/rust_bridge.py`, `src/cracktrader/engine/__init__.py`, `rust/cracktrader_engine/src/python.rs`, `rust/cracktrader_engine/src/lib.rs`, `tests/unit/engine/test_rust_bridge_smoke.py`, `tests/contracts/engine/test_python_rust_event_normalization_parity.py`.
 - **Follow-ups:** Expand parity coverage to fill/timer normalization and run full Rust-enabled parity suite in CI.
+
+## 2026-02-22 - [Phase 7 / P7-S3] Standardize adapter capability matrix and expand contract coverage
+- **Status:** decided
+- **Context:** Exchange adapters exposed similar but ad-hoc capability dicts, and normalization contracts did not enforce cross-adapter capability consistency or idempotent normalization behavior.
+- **Decision:** Introduce shared capability matrix constants/helpers in `adapters/base.py`, route CCXT/Polymarket/Kalshi adapters through `default_adapter_capabilities()`, normalize order status consistently using `normalize_order_status_text(...)`, and add contract tests for capability key parity plus normalization idempotency.
+- **Alternatives considered:**
+  - Keep per-adapter capability dicts and only document preferred keys.
+  - Delay capability matrix standardization until additional exchanges are onboarded.
+- **Why this choice:** Delivers the Phase 7 S3 capability-cleanup objective with minimal runtime risk and stronger contract enforcement for future adapter onboarding.
+- **Impact radius:** `src/cracktrader/exchanges/adapters/base.py`, `src/cracktrader/exchanges/adapters/ccxt.py`, `src/cracktrader/exchanges/adapters/polymarket.py`, `src/cracktrader/exchanges/adapters/kalshi.py`, `tests/contracts/adapters/test_exchange_adapter_contract.py`, `docs/architecture/adapter_onboarding_checklist.md`.
+- **Follow-ups:** Expand adapter contracts for reconnect replay behavior when explicit replay semantics are implemented in live transport layers.
