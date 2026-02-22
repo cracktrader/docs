@@ -336,3 +336,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Keeps parity guarantees close to the normalization seam and increases confidence before Rust-enabled execution environments run the full contract matrix.
 - **Impact radius:** `tests/contracts/engine/test_python_rust_event_normalization_parity.py`.
 - **Follow-ups:** Run parity contracts in Rust-enabled environment and address any runtime binding deltas if surfaced.
+
+## 2026-02-22 - [Perf Infra] Repair benchmark runner paths and native engine benchmark harness
+- **Status:** decided
+- **Context:** Performance smoke entrypoints were failing from two sources: deprecated benchmark harness calls (`CracktraderEngine.adddata/addstrategy`) and automation script references to missing runner files plus stripped subprocess environment on Windows.
+- **Decision:** Rework engine backend benchmark harness to run through native runtime (`NativeEngineRuntime` + `EngineRunner(build_core(...))`) and update automation fallback logic to use pytest benchmark mode when sync runner scripts are absent, while preserving process environment variables in subprocess calls.
+- **Alternatives considered:**
+  - Restore removed legacy runtime API just for benchmarks.
+  - Keep automation script fixed to one platform-specific runner path.
+- **Why this choice:** Keeps benchmark tooling aligned with current native-only runtime architecture and restores cross-platform execution without reintroducing legacy API surface.
+- **Impact radius:** `src/cracktrader/engine/benchmark.py`, `performance/automation/run_benchmarks.py`, `tests/unit/engine/test_benchmark_runtime_api.py`, `tests/unit/engine/test_run_benchmarks_automation.py`.
+- **Follow-ups:** Execute full Rust parity/perf gate in Rust-enabled environment and tune baseline thresholds as needed.
