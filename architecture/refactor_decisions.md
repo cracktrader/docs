@@ -281,3 +281,14 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Keeps Polymarket/Kalshi adapter rollout symmetric and enforces one contract-tested seam per exchange before broader capability cleanup.
 - **Impact radius:** `src/cracktrader/exchanges/adapters/kalshi.py`, `src/cracktrader/exchanges/adapters/__init__.py`, `src/cracktrader/broker/kalshi_live_broker.py`, `tests/contracts/adapters/test_exchange_adapter_contract.py`, `tests/unit/broker/test_prediction_live_broker_submission.py`.
 - **Follow-ups:** Expand both prediction adapters to balance/order-stream normalization coverage and consolidate capability matrix in `P7-S3`.
+
+## 2026-02-22 - [Phase 8 / P8-S1] Add sequencer backend bridge and Rust sequencer surface
+- **Status:** decided
+- **Context:** Phase 8 required sequencer boundary expansion, but backend bridging previously covered only deterministic core (`build_core`), with no Rust sequencer selection path.
+- **Decision:** Add `build_sequencer` and `_RustSequencerAdapter` in `engine/rust_bridge.py`, wire `EngineRunner` with optional `sequencer_backend` selection while preserving explicit `sequencer=` override, add `RustEventSequencer` in Rust extension bindings, and add Python/Rust sequencer parity contract tests (auto-skip when Rust extension unavailable).
+- **Alternatives considered:**
+  - Keep runner on Python sequencer only and defer all backend wiring.
+  - Add bridge helper only without Rust extension class surface.
+- **Why this choice:** Establishes the seam-first backend wiring now, preserves Python fallback behavior, and creates parity enforcement hooks for environments where Rust extension is enabled.
+- **Impact radius:** `src/cracktrader/engine/rust_bridge.py`, `src/cracktrader/engine/runner.py`, `src/cracktrader/engine/__init__.py`, `rust/cracktrader_engine/src/python.rs`, `rust/cracktrader_engine/src/lib.rs`, `tests/unit/engine/test_rust_bridge_smoke.py`, `tests/unit/engine/test_runner.py`, `tests/contracts/engine/test_python_rust_sequencer_parity.py`.
+- **Follow-ups:** Run full Rust parity suites in an environment with compiled `cracktrader_rust` extension and continue Phase 8 with invariant extraction (`P8-S2`).
