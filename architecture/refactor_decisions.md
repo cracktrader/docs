@@ -358,3 +358,58 @@ Use it to record non-trivial design decisions, intentional behavior changes, def
 - **Why this choice:** Smallest targeted fix that restores build correctness and unlocks full parity/perf verification immediately.
 - **Impact radius:** `rust/cracktrader_engine/src/python.rs`; verification commands `scripts/install_rust_backend.py` and `scripts/run_rust_parity_gate.py`.
 - **Follow-ups:** Optional cleanup for remaining Rust compile warnings (`RustEngineError` unused, intent fields currently unused).
+
+## 2026-02-22 - [Phase 3 follow-up] Implement concrete OrderState machine contracts
+- **Status:** decided
+- **Context:** `tests/contracts/state/test_order_state_contracts.py` was still a placeholder skip and there was no explicit state boundary object for applying canonical order transitions with idempotency checks.
+- **Decision:** Add `OrderStateMachine` with `OrderEvent`/`OrderTransitionRecord`, legal transition enforcement, per-order transition history, and duplicate-event idempotency.
+- **Alternatives considered:**
+  - Keep relying on core transition helpers only and leave state contracts as placeholders.
+  - Fold order-state behavior into `AccountState` to avoid another boundary.
+- **Why this choice:** Implements the missing state boundary seam explicitly and converts the skipped contract placeholder into executable coverage.
+- **Impact radius:** `src/cracktrader/state/order_state.py`, `src/cracktrader/state/__init__.py`, `tests/contracts/state/test_order_state_contracts.py`.
+- **Follow-ups:** Evaluate integrating broker order update ingestion through this boundary in a later slice.
+
+## 2026-02-22 - [Phase 3 follow-up] Promote AccountState write authority for local cash/fill mutations
+- **Status:** decided
+- **Context:** `AccountState` existed but broker balance writes still defaulted to legacy direct `_balances` mutation with optional mirror mode.
+- **Decision:** Add `account_state_write_authority` (default enabled) and route `setcash`, `_set_cash`, and fill delta mutation paths through `AccountState`, syncing broker balances from canonical snapshots.
+- **Alternatives considered:**
+  - Keep mirror-write optional behavior as the default.
+  - Switch all paths unconditionally with no compatibility flag.
+- **Why this choice:** Moves toward canonical state ownership while preserving a compatibility escape hatch for controlled rollback.
+- **Impact radius:** `src/cracktrader/broker/universal_broker_base.py`, `src/cracktrader/state/account_state.py`, `tests/contracts/state/test_account_state_contracts.py`, `docs/architecture/mode_divergence_ledger.md`.
+- **Follow-ups:** Expand this authority model to additional reconciliation-sensitive balance paths as they are extracted.
+
+## 2026-02-22 - [Phase 7 follow-up] Normalize prediction live broker callback paths through adapters
+- **Status:** decided
+- **Context:** Polymarket/Kalshi live brokers normalized submit/cancel callbacks but balance and order-stream update callbacks still used raw payload handling.
+- **Decision:** Add adapter-normalized `_on_balance_update` and `_on_order_update` overrides in both prediction live brokers, matching the CCXT normalization pattern.
+- **Alternatives considered:**
+  - Leave callback normalization for prediction brokers deferred.
+  - Move callback normalization into shared live base with broker-type branching.
+- **Why this choice:** Completes high-value adapter seam coverage on active callback ingestion paths with low-risk broker-local changes.
+- **Impact radius:** `src/cracktrader/broker/polymarket_live_broker.py`, `src/cracktrader/broker/kalshi_live_broker.py`, `tests/unit/broker/test_prediction_live_broker_submission.py`.
+- **Follow-ups:** Extend adapter contracts for reconnect/replay semantics when those transport behaviors are formalized.
+
+## 2026-02-22 - [Phase 5 consolidation] Remove legacy OHLCVSubsystem and finalize ownership
+- **Status:** decided
+- **Context:** `OHLCVSubsystem` remained as a legacy/test-only module, leaving unresolved ownership ambiguity despite runtime relying on `MarketDataSubsystem` and `OHLCVCandleRouter`.
+- **Decision:** Remove `src/cracktrader/store/subsystems/ohlcv_subsystem.py` and legacy module-specific tests; keep runtime role coverage focused on the active market-data subsystem path.
+- **Alternatives considered:**
+  - Keep legacy subsystem indefinitely as dormant utility.
+  - Rewire runtime to use `OHLCVSubsystem`.
+- **Why this choice:** Finalizes the documented decision checkpoint with one clear runtime owner and removes dead architectural overlap.
+- **Impact radius:** `src/cracktrader/store/subsystems/ohlcv_subsystem.py` (removed), `tests/unit/store/test_ohlcv_subsystem.py` (removed), `tests/unit/store/test_ohlcv_subsystem_role.py`, `docs/architecture/ohlcv_subsystem_decision.md`.
+- **Follow-ups:** Maintain market data behavior guarantees in contract tests and integration data quality suites.
+
+## 2026-02-22 - [Phase 8 verification] Validate Rust parity contracts in venv runtime
+- **Status:** decided
+- **Context:** Rust parity contract files were present but skipped in this shell due interpreter mismatch (`python` could not import `cracktrader_rust`).
+- **Decision:** Reinstall Rust extension with `scripts/install_rust_backend.py` and run parity contracts with `.venv\\Scripts\\python.exe` to verify sequencer/invariant/event-normalization parity end-to-end.
+- **Alternatives considered:**
+  - Accept skipped parity checks in this environment.
+  - Patch skip guards to force execution without fixing interpreter context.
+- **Why this choice:** Produces real parity evidence in the environment where the extension is installed, without weakening test guards.
+- **Impact radius:** verification commands only (`scripts/install_rust_backend.py`, `.venv\\Scripts\\python.exe -m pytest ...`).
+- **Follow-ups:** Ensure CI uses the same interpreter path or environment activation so parity contracts do not silently skip.

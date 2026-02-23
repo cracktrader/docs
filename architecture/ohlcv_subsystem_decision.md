@@ -1,26 +1,27 @@
-# OHLCVSubsystem Decision Checkpoint (Phase 5 P5-S1)
+# OHLCVSubsystem Decision Checkpoint (Phase 5 Consolidation)
 
 Date: 2026-02-22
 
-## Decision
+## Final Decision
 
-`OHLCVSubsystem` is retained as a legacy/test utility and is not wired into the active runtime store path.
+`OHLCVSubsystem` is removed. Runtime OHLCV ownership is consolidated on:
+
+- `BaseStore -> MarketDataSubsystem -> OHLCVCandleRouter`
+- `StoreMarketDataFeed` contract surface for feed-driver interaction
 
 ## Evidence
 
 - `BaseStore` constructs `MarketDataSubsystem` directly in `src/cracktrader/store/base_store.py`.
-- `MarketDataSubsystem` uses `OHLCVCandleRouter` for OHLCV behavior in `src/cracktrader/store/subsystems/market_data_subsystem.py`.
-- No runtime references to `OHLCVSubsystem` were found in `src/cracktrader` outside its own module.
-- `OHLCVSubsystem` is still covered by unit tests in `tests/unit/store/test_ohlcv_subsystem.py`.
+- `MarketDataSubsystem` owns OHLCV routing via `OHLCVCandleRouter` in `src/cracktrader/store/subsystems/market_data_subsystem.py`.
+- No production call sites depended on `OHLCVSubsystem`.
+- Legacy module and legacy module-specific tests were removed.
 
 ## Outcome
 
-- Keep `OHLCVSubsystem` in the repository for now.
-- Treat it as non-runtime by default.
-- Preserve existing tests as documentation of legacy behavior.
+- Single runtime owner for OHLCV behavior is now explicit.
+- Legacy/test-only subsystem ambiguity is eliminated.
+- Role coverage remains in `tests/unit/store/test_ohlcv_subsystem_role.py`.
 
 ## Follow-up
 
-- During Phase 5 consolidation, either:
-  - merge any valuable behavior into `OHLCVCandleRouter`, or
-  - deprecate/remove `OHLCVSubsystem` with explicit test replacements.
+- Keep market-data contract tests (`tests/contracts/test_market_data_contracts.py`) as the authority for OHLCV callback/ordering behavior.
