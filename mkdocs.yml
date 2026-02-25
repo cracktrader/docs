@@ -66,6 +66,7 @@ nav:
       - Strategy Cookbook: strategy_guide.md
   - Concepts:
       - Architecture: core_concepts/architecture.md
+      - Schema-First Boundary RFC: plans/schema_first_python_rust_boundary_rfc.md
       - Mode Divergence Ledger: mode_divergence_ledger.md
       - Strategies: core_concepts/strategies.md
       - Feeds: core_concepts/feeds.md
