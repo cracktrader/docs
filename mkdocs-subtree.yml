@@ -88,6 +88,7 @@ nav:
       - Strategy analysis: testing/strategy_analysis.md
       - Fixtures & sample strategy: testing/fixture_strategy.md
       - Mocking policy: testing/mocking_policy.md
+      - Rust CI policy: testing/rust_ci_policy.md
       - Test coverage status: testing/test_coverage.md
       - Known gaps: testing/known_gaps.md
   - Contributing:
