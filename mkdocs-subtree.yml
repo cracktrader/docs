@@ -69,6 +69,7 @@ nav:
       - Use the Web API: WEB_API.md
   - Explanations:
       - Architecture: core_concepts/architecture.md
+      - Mode Divergence Ledger: mode_divergence_ledger.md
       - Strategies: core_concepts/strategies.md
       - Feeds: core_concepts/feeds.md
       - Brokers: core_concepts/brokers.md

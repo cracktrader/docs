@@ -266,3 +266,4 @@ class Strategy(bt.Strategy):
 - [**Data Feeds**](feeds.md) - Market data handling
 - [**Brokers**](brokers.md) - Order execution systems
 - [**Strategies**](strategies.md) - Trading logic development
+- [**Mode Divergence Ledger**](../mode_divergence_ledger.md) - Intentional mode differences and linked tests
