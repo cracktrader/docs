@@ -7,8 +7,10 @@ This document defines the current compatibility contract for Backtrader-facing b
 - `broker.getcash()` is stable and deterministic at submission time.
 - `broker.getvalue(datas=[data])` reflects data-scoped position value after fills.
 - Order callback timing (`notify_order`) observes already-updated broker balances/values.
+- Reactive strategy callbacks that place follow-up orders from `notify_order` are supported.
 - Lifecycle callback status progression remains stable for the tested path:
   - `Accepted -> Partial -> Completed`
+  - `Accepted -> Canceled` (non-fill path preserves balances)
 
 Primary contract tests:
 
