@@ -39,6 +39,13 @@ Feed parity gate runner:
 python scripts/run_feed_rust_parity_gate.py
 ```
 
+Notes:
+
+- Requires Rust toolchain (`rustup`/`rustc`) and `maturin` available.
+- Gate includes benchmark baseline comparison against:
+  - `performance/baselines/feed_accelerator_benchmark_baseline.json`
+- CI required lane (`rust-feed-parity-required`) runs this gate with benchmark enabled.
+
 Outputs:
 
 - JSON report at `performance/feed_accelerator_benchmark.json`
@@ -47,16 +54,17 @@ Outputs:
 Published baseline artifact (current branch):
 
 - `performance/reports/feed_accelerator_benchmark_latest.json`
+- `performance/baselines/feed_accelerator_benchmark_baseline.json`
 - Environment sample captured on February 26, 2026:
   - backend: `python`
-  - ticks: `20000`
-  - elapsed: `37.572 ms`
-  - emitted candles: `1999`
+  - ticks: `50000`
+  - elapsed: `79.621 ms`
+  - emitted candles: `4999`
   - parser samples: `5000`
   - hotpaths (ms):
-    - aggregation: `25.031`
-    - parser normalization: `7.301`
-    - reorder sort: `0.419`
+    - aggregation: `61.341`
+    - parser normalization: `7.124`
+    - reorder sort: `0.399`
 
 ## Parity expectations
 
