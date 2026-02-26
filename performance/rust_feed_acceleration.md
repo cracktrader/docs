@@ -50,9 +50,13 @@ Published baseline artifact (current branch):
 - Environment sample captured on February 26, 2026:
   - backend: `python`
   - ticks: `20000`
-  - elapsed: `33.135 ms`
+  - elapsed: `37.572 ms`
   - emitted candles: `1999`
   - parser samples: `5000`
+  - hotpaths (ms):
+    - aggregation: `25.031`
+    - parser normalization: `7.301`
+    - reorder sort: `0.419`
 
 ## Parity expectations
 
