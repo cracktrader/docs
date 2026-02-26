@@ -1,73 +1,37 @@
 # Using the Web Interface
 
-Cracktrader provides a modern web interface for monitoring and controlling your trading strategies. The web interface offers real-time data visualization, strategy management, and performance analytics.
+The local web interface is served directly by the FastAPI runtime and is intended for local workstation use.
 
-## Starting the Web Interface
-
-To launch the web interface:
+## Start the server
 
 ```python
 from cracktrader.web import start_web_server
 
-# Start the web server
-start_web_server(host="0.0.0.0", port=8080)
+start_web_server(host="127.0.0.1", port=8080)
 ```
 
-Or use the command line:
+Then open:
 
-```bash
-cracktrader web --host 0.0.0.0 --port 8080
-```
+- `http://127.0.0.1:8080/ui`
 
-## Features
+## What v1 UI supports
 
-### Dashboard Overview
-- Real-time portfolio performance
-- Active strategy status
-- Exchange connection health
-- System resource monitoring
+- Start backtest/paper/sandbox/live runs
+- Stop and reset runs
+- Live status updates (WebSocket + polling)
+- Health and result payload visibility
+- Strategy/exchange selection with config inputs
+- Visible API error banner for actionable failures
 
-### Strategy Management
-- Start/stop strategies
-- View strategy parameters
-- Monitor strategy performance
-- Real-time position tracking
+## Local-only threat model
 
-### Data Visualization
-- Interactive price charts
-- Performance analytics
-- Trade history
-- Risk metrics
+Authentication is intentionally out-of-scope for v1. Treat this UI/API as local-trusted only.
 
-### System Monitoring
-- Exchange connectivity status
-- Data feed health
-- System resource usage
-- Error logs and alerts
+- Bind to loopback (`127.0.0.1`) by default.
+- Do not expose this endpoint publicly without adding auth and transport hardening.
+- Keep reverse-proxy/auth integration as the extension seam for future secured deployments.
 
-## Configuration
+## Related references
 
-The web interface can be configured through the main configuration file or environment variables:
-
-```json
-{
-  "web": {
-    "host": "0.0.0.0",
-    "port": 8080,
-    "debug": false,
-    "cors_origins": ["http://localhost:3000"]
-  }
-}
-```
-
-## Security Considerations
-
-- The web interface should only be accessible from trusted networks
-- Use HTTPS in production environments
-- Configure proper authentication if exposing publicly
-- Monitor access logs regularly
-
-## Next Steps
-
-- [Configuration](configuration.md) - Learn about web interface configuration options
-- [Web API Reference](../reference/web_api.md) - Explore the REST API endpoints
+- [Web API Reference](../reference/web_api.md)
+- [Research Pipeline Reference](../reference/research_pipeline.md)

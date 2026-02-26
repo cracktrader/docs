@@ -32,9 +32,9 @@ Core endpoints
 - `GET /status`
   - Response: run lifecycle fields (`run_id`, `status`, `mode`, timing, pnl/value/cash, errors)
 - `GET /status/detailed`
-  - Response: `/status` + `recent_trades`, `equity_curve`, `performance_metrics`, `health`
+  - Response: `/status` + `recent_orders`, `recent_trades`, `positions`, `equity_curve`, `performance_metrics`, `health`
 - `GET /results`
-  - Response: `run_id`, `config`, `status`, `start_time`, `end_time`, `trades`, `equity_curve`, `performance_metrics`, `final_value`, `error`
+  - Response: `run_id`, `config`, `status`, `start_time`, `end_time`, `orders`, `trades`, `positions`, `equity_curve`, `performance_metrics`, `final_value`, `error`
 
 Run lifecycle endpoints
 
@@ -87,6 +87,23 @@ Realtime stream
   "timestamp": "2026-02-26T00:00:00Z"
 }
 ```
+
+Local UI shell
+
+- `GET /ui`
+- Local-first dashboard for run control and monitoring.
+- Uses `GET /api/v1/health`, `GET /api/v1/status`, `GET /api/v1/results`,
+  `GET /api/v1/strategies`, `GET /api/v1/exchanges`,
+  `POST /api/v1/run/backtest`, `POST /api/v1/run/live`,
+  `POST /api/v1/run/stop`, `DELETE /api/v1/run/reset`,
+  and `WS /api/v1/ws/status`.
+
+Security model (v1)
+
+- Local-only trusted-host model by default (auth is deferred).
+- Bind to loopback unless an authenticated proxy is added.
+- Auth/session integration should be added at the HTTP edge without changing
+  core run-control contracts.
 
 Parent tracking
 
