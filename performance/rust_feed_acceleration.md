@@ -39,6 +39,13 @@ Optional parser normalization workload control:
 python scripts/benchmark_feed_accelerators.py --ticks 50000 --timeframe-ms 1000 --parser-samples 20000
 ```
 
+Baseline comparisons are strict by default: `parser_samples_used` must match baseline/current.
+Override only for exploratory checks:
+
+```bash
+python scripts/benchmark_feed_accelerators.py --allow-parser-samples-mismatch
+```
+
 Feed parity gate runner:
 
 ```bash
