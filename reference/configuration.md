@@ -60,6 +60,10 @@ Brokers (order execution)
   - Sell fills: `price * (1 - bps/10000)`
   - Limit orders remain price-protected (slippage cannot violate the limit bound)
   - Default remains `0` bps when not configured
+- Backtest deterministic latency model (v1):
+  - `execution_realism={"latency": {"model": "bar_delay", "bars": 1}}`
+  - Semantics: defer order fill/trigger evaluation by N engine bars after submission
+  - Default remains `0` bars when not configured
 
 Example
 
@@ -75,6 +79,13 @@ paper_slippage = BrokerFactory.create(
     cash=10_000,
     commission=0.001,
     execution_realism={"slippage": {"model": "fixed_bps", "bps": 10.0}},
+)
+
+# Backtest/paper with deterministic 1-bar execution delay
+paper_latency = BrokerFactory.create(
+    mode='paper',
+    cash=10_000,
+    execution_realism={"latency": {"model": "bar_delay", "bars": 1}},
 )
 
 # Live
