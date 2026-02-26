@@ -53,6 +53,13 @@ Override only for exploratory checks:
 python scripts/benchmark_feed_accelerators.py --allow-workload-shape-mismatch
 ```
 
+Baseline summary validation runs by default before comparison (schema + required backends).
+Override only for exploratory checks:
+
+```bash
+python scripts/benchmark_feed_accelerators.py --skip-baseline-validate
+```
+
 Feed parity gate runner:
 
 ```bash
