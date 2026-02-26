@@ -24,6 +24,7 @@ Python and Rust share the same bridge contract in `cracktrader.feeds.rust_bridge
 - Default backend is `python`.
 - If `feed_backend="rust"` is requested but extension is not installed, the driver logs a warning and falls back to Python.
 - This keeps runtime behavior stable while enabling opt-in acceleration.
+- Live trade aggregation drops stale out-of-order ticks older than the active bucket start to avoid bucket time regression; the drop counter is exposed via runtime stats as `trade_out_of_order_dropped`.
 
 ## Profiling / benchmark workflow
 
