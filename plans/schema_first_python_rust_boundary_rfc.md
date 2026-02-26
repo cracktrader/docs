@@ -100,8 +100,14 @@ Initial schema package and validators are now in-repo:
 
 ## Follow-up Implementation Issues
 
+- [#34](https://github.com/cracktrader/cracktrader/issues/34): Python↔Rust LEGAL_TRANSITIONS matrix parity
+- [#40](https://github.com/cracktrader/cracktrader/issues/40): mode policy contract suite
 - [#41](https://github.com/cracktrader/cracktrader/issues/41): VenueAdapter boundary
 - [#42](https://github.com/cracktrader/cracktrader/issues/42): reconciliation contracts
+- [#43](https://github.com/cracktrader/cracktrader/issues/43): replay regression CI gate
+- [#44](https://github.com/cracktrader/cracktrader/issues/44): mode divergence ledger
 - [#45](https://github.com/cracktrader/cracktrader/issues/45): timeline and trace correlation
+- [#47](https://github.com/cracktrader/cracktrader/issues/47): Rust availability/parity CI policy
+- [#48](https://github.com/cracktrader/cracktrader/issues/48): Backtrader compatibility contracts
 
 Additional schema-specific implementation issues may be split from #46 as needed.
