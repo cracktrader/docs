@@ -46,6 +46,13 @@ For exploratory local runs only, you can bypass this guard:
 python scripts/run_feed_rust_parity_gate.py --allow-missing-baseline
 ```
 
+The gate also requires benchmark output for both `python` and `rust` backends by default.
+You can override required backends for ad-hoc local checks:
+
+```bash
+python scripts/run_feed_rust_parity_gate.py --require-backend python
+```
+
 Notes:
 
 - Requires Rust toolchain (`rustup`/`rustc`) and `maturin` available.
