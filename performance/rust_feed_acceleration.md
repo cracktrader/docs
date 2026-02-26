@@ -45,6 +45,7 @@ Notes:
 - Gate includes benchmark baseline comparison against:
   - `performance/baselines/feed_accelerator_benchmark_baseline.json`
 - CI required lane (`rust-feed-parity-required`) runs this gate with benchmark enabled.
+- CI lane uploads feed benchmark artifacts and emits a benchmark table in job summary.
 
 Outputs:
 
