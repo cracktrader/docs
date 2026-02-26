@@ -7,7 +7,7 @@ CCXTStore (exchange connectivity)
 - `exchange` (str): CCXT exchange id, e.g., `"binance"`
 - `sandbox` (bool): Use testnet/paper endpoints when available
 - `config` (dict): Passed to CCXT (e.g., `apiKey`, `secret`, `enableRateLimit`)
-- `cache_enabled` (bool): Enable historical data caching
+- `cache_enabled` (bool): Enable historical data caching (default: `True`)
 - `cache_dir` (str): Cache directory path
 - `exchange_instance` (object): Preconfigured CCXT instance (advanced/testing)
 
@@ -20,10 +20,35 @@ store = CCXTStore(
     exchange='binance',
     sandbox=True,
     config={'apiKey': '...', 'secret': '...', 'enableRateLimit': True},
-    cache_enabled=True,
     cache_dir='./data'
 )
 ```
+
+Cache invalidation and refresh controls
+
+- Config (`read_policy`):
+  - `cache_enabled` (bool, default `true`)
+  - `cache_dir` (str, default `"data"`)
+  - `refresh_cache` (bool, default `false`) for store-level default refresh behavior
+- API:
+  - `store.invalidate_cache(exchange=..., symbol=..., timeframe=..., instrument_type=...)`
+  - `store.fetch_historical_ohlcv(..., refresh_cache=True)` to force refresh a stream
+- CLI:
+  - `cracktrader data invalidate --exchange binance --instrument spot --symbol BTC/USDT --timeframe 1m`
+  - `cracktrader data backfill --exchange binance --symbol BTC/USDT --timeframe 1m --refresh`
+
+Determinism and stale-data semantics
+
+- Default behavior (`refresh_cache=False`): cached candles are reused when they satisfy the request.
+- `refresh_cache=True`: matching cache scope is invalidated before remote fetch, then replaced with fresh data.
+- `use_cache=False`: bypass read-path cache usage for that call.
+
+Reference benchmark delta (2026-02-26, local dev sample)
+
+- Dataset: 2,000 1m candles, simulated remote latency.
+- First fetch (cold path): `73.82 ms`
+- Second fetch (cache hit): `16.54 ms`
+- Observed speedup: `4.46x`
 
 CCXTDataFeed (market data)
 
