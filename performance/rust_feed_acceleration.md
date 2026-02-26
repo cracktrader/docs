@@ -38,6 +38,16 @@ Outputs:
 - JSON report at `performance/feed_accelerator_benchmark.json`
 - backend elapsed timing and optional speedup ratio (`speedup_python_over_rust`) when Rust is available
 
+Published baseline artifact (current branch):
+
+- `performance/reports/feed_accelerator_benchmark_latest.json`
+- Environment sample captured on February 26, 2026:
+  - backend: `python`
+  - ticks: `20000`
+  - elapsed: `33.135 ms`
+  - emitted candles: `1999`
+  - parser samples: `5000`
+
 ## Parity expectations
 
 Rust and Python backends must match for:
