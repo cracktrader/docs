@@ -36,6 +36,7 @@ Cache invalidation and refresh controls
 - CLI:
   - `cracktrader data invalidate --exchange binance --instrument spot --symbol BTC/USDT --timeframe 1m`
   - `cracktrader data backfill --exchange binance --symbol BTC/USDT --timeframe 1m --refresh`
+  - `cracktrader data migrate-cache --source ./data --exchange binance --instrument spot`
 
 Determinism and stale-data semantics
 
