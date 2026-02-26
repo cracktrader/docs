@@ -55,6 +55,11 @@ Brokers (order execution)
 
 - Paper/backtest: `BrokerFactory.create(mode='paper', cash=..., commission=..., slip_perc=...)`
 - Live: `BrokerFactory.create(mode='live', store=store)`
+- Backtest execution realism (v1 slippage): `execution_realism={"slippage": {"model": "fixed_bps", "bps": 10.0}}`
+  - Buy fills: `price * (1 + bps/10000)`
+  - Sell fills: `price * (1 - bps/10000)`
+  - Limit orders remain price-protected (slippage cannot violate the limit bound)
+  - Default remains `0` bps when not configured
 
 Example
 
@@ -63,6 +68,14 @@ from cracktrader.broker import BrokerFactory
 
 # Paper
 paper = BrokerFactory.create(mode='paper', cash=10_000, commission=0.001)
+
+# Backtest/paper with deterministic fixed-bps slippage
+paper_slippage = BrokerFactory.create(
+    mode='paper',
+    cash=10_000,
+    commission=0.001,
+    execution_realism={"slippage": {"model": "fixed_bps", "bps": 10.0}},
+)
 
 # Live
 live = BrokerFactory.create(mode='live', store=store)
