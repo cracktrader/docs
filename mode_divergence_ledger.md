@@ -27,6 +27,7 @@ Each divergence entry should include:
 | id | area | modes_affected | behavior | justification | owner | status | introduced_in | test_reference | notes |
 |---|---|---|---|---|---|---|---|---|---|
 | MDL-001 | engine normalization | backtest vs paper/sandbox/live | In `backtest`, missing timestamps in `normalize_order_event`, `normalize_fill_event`, and `normalize_timer_event` raise an error instead of falling back to wall-clock. | Preserve deterministic replay and prevent non-reproducible event timelines in backtests. | engine team | active | #36 | `tests/unit/engine/test_events.py`, `tests/contracts/engine/test_python_rust_event_normalization_parity.py` | Paper/sandbox/live may still use wall-clock fallback when explicit timestamps are unavailable. |
+| MDL-002 | broker submission path | backtest/paper vs sandbox/live | `backtest` and `paper` route submission through the simulated `CCXTBackBroker`, while `sandbox` and `live` use async real-time broker paths. | Keep offline determinism and test speed for research modes while preserving venue-coupled semantics for real-time modes. | engine team | active | #35 | `tests/contracts/test_mode_contracts.py`, `tests/unit/factory/test_broker_factory.py` | This divergence is intentional and relied on by mode contract suites. |
 
 ## Update Policy
 
