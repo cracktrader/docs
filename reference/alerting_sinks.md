@@ -18,6 +18,7 @@ Alert routing is available via `cracktrader.alerts`.
 - `stdout`: prints JSON lines
 - `webhook`: HTTP POST JSON payload
 - `email`: SMTP message delivery
+- `signal`: HTTP relay to Signal gateway/service
 
 ## Registry + Fanout
 
@@ -62,4 +63,13 @@ email_cfg = {
     "sender_email": "alerts@example.com",
     "recipient_email": "ops@example.com",
 }
+signal_cfg = {
+    "type": "signal",
+    "endpoint": "https://signal.example/send",
+    "default_recipient": "+15550000000",
+    "route_map": {"risk_trigger": "+15551111111"},
+    "token": "SIGNAL_GATEWAY_TOKEN",
+}
 ```
+
+For Signal sink secrets, pass `token` from secure config/environment and avoid hardcoding in code.
