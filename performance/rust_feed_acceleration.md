@@ -46,6 +46,13 @@ Override only for exploratory checks:
 python scripts/benchmark_feed_accelerators.py --allow-parser-samples-mismatch
 ```
 
+Workload shape (`ticks`, `timeframe_ms`) is also strict by default during baseline comparisons.
+Override only for exploratory checks:
+
+```bash
+python scripts/benchmark_feed_accelerators.py --allow-workload-shape-mismatch
+```
+
 Feed parity gate runner:
 
 ```bash
