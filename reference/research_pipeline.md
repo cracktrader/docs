@@ -52,3 +52,5 @@ rows = compare_registered_runs(registry)
 best = rows[0]
 print(best["run_id"], best["metric"])
 ```
+
+For time-series validation sampler details, see `docs/reference/research_samplers.md`.
