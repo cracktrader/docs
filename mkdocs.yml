@@ -89,6 +89,7 @@ nav:
           - Strategy Analysis: testing/strategy_analysis.md
           - Fixtures & Sample Strategy: testing/fixture_strategy.md
           - Mocking Policy: testing/mocking_policy.md
+          - Backtrader Compatibility Envelope: testing/backtrader_compatibility_envelope.md
           - Rust CI Policy: testing/rust_ci_policy.md
           - Test Coverage Status: testing/test_coverage.md
           - Known Gaps: testing/known_gaps.md
