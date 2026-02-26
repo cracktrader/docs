@@ -60,6 +60,10 @@ Override only for exploratory checks:
 python scripts/benchmark_feed_accelerators.py --skip-baseline-validate
 ```
 
+Note:
+- Required backend enforcement applies to the current benchmark output.
+- Baseline validation checks schema integrity by default and does not require all current required backends to be present.
+
 Feed parity gate runner:
 
 ```bash
