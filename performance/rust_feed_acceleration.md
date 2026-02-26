@@ -8,11 +8,14 @@ Feed acceleration currently targets two hot paths:
 
 - Tick bucketing / candle aggregation from trades
 - Reorder-buffer sorting for out-of-order ticks
+- Feed payload parsing / normalization (trade + OHLCV)
 
 Python and Rust share the same bridge contract in `cracktrader.feeds.rust_bridge`:
 
 - `aggregate_trade_bucket(...) -> {emit, next_bucket_start_ms, next_bucket}`
 - `sort_reorder_buffer(candles) -> {sorted, out_of_order_count}`
+- `normalize_trade_payload(payload) -> {timestamp_ms, price, amount} | None`
+- `normalize_ohlcv_payload(payload) -> [ts, open, high, low, close, volume] | None`
 
 `NativeCCXTFeedDriver` accepts `feed_backend="python" | "rust"` and keeps Python fallback if Rust is unavailable.
 
@@ -44,3 +47,7 @@ Rust and Python backends must match for:
 - reorder sort order for out-of-order timestamps
 
 Parity is guarded by feed unit tests and bridge smoke tests.
+
+When Rust extension is installed, cross-backend parity harness runs:
+
+- `tests/unit/feed/test_rust_feed_parity.py`
