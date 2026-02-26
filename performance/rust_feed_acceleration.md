@@ -33,6 +33,12 @@ Run:
 python scripts/benchmark_feed_accelerators.py --ticks 50000 --timeframe-ms 1000
 ```
 
+Optional parser normalization workload control:
+
+```bash
+python scripts/benchmark_feed_accelerators.py --ticks 50000 --timeframe-ms 1000 --parser-samples 20000
+```
+
 Feed parity gate runner:
 
 ```bash
