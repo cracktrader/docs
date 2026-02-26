@@ -84,6 +84,14 @@ Parity generation:
 4. Tighten runtime boundary checks behind explicit debug policy.
 5. Freeze v1 schema and document versioning process.
 
+## Current implementation status
+
+Initial schema package and validators are now in-repo:
+
+- `schemas/engine/*.schema.json`
+- `src/cracktrader/engine/schema_contracts.py`
+- `tests/unit/engine/test_schema_contracts.py` validates parity fixture corpus against schema contracts
+
 ## Non-Goals
 
 - Rewriting internal in-memory data structures to match wire shape.
