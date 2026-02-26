@@ -33,6 +33,12 @@ Run:
 python scripts/benchmark_feed_accelerators.py --ticks 50000 --timeframe-ms 1000
 ```
 
+Feed parity gate runner:
+
+```bash
+python scripts/run_feed_rust_parity_gate.py
+```
+
 Outputs:
 
 - JSON report at `performance/feed_accelerator_benchmark.json`
