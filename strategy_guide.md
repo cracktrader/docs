@@ -867,6 +867,37 @@ class ConfigurableStrategy(bt.Strategy):
         self.sma_slow = bt.indicators.SMA(period=self.config.slow_period)
 ```
 
+## Pegged Order Top-Of-Book Source
+
+`PeggedIntentStrategy` supports explicit control over how top-of-book prices are sourced for intent pricing.
+
+- `lines_fallback` (default): use feed bid/ask lines first, then fallback to broker orderbook.
+- `lines_only`: use feed bid/ask lines only.
+- `orderbook_prefer`: prefer broker orderbook best bid/ask, fallback to feed lines.
+- `orderbook_only`: require broker orderbook best bid/ask.
+
+Strategy-wide default:
+
+```python
+class MyPegStrategy(ct.PeggedIntentStrategy):
+    params = dict(
+        pegged_top_source="lines_fallback",
+    )
+```
+
+Per-intent override:
+
+```python
+yield ct.PeggedIntentSpec(
+    data=self.data0,
+    fair_value=self.signal[0],
+    qty=10,
+    side="buy",
+    band=0.02,
+    top_source="orderbook_prefer",
+)
+```
+
 ## Testing Strategies
 
 ### Unit Testing
