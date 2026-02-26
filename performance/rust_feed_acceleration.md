@@ -61,6 +61,7 @@ Notes:
 - CI required lane (`rust-feed-parity-required`) runs this gate with benchmark enabled.
 - CI lane uploads feed benchmark artifacts and emits a benchmark table in job summary.
 - Benchmark step requires both `python` and `rust` backend results in gate runs.
+- Benchmark script validates summary shape (ticks/timeframe/backend metrics/hotpath fields) unless `--skip-summary-validate` is set.
 
 Outputs:
 
