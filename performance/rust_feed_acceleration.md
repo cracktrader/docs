@@ -39,6 +39,13 @@ Feed parity gate runner:
 python scripts/run_feed_rust_parity_gate.py
 ```
 
+By default, the gate requires the benchmark baseline file to exist when benchmark checks are enabled.
+For exploratory local runs only, you can bypass this guard:
+
+```bash
+python scripts/run_feed_rust_parity_gate.py --allow-missing-baseline
+```
+
 Notes:
 
 - Requires Rust toolchain (`rustup`/`rustc`) and `maturin` available.
