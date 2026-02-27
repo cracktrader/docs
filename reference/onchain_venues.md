@@ -91,6 +91,14 @@ results = engine.run_native(
 - Tx lifecycle and private-first fallback semantics are defined in the architecture ADR:
   [On-chain Venue Architecture ADR](../plans/onchain_venue_architecture_adr.md).
 
+### Contract executor policy (v1.5 additive backend)
+- Optional policy guard can enforce:
+  - token allowlist
+  - max notional
+  - slippage cap
+  - global pause
+- Policy violations return rejected/failed logical outcomes without changing public factory/session APIs.
+
 ## Fee and Accounting Surface
 
 On-chain broker results expose:
