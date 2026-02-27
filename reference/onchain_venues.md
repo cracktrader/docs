@@ -109,6 +109,33 @@ results = engine.run_native(
 - Broker diagnostics preserve the same schema and add mempool fields (`mempool_action`, `mev_risk_score`) when enabled.
 - Replacement decisions should surface through existing replacement/fallback diagnostics and fee attribution components.
 
+## v2 vs v3 Connector Configuration
+
+Default routing remains v2-compatible. To opt into v3 connector behavior:
+
+```python
+session = ct.exchange(
+    "uniswap",
+    connector_name="uniswap_v3",
+    pools_json_path="tests/fixtures/onchain/data/pools.json",
+)
+```
+
+Pancake v3:
+
+```python
+session = ct.exchange(
+    "pancakeswap",
+    connector_name="pancakeswap_v3",
+    pools_json_path="tests/fixtures/onchain/data/pools.json",
+)
+```
+
+Current v3 caveats:
+- v3 path is deterministic and protocol-compatible with the existing connector interface.
+- v2 connector semantics and tests remain unchanged.
+- Backtest parity for v3 uses deterministic snapshot pricing and should be validated with venue fixtures before production rollout.
+
 ## Fee and Accounting Surface
 
 On-chain broker results expose:
