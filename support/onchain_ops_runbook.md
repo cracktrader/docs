@@ -57,6 +57,18 @@ Actions:
 3. Audit relay/network errors for cause (rate limit, auth, transport).
 4. Continue tracking tx under public hash.
 
+## Mempool / MEV Policy Rejection
+
+Symptoms:
+- order returns rejected with `failure_reason=mempool_policy_violation`
+- diagnostics show `mempool_action=block`
+
+Actions:
+1. Capture `mev_risk_score` and policy thresholds used.
+2. Verify watcher signal provenance and freshness.
+3. For false positives, tune risk thresholds in non-production first.
+4. Keep lifecycle and diagnostics schema unchanged when adjusting policy knobs.
+
 ## Failure: Reorg
 
 Symptoms:

@@ -104,6 +104,11 @@ results = engine.run_native(
 - Permit2 gas should be attributed through the same fee breakdown approval-gas component to preserve accounting compatibility.
 - Migration guidance: start with Permit2 disabled, enable per-environment after permit signature plumbing and signer policies are validated.
 
+### Mempool / MEV-aware policy hooks (v1.5 additive backend)
+- Optional mempool watcher can provide risk assessment signals (`allow/replace/block`).
+- Broker diagnostics preserve the same schema and add mempool fields (`mempool_action`, `mev_risk_score`) when enabled.
+- Replacement decisions should surface through existing replacement/fallback diagnostics and fee attribution components.
+
 ## Fee and Accounting Surface
 
 On-chain broker results expose:
