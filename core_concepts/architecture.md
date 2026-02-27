@@ -263,6 +263,7 @@ class Strategy(bt.Strategy):
 ## Next Steps
 
 - [**Exchanges**](exchanges.md) - Exchange integration details
+- [**On-chain Venues**](../reference/onchain_venues.md) - Uniswap/PancakeSwap usage, config, and backtest path
 - [**Data Feeds**](feeds.md) - Market data handling
 - [**Brokers**](brokers.md) - Order execution systems
 - [**Strategies**](strategies.md) - Trading logic development

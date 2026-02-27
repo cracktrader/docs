@@ -234,3 +234,19 @@ session = ct.exchange("kalshi")
 feed = session.feed(symbol="K:TEST", live=False)
 broker = session.broker(mode="paper")
 ```
+
+## On-chain DEX venues (Uniswap / PancakeSwap)
+
+On-chain venues use the same factory/session surface:
+
+```python
+import cracktrader as ct
+
+session = ct.exchange("uniswap", mode="paper")
+feed = session.feed(symbol="WETH/USDC", amount_in=10**18)
+broker = session.broker(mode="paper")
+```
+
+For configuration, security notes, and operations guidance:
+- [On-chain Venues Reference](../reference/onchain_venues.md)
+- [On-chain Operations Runbook](../support/onchain_ops_runbook.md)
