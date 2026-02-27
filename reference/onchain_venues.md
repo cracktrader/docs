@@ -99,6 +99,11 @@ results = engine.run_native(
   - global pause
 - Policy violations return rejected/failed logical outcomes without changing public factory/session APIs.
 
+### Permit2 approval flow (v1.5 additive backend)
+- Approval manager construction supports a Permit2-enabled path with fallback to existing infinite approval behavior.
+- Permit2 gas should be attributed through the same fee breakdown approval-gas component to preserve accounting compatibility.
+- Migration guidance: start with Permit2 disabled, enable per-environment after permit signature plumbing and signer policies are validated.
+
 ## Fee and Accounting Surface
 
 On-chain broker results expose:
