@@ -2,14 +2,6 @@
 
 This page describes how to use Cracktrader as a reusable connectivity layer for an external arbitrage runner.
 
-## Reference runner
-
-The maintained reference orchestration repo is:
-
-- `https://github.com/cracktrader/cracktrader-arb-runner`
-
-Use that repo for scanner orchestration, paper execution workflow, reporting, replay, and operator runbooks.
-
 ## Why this pattern
 
 Keep Cracktrader focused on:
