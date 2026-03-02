@@ -104,4 +104,3 @@ When approval is linked to the same logical order chain:
 - Lifecycle timeline captured (submitted/pending/mined/finalized or failure path).
 - Fee attribution snapshot recorded.
 - Root cause tagged: gas, nonce, relay, path/liquidity, chain stability, config.
-

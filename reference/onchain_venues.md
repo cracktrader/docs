@@ -153,4 +153,3 @@ On-chain broker results expose:
 
 For operational failure handling (stuck tx, replacement, fallback, reorg), see:
 - [On-chain Operations Runbook](../support/onchain_ops_runbook.md)
-
