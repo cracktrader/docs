@@ -11,8 +11,8 @@ Public documentation for CrackTrader - A cryptocurrency trading framework.
 ### Setup
 ```bash
 # Clone repository
-git clone https://github.com/cracktrader/cracktrader-docs.git
-cd cracktrader-docs
+git clone https://github.com/cracktrader/docs.git
+cd docs
 
 # Install dependencies
 pip install -r requirements.txt
@@ -47,7 +47,7 @@ mkdocs gh-deploy
 ## Repository Structure
 
 ```
-cracktrader-docs/
+docs/
 ├── docs/                  # Documentation source
 │   ├── index.md          # Homepage
 │   ├── getting_started/  # Setup guides

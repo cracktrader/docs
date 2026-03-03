@@ -1,5 +1,7 @@
 # Research Samplers (Walk-Forward, Purged CV, Embargo)
 
+Source repository: [`cracktrader-lab`](https://github.com/cracktrader/cracktrader-lab).
+
 `research.dsl_evaluator.samplers` provides time-series-safe sampling helpers for research validation.
 
 ## Supported samplers

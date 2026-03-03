@@ -1,6 +1,6 @@
 ﻿site_name: Cracktrader Documentation
 site_description: A modern trading framework with native CCXT and prediction-market support
-site_url: https://your-domain.com/cracktrader-docs  # Update with your VPS domain
+site_url: https://cracktrader.github.io/docs/
 
 repo_name: cracktrader
 edit_uri: ""

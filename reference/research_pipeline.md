@@ -1,5 +1,7 @@
 # Research Pipeline: Run Metadata, Artifacts, and Comparison
 
+Source repository: [`cracktrader-lab`](https://github.com/cracktrader/cracktrader-lab).
+
 The DSL evaluator writes each run under `.cracktrader/runs/<run_id>/` (or `EvaluationOptions.artifacts_root` when provided).
 
 ## Stored outputs

@@ -3,7 +3,7 @@
 Cracktrader keeps the core library focused on exchange connectivity, stores,
 feeds, and brokers. Optional indicators, analyzers, strategies, and runnable
 examples now live in the unified companion package named
-[`cracktrader_extras`](https://github.com/LachlanBridges/cracktrader-extras).
+[`cracktrader_extras`](https://github.com/cracktrader/cracktrader-extras).
 
 ## Installing extras
 

@@ -4,17 +4,17 @@ How to publish CrackTrader documentation to the public repository.
 
 ## Overview
 
-CrackTrader uses a **git subtree** approach to publish documentation from the private main repository to a separate public documentation repository at `https://github.com/cracktrader/cracktrader-docs`.
+CrackTrader uses a **git subtree** approach to publish documentation from the private main repository to a separate public documentation repository at `https://github.com/cracktrader/docs`.
 
 ## Setup (One-time)
 
 ### 1. Add Public Repository Remote
 ```bash
-git remote add docs-public https://github.com/cracktrader/cracktrader-docs.git
+git remote add docs-public https://github.com/cracktrader/docs.git
 ```
 
 ### 2. Create Public Repository on GitHub
-- Repository name: `cracktrader-docs`
+- Repository name: `docs`
 - Visibility: **Public**
 - Don't initialize with README (we'll push content)
 
@@ -74,7 +74,7 @@ Once published, GitHub Actions automatically:
 
 ### Permission Denied
 ```bash
-git remote set-url docs-public https://github.com/cracktrader/cracktrader-docs.git
+git remote set-url docs-public https://github.com/cracktrader/docs.git
 ```
 
 ### Subtree Push Fails

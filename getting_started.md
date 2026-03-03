@@ -11,7 +11,7 @@ pip install cracktrader
 ```
 
 Extras such as indicators and runnable examples now live in
-[`cracktrader-extras`](https://github.com/LachlanBridges/cracktrader-extras).
+[`cracktrader-extras`](https://github.com/cracktrader/cracktrader-extras).
 Install it when you need the additional toolbox.
 
 ## Core ideas
