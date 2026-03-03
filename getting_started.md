@@ -18,9 +18,9 @@ Install it when you need the additional toolbox.
 
 Cracktrader exposes three factory functions:
 
-- `Store(exchange=...)` – shared connection state for an exchange
-- `Feed(symbol=..., exchange=..., store=...)` – Backtrader-compatible market data feed
-- `Broker(mode=..., exchange=..., store=...)` – order routing built on top of the store
+- `Store(exchange=...)` â€“ shared connection state for an exchange
+- `Feed(symbol=..., exchange=..., store=...)` â€“ Backtrader-compatible market data feed
+- `Broker(mode=..., exchange=..., store=...)` â€“ order routing built on top of the store
 
 All three components mirror the CCXT integration and work identically for
 Polymarket.
