@@ -1,30 +1,19 @@
 # cracktrader_extras Release Notes
 
-The `cracktrader-extras/` directory is maintained in-tree so development and CI
-can cover the core library and optional packages together. When you need to
-publish or sync the extras package to its dedicated repository, use `git subtree`
-from the root of this repo:
+`cracktrader-extras` is now maintained as a standalone repository:
 
-```bash
-# create/update a split branch that only contains the extras directory
-EXTRAS_BRANCH=extras/latest
-PREFIX=cracktrader-extras
+- https://github.com/cracktrader/cracktrader-extras
 
-git subtree split --prefix "$PREFIX" --branch "$EXTRAS_BRANCH"
+Core (`cracktrader`) no longer keeps an in-tree mirror of the extras package.
 
-# push to the remote repo you use for cracktrader-extras
-# (replace origin-extras with the remote that points at github.com/.../cracktrader-extras)
-git push origin-extras "$EXTRAS_BRANCH":main
-```
+## Release workflow
 
-After pushing, tag/releases can be cut in the extras repo as usual. When you
-want to bring changes from the external repo back here, `git subtree pull` keeps
-history clean:
+1. Work in the `cracktrader-extras` repository directly.
+2. Run that repository's lint/test checks.
+3. Tag and publish from `cracktrader-extras`.
 
-```bash
-git subtree pull --prefix "$PREFIX" origin-extras main
-```
+## Core repo changes
 
-Keeping the subtree locally means tests and documentation stay in lockstep,
-while publishing still produces a clean, standalone repository for package
-releases.
+When extras API/examples change, update references in core docs (for example,
+`docs/plugins_and_extras.md`, `docs/strategy_guide.md`, and related pages) to
+point at the latest extras repository paths.

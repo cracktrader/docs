@@ -1,10 +1,13 @@
 # Basic Strategy Example
 
-A complete, runnable moving-average crossover strategy. This page includes the source directly from the examples directory so it stays in sync.
+A complete, runnable moving-average crossover strategy from the optional
+`cracktrader-extras` package.
 
 ## Source
 
---8<-- "../../cracktrader-extras/src/cracktrader_extras/examples/moving_average_cross.py"
+Canonical source:
+
+- https://github.com/cracktrader/cracktrader-extras/blob/main/src/cracktrader_extras/examples/moving_average_cross.py
 
 ## Run It
 
