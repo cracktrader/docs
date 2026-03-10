@@ -64,47 +64,50 @@ nav:
   - Architecture:
       - Read This First: architecture/agent_index.md
       - Runtime Map: architecture/runtime_map.md
+      - Source of Truth and Migration Map: migration/docs_source_of_truth.md
       - Mode Matrix: architecture/mode_matrix.md
       - Runtime Terms: architecture/runtime_terms.md
-      - Legacy Architecture Context: core_concepts/architecture.md
-  - How-to:
-      - Web Hooks: webhooks.md
-      - Strategy Cookbook: strategy_guide.md
-  - Concepts:
-      - Schema-First Boundary RFC: plans/schema_first_python_rust_boundary_rfc.md
+  - Runtime Boundaries:
       - Mode Divergence Ledger: mode_divergence_ledger.md
       - Strategies: core_concepts/strategies.md
       - Feeds: core_concepts/feeds.md
       - Brokers: core_concepts/brokers.md
       - Exchanges: core_concepts/exchanges.md
       - Caching: core_concepts/caching.md
-  - Plugins & Extras: plugins_and_extras.md
+  - How-to:
+      - Strategy Cookbook: strategy_guide.md
+      - Web Hooks: webhooks.md
   - Reference:
+      - Entry Points & API Freeze: reference/entry_points.md
       - Web API Reference: reference/web_api.md
       - Configuration Reference: reference/configuration.md
-      - Entry Points & API Freeze: reference/entry_points.md
+  - Testing & Reliability:
+      - Runtime Guarantees: testing/runtime_guarantees.md
+      - Testing Guidelines: development/testing_guidelines.md
+      - Test Coverage Responsibilities: testing/test_coverage.md
+      - Known Gaps: testing/known_gaps.md
+      - Strategy Analysis: testing/strategy_analysis.md
+      - Fixtures & Sample Strategy: testing/fixture_strategy.md
+      - Mocking Policy: testing/mocking_policy.md
+      - Backtrader Compatibility Envelope: testing/backtrader_compatibility_envelope.md
+      - Rust CI Policy: testing/rust_ci_policy.md
+  - Migration and Compatibility:
+      - Legacy Architecture Context: core_concepts/architecture.md
+      - Schema-First Boundary RFC: plans/schema_first_python_rust_boundary_rfc.md
+      - Backtrader Broker API Envelope: compatibility/backtrader_broker_api_envelope.md
+  - Reference Appendices:
+      - Plugins and Extras: plugins_and_extras.md
+  - Performance:
+      - Overview: performance/overview.md
+      - Caching Guide: performance/caching_guide.md
+      - Large Datasets: performance/large_datasets.md
+      - Benchmarking: performance/benchmarking.md
+      - Optimization Roadmap: performance/optimization_roadmap.md
   - Development:
-      - Performance:
-          - Overview: performance/overview.md
-          - Caching Guide: performance/caching_guide.md
-          - Large Datasets: performance/large_datasets.md
-          - Benchmarking: performance/benchmarking.md
-          - Optimization Roadmap: performance/optimization_roadmap.md
-      - Testing & Quality:
-          - Runtime Guarantees: testing/runtime_guarantees.md
-          - Testing Guidelines: development/testing_guidelines.md
-          - Test Coverage Responsibilities: testing/test_coverage.md
-          - Known Gaps: testing/known_gaps.md
-          - Strategy Analysis: testing/strategy_analysis.md
-          - Fixtures & Sample Strategy: testing/fixture_strategy.md
-          - Mocking Policy: testing/mocking_policy.md
-          - Backtrader Compatibility Envelope: testing/backtrader_compatibility_envelope.md
-          - Rust CI Policy: testing/rust_ci_policy.md
-      - Contributing:
-          - Overview: development/README.md
-          - Workflow: development/workflow.md
-          - Quick Reference: development/quick-reference.md
-          - Publishing: development/publishing.md
+      - Overview: development/README.md
+      - Workflow: development/workflow.md
+      - Quick Reference: development/quick-reference.md
+      - Publishing: development/publishing.md
   - Project (internal):
       - Documentation plan: internal/DOCUMENTATION_PLAN.md
       - Documentation status: internal/DOCUMENTATION_STATUS.md

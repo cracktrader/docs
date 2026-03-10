@@ -66,30 +66,24 @@ nav:
   - Architecture:
       - Read This First: architecture/agent_index.md
       - Runtime Map: architecture/runtime_map.md
+      - Source of Truth and Migration Map: migration/docs_source_of_truth.md
       - Mode Matrix: architecture/mode_matrix.md
       - Runtime Terms: architecture/runtime_terms.md
-      - Legacy Architecture Context: core_concepts/architecture.md
-  - How-to:
-      - Configure the platform: getting_started/configuration.md
-      - Strategy cookbook: strategy_guide.md
-      - Use the Web API: reference/web_api.md
-  - Explanations:
-      - Schema-first boundary RFC: plans/schema_first_python_rust_boundary_rfc.md
+  - Runtime Boundaries:
       - Mode Divergence Ledger: mode_divergence_ledger.md
       - Strategies: core_concepts/strategies.md
       - Feeds: core_concepts/feeds.md
       - Brokers: core_concepts/brokers.md
       - Exchanges: core_concepts/exchanges.md
       - Caching model: core_concepts/caching.md
+  - How-to:
+      - Configure the platform: getting_started/configuration.md
+      - Strategy cookbook: strategy_guide.md
+      - Use the Web API: reference/web_api.md
   - Reference:
+      - Entry points and API freeze: reference/entry_points.md
       - API Reference: reference/web_api.md
       - Configuration reference: reference/configuration.md
-  - Performance:
-      - Overview: performance/overview.md
-      - Caching guide: performance/caching_guide.md
-      - Large datasets: performance/large_datasets.md
-      - Benchmarking: performance/benchmarking.md
-      - Optimization roadmap: performance/optimization_roadmap.md
   - Testing & Quality:
       - Runtime guarantees: testing/runtime_guarantees.md
       - Testing guidelines: development/testing_guidelines.md
@@ -100,6 +94,18 @@ nav:
       - Mocking policy: testing/mocking_policy.md
       - Backtrader compatibility envelope: testing/backtrader_compatibility_envelope.md
       - Rust CI policy: testing/rust_ci_policy.md
+  - Migration and Compatibility:
+      - Legacy architecture context: core_concepts/architecture.md
+      - Schema-first boundary RFC: plans/schema_first_python_rust_boundary_rfc.md
+      - Backtrader broker API envelope: compatibility/backtrader_broker_api_envelope.md
+  - Reference Appendices:
+      - Plugins and extras: plugins_and_extras.md
+  - Performance:
+      - Overview: performance/overview.md
+      - Caching guide: performance/caching_guide.md
+      - Large datasets: performance/large_datasets.md
+      - Benchmarking: performance/benchmarking.md
+      - Optimization roadmap: performance/optimization_roadmap.md
   - Contributing:
       - Overview: development/README.md
       - Workflow: development/workflow.md
