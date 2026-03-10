@@ -91,18 +91,19 @@ nav:
       - Benchmarking: performance/benchmarking.md
       - Optimization roadmap: performance/optimization_roadmap.md
   - Testing & Quality:
+      - Runtime guarantees: testing/runtime_guarantees.md
+      - Testing guidelines: development/testing_guidelines.md
+      - Test coverage responsibilities: testing/test_coverage.md
+      - Known gaps: testing/known_gaps.md
       - Strategy analysis: testing/strategy_analysis.md
       - Fixtures & sample strategy: testing/fixture_strategy.md
       - Mocking policy: testing/mocking_policy.md
       - Backtrader compatibility envelope: testing/backtrader_compatibility_envelope.md
       - Rust CI policy: testing/rust_ci_policy.md
-      - Test coverage status: testing/test_coverage.md
-      - Known gaps: testing/known_gaps.md
   - Contributing:
       - Overview: development/README.md
       - Workflow: development/workflow.md
       - Quick reference: development/quick-reference.md
-      - Testing guidelines: development/testing_guidelines.md
       - Publishing: development/publishing.md
   - Project (internal):
       - Documentation plan: internal/DOCUMENTATION_PLAN.md
