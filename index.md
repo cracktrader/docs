@@ -1,145 +1,62 @@
-# CrackTrader
+# Cracktrader Documentation
 
-Professional cryptocurrency trading framework for algorithmic traders and quantitative analysts
+This docs site now treats the runtime architecture as the primary orientation layer.
 
-Trade across 400+ exchanges. Backtest with precision. Deploy with confidence.
+If you are new to Cracktrader, or trying to re-ingest the repo after earlier Cerebro-centric docs, start with the architecture pages below before reading older concept pages.
 
----
+## Read This First
 
-## Overview
+1. [Architecture Index](architecture/agent_index.md)
+2. [Runtime Map](architecture/runtime_map.md)
+3. [Mode Matrix](architecture/mode_matrix.md)
+4. [Runtime Terms](architecture/runtime_terms.md)
 
-CrackTrader provides a unified platform to build, test, and deploy algorithmic trading strategies across 400+ cryptocurrency exchanges with seamless Backtrader integration. Built for professional traders who demand execution quality, data integrity, and reproducible results.
+## Current Runtime Model
 
-## Key Features
+The preferred mental model is:
 
-- **Universal Exchange Access**: Trade on 400+ exchanges through a single, unified interface
-- **Real-Time Data Streams**: WebSocket feeds with historical backfill and intelligent caching
-- **Production Ready**: Comprehensive testing, robust error handling, and proven reliability
-- **Web Dashboard**: REST API with real-time monitoring and control interface
-- **High Performance**: Asynchronous architecture supporting sub-minute timeframes
+- a session owns shared runtime services
+- market inputs update a shared state coordinator
+- the runtime builds one immutable snapshot per step
+- strategies consume filtered views of that snapshot
+- strategies emit attributed intents against execution contexts and routes
+- inventory, risk, execution adapters, and post-trade hooks handle the rest
 
----
+Backtrader compatibility is still important, but it is no longer the right top-level map for the system.
 
-## Quick Start
+## Where To Go Next
 
-### 1. Install
+| Goal | Start here |
+| --- | --- |
+| Understand the current architecture quickly | [Architecture Index](architecture/agent_index.md) |
+| See the runtime boundaries end to end | [Runtime Map](architecture/runtime_map.md) |
+| Compare backtest, paper, sandbox, and live behavior | [Mode Matrix](architecture/mode_matrix.md) |
+| Look up stable runtime vocabulary | [Runtime Terms](architecture/runtime_terms.md) |
+| Follow legacy links or older mental models safely | [Legacy Architecture Context](core_concepts/architecture.md) |
+| Install and run your first example | [Getting Started](getting_started/installation.md) |
+| Find stable user-facing APIs | [Reference](reference/entry_points.md) |
 
-```bash
-pip install git+https://github.com/cracktrader/cracktrader.git
-```
-
-### 2. Your First Strategy (backtest)
-
-```python
-import cracktrader as ct
-
-class SimpleMovingAverage(ct.bt.Strategy):
-    def __init__(self):
-        self.sma = ct.indicators.SMA(self.data.close, period=20)
-
-    def next(self):
-        if not self.position and self.data.close[0] > self.sma[0]:
-            self.buy()
-        elif self.position and self.data.close[0] < self.sma[0]:
-            self.sell()
-
-# Create a session for Binance in backtest mode
-session = ct.exchange('binance', mode='backtest')
-
-# Get a data feed from the session
-feed = session.feed(symbol='BTC/USDT', timeframe='1h')
-
-cerebro = ct.Cerebro()
-cerebro.adddata(feed)
-cerebro.addstrategy(SimpleMovingAverage)
-cerebro.run()
-```
-
-### 3. Go Live (when ready)
-
-```python
-# Switch to live trading with your API keys
-session = ct.exchange(
-    'binance',
-    mode='live',
-    apiKey='YOUR_API_KEY',
-    secret='YOUR_SECRET'
-)
-```
-
-The session helper automatically manages connections and ensures data consistency across components.
-
----
-
-## Navigation
-
-Use the navigation tabs above or explore key sections:
-
-**🚀 [Getting Started](getting_started/installation.md)** - Installation, configuration, and your first strategy  
-**🧠 [Understanding Cracktrader](core_concepts/architecture.md)** - Core concepts and system architecture  
-**📈 [Strategy Tutorials](tutorials/multi_exchange.md)** - Advanced trading strategies and techniques  
-**📚 [Reference](reference/core_classes.md)** - Complete API documentation and indicators  
-**⚡ [Developers](testing/tested_exchanges.md)** - Testing, performance, and support resources
-
----
-
-## For Professional Traders
-
-- **Multi-Exchange Trading**: Unified interface across 400+ exchanges with consistent symbol mapping
-- **Strategy Migration**: Run existing Backtrader strategies with minimal modifications
-- **Real-Time Monitoring**: FastAPI-powered dashboard with WebSocket streams and REST controls
-- **High-Frequency Capable**: Asynchronous data pipeline supporting sub-minute timeframes
-- **Enterprise Quality**: Comprehensive test coverage with unit, integration, and end-to-end validation
-
----
-
-## Architecture Overview
+## Runtime Overview
 
 ```mermaid
-graph TB
-    A[Trading Strategies] --> B[Cerebro Engine]
-    B --> C[Data Feeds]
-    B --> D[Brokers]
-    C --> E[Exchange Sessions]
-    D --> E
-    E --> F[Exchanges]
-
-    G[Web Dashboard] --> H[REST API]
-    H --> B
-
-    subgraph "400+ Exchanges"
-        F1[Binance]
-        F2[Coinbase Pro]
-        F3[Kraken]
-        F4[Bybit]
-        F5[Bitfinex]
-        F6[KuCoin]
-    end
-
-    F --> F1
-    F --> F2
-    F --> F3
-    F --> F4
-    F --> F5
-    F --> F6
+graph TD
+    A["Session"] --> B["Reference Data"]
+    A --> C["State Coordinator"]
+    A --> D["Strategies"]
+    A --> E["Execution Contexts and Routes"]
+    A --> F["Inventory and Risk"]
+    A --> G["Post-Trade and Control Plane"]
+    H["Feeds and Channels"] --> C
+    C --> I["Shared Snapshot"]
+    I --> D
+    D --> J["Execution Intents"]
+    J --> E
+    E --> F
+    F --> G
 ```
 
-Data flows from exchanges through the unified interface to your strategies. The web API provides real-time monitoring and control. See [Performance](performance/overview.md) for current characteristics and benchmarks.
+## Compatibility Note
 
----
+Older pages about feeds, brokers, stores, and Cerebro are still available because they remain useful for implementation detail and migration work.
 
-## Ready to Start?
-
-### 🆕 New to Algorithmic Trading?
-Start with our [**Quickstart Guide**](getting_started/quickstart.md) - Learn the fundamentals with step-by-step examples
-
-### 📊 Experienced with Backtrader?  
-Check out [**Strategy Migration**](core_concepts/strategies.md) - Adapt existing strategies with minimal changes
-
-### 🏗️ Building for Production?
-Review our [**Architecture Overview**](core_concepts/architecture.md) - Understand the system design and best practices
-
-### 🔌 Need API Integration?
-Explore the [**Web API Reference**](reference/web_api.md) - Complete REST and WebSocket documentation
-
----
+Use them as secondary detail, not as the primary runtime truth.

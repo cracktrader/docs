@@ -61,11 +61,16 @@ nav:
       - Installation: getting_started/installation.md
       - First Strategy: getting_started/first_strategy.md
       - Configuration: getting_started/configuration.md
+  - Architecture:
+      - Read This First: architecture/agent_index.md
+      - Runtime Map: architecture/runtime_map.md
+      - Mode Matrix: architecture/mode_matrix.md
+      - Runtime Terms: architecture/runtime_terms.md
+      - Legacy Architecture Context: core_concepts/architecture.md
   - How-to:
       - Web Hooks: webhooks.md
       - Strategy Cookbook: strategy_guide.md
   - Concepts:
-      - Architecture: core_concepts/architecture.md
       - Schema-First Boundary RFC: plans/schema_first_python_rust_boundary_rfc.md
       - Mode Divergence Ledger: mode_divergence_ledger.md
       - Strategies: core_concepts/strategies.md

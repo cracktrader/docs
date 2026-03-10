@@ -1,270 +1,60 @@
-# Architecture Overview
+# Legacy Architecture Context
 
-Cracktrader is built for modularity, performance, and reliability. This overview shows how strategies, feeds, brokers, and the stores (CCXT or Polymarket) work together.
+This page remains for historical links and compatibility context.
 
-## High-Level Architecture
+It is not the primary architecture truth anymore.
 
-```mermaid
-graph TB
-    subgraph "User Layer"
-        S[Strategies]
-        W[Web Dashboard]
-        CLI[CLI Tools]
-    end
+## Use These Pages First
 
-    subgraph "Execution Layer"
-        C[Cerebro Engine]
-        A[Analyzers]
-        I[Indicators]
-    end
+If you are trying to understand the current runtime, start here instead:
 
-    subgraph "Trading Layer"
-        B[Brokers]
-        F[Data Feeds]
-        R[Risk Manager]
-    end
+1. [Runtime Map](../architecture/runtime_map.md)
+2. [Architecture Index](../architecture/agent_index.md)
+3. [Mode Matrix](../architecture/mode_matrix.md)
+4. [Runtime Terms](../architecture/runtime_terms.md)
 
-    subgraph "Integration Layer"
-        ST[Store (CCXT / Polymarket)]
-        WS[WebSocket Streams]
-        API[REST API]
-    end
+## Why This Page Changed
 
-    subgraph "Exchange Layer"
-        EX[100+ Exchanges]
-    end
+Older Cracktrader docs were organized around a simpler mental model:
 
-    S --> C
-    W --> API
-    CLI --> C
+- Cerebro as the center of the system
+- feeds and brokers as the main runtime boundaries
+- stores as the dominant integration surface
 
-    C --> B
-    C --> F
-    C --> A
-    C --> I
+That framing is still useful when reading legacy compatibility code or migration-oriented pages, but it is no longer the preferred top-level explanation.
 
-    B --> ST
-    F --> ST
-    B --> R
+The current runtime direction is session-owned and contract-first:
 
-    ST --> WS
-    ST --> API
+- shared reference data and state coordination
+- multi-strategy fanout over one shared snapshot per step
+- execution contexts and stable route IDs
+- central inventory, exposure, and risk
+- unified execution adapters across backtest, paper, sandbox, and live
+- post-trade and control-plane hooks around the runtime edge
 
-    ST --> EX
-    WS --> EX
-    API --> EX
-```
+## How To Read Older Pages
 
-## Core Components
+When you encounter older terms, reinterpret them this way:
 
-### 1. Cerebro (Execution)
+| Older emphasis | How to read it now |
+| --- | --- |
+| Cerebro-centric execution | important compatibility surface, not the whole runtime map |
+| Feed + broker wiring | one layer inside a broader session-owned orchestration model |
+| Store as architecture center | external IO and transport ownership, not runtime ownership |
+| Risk manager near broker | one slice of a broader explicit risk engine |
 
-Backtrader's Cerebro runs your strategy, routes data, and manages the broker.
+## Where Legacy Framing Still Helps
 
-- Strategy orchestration and lifecycle
-- Feed ↔ strategy ↔ broker data flow
-- Bar/tick progression and analyzers
+Older pages are still useful for:
 
-```python
-cerebro = bt.Cerebro()
-cerebro.adddata(data_feed)
-cerebro.addstrategy(MyStrategy)
-cerebro.setbroker(broker)
-cerebro.run()
-```
+- Backtrader compatibility behavior
+- exchange/store implementation detail
+- feed or broker-specific usage notes
+- migration work where old and new abstractions coexist
 
-### 2. Store (Integration)
+## Next Reading
 
-The store centralizes exchange connectivity and shared resources. CCXTStore handles crypto exchanges; PolymarketStore handles prediction markets with the same factory/session API.
-
-- Unified interface to 100+ exchanges (CCXT) plus Polymarket
-- WebSocket/REST connection management
-- Historical data caching
-- Built-in rate limiting
-
-```python
-store = ct.Store(exchange='binance', sandbox=True)
-# or Polymarket with the same API surface
-pm_store = ct.Store(exchange='polymarket', enable_network=True)
-```
-
-Key features
-- Registry/singleton for shared connections
-- Async background loop for exchange I/O
-- Automatic reconnection and error handling
-- Structured logging and diagnostics
-
-### 3. Data Feeds (Market Data)
-
-CCXTDataFeed provides real-time and historical OHLCV data. PolymarketDataFeed mirrors the surface for prediction markets.
-
-- Timeframes: seconds to monthly
-- Live streaming via WebSocket
-- Historical backfill for backtests
-- Validation and gap detection
-
-```python
-feed = ct.Feed(
-    store=store,
-    symbol='BTC/USDT',
-    ccxt_timeframe='1h',
-    live=True,
-)
-
-# Session helper reuses stores automatically
-session = ct.exchange('polymarket', mode='paper')
-pm_feed = session.feed(symbol='PM:some-market:yes', granularity='1m')
-```
-
-### 4. Brokers (Execution)
-
-Two broker paths cover live and research.
-
-- CCXTLiveBroker: real exchanges, live orders and balances
-- CCXTBackBroker: backtesting/paper trading with configurable costs
-
-Paper trading uses the backtesting broker with live feeds (create via `BrokerFactory.create(mode='paper')`).
-
-### 5. Strategies (Trading Logic)
-
-Built on Backtrader's strategy framework with enhancements:
-
-```python
-class MyStrategy(bt.Strategy):
-    def __init__(self):
-        self.sma = bt.indicators.SMA(period=20)
-
-    def next(self):
-        if self.data.close > self.sma:
-            self.buy(size=0.1)
-```
-
-Enhanced features
-- OCO bracket orders and risk helpers
-- Real-time monitoring hooks
-- Multi-asset support
-
-## Data Flow Architecture
-
-### 1. Market Data Flow
-
-```mermaid
-sequenceDiagram
-    participant E as Exchange
-    participant WS as WebSocket
-    participant S as Store
-    participant F as Feed
-    participant C as Cerebro
-    participant ST as Strategy
-
-    E->>WS: Market data stream
-    WS->>S: Raw tick data
-    S->>F: Processed OHLCV
-    F->>C: Backtrader data
-    C->>ST: Strategy.next()
-```
-
-### 2. Order Execution Flow
-
-```mermaid
-sequenceDiagram
-    participant ST as Strategy
-    participant B as Broker
-    participant S as Store
-    participant E as Exchange
-
-    ST->>B: self.buy(size=0.1)
-    B->>S: create_order()
-    S->>E: REST API call
-    E->>S: Order confirmation
-    S->>B: Order update
-    B->>ST: notify_order()
-```
-
-## Concurrency Model
-
-Hybrid sync/async design:
-
-- Main thread: strategy execution, indicators, analyzers
-- Background loop: exchange I/O (WebSocket/REST), order/balance updates
-- Thread-safe queues and minimal locking between components
-
-```python
-# Thread-safe store operations
-store = CCXTStore(exchange='binance')
-await store.initialize()  # Async initialization
-
-# Sync strategy access
-class Strategy(bt.Strategy):
-    def next(self):
-        # This runs in main thread
-        latest_price = self.data.close[0]
-```
-
-## Performance
-
-- Caching for historical data (configurable location)
-- WebSocket reuse and HTTP session pooling
-- Built-in rate limiting
-- Efficient data structures for in-memory processing
-
-## Reliability
-
-- Automatic reconnection with backoff
-- Heartbeats and stream liveness checks
-- Data validation and outlier filtering
-- Pre-flight order validation and lifecycle tracking
-- **Failure Recovery**: Handle partial fills and rejections
-
-## Configuration Management
-
-### 1. Hierarchical Configuration
-```
-Environment Variables → Config Files → Code Defaults
-```
-
-### 2. Exchange-Specific Settings
-```python
-config = {
-    'binance': {
-        'sandbox': True,
-        'rate_limit': 1200,  # requests per minute
-        'timeout': 30000     # milliseconds
-    }
-}
-```
-
-### 3. Strategy Parameters
-```python
-class Strategy(bt.Strategy):
-    params = (
-        ('period', 20),
-        ('risk_pct', 0.02),
-    )
-```
-
-## Monitoring and Observability
-
-### 1. Structured Logging
-- **JSON Format**: Machine-readable logs
-- **Context Propagation**: Request tracing across components
-- **Log Levels**: Configurable verbosity
-
-### 2. Metrics Collection
-- **Performance Metrics**: Latency, throughput, error rates
-- **Business Metrics**: PnL, win rate, Sharpe ratio
-- **System Metrics**: Memory, CPU, network usage
-
-### 3. Health Checks
-- **Liveness Probes**: Is the system running?
-- **Readiness Probes**: Can it handle requests?
-- **Dependency Checks**: Are exchanges reachable?
-
-## Next Steps
-
-- [**Exchanges**](exchanges.md) - Exchange integration details
-- [**On-chain Venues**](../reference/onchain_venues.md) - Uniswap/PancakeSwap usage, config, and backtest path
-- [**Data Feeds**](feeds.md) - Market data handling
-- [**Brokers**](brokers.md) - Order execution systems
-- [**Strategies**](strategies.md) - Trading logic development
-- [**Mode Divergence Ledger**](../mode_divergence_ledger.md) - Intentional mode differences and linked tests
+- [Strategies](strategies.md)
+- [Feeds](feeds.md)
+- [Brokers](brokers.md)
+- [Exchanges](exchanges.md)
