@@ -32,6 +32,7 @@ Backtrader compatibility is still important, but it is no longer the right top-l
 | See the runtime boundaries end to end | [Runtime Map](architecture/runtime_map.md) |
 | Compare backtest, paper, sandbox, and live behavior | [Mode Matrix](architecture/mode_matrix.md) |
 | Look up stable runtime vocabulary | [Runtime Terms](architecture/runtime_terms.md) |
+| Understand which docs are canonical vs transitional | [Docs Source of Truth and Migration Map](migration/docs_source_of_truth.md) |
 | Follow legacy links or older mental models safely | [Legacy Architecture Context](core_concepts/architecture.md) |
 | Install and run your first example | [Getting Started](getting_started/installation.md) |
 | Find stable user-facing APIs | [Reference](reference/entry_points.md) |
