@@ -1,26 +1,48 @@
-## Testing Methodology
+# Known Gaps
 
-This page outlines how Cracktrader is tested and what each tier validates.
+This page documents real limitations and intentionally incomplete areas in the current testing and reliability story.
 
-Test Tiers
+It should be read as a boundary document, not as a list of excuses.
 
-- Unit: Isolated modules with fakes/mocks to validate contracts
-- Integration: Cross‑component behavior using a fake exchange
-- End‑to‑End: Optional sandbox/live runs for final validation
+## Current Gaps
 
-Environments
+### Deep Live-Market Realism
 
-- Mock/fake exchange by default — deterministic, fast, and free
-- Sandbox for selected critical paths — realistic but network‑dependent
-- Live opt‑in only — used sparingly before releases
+The simulator boundary now has a first realism slice, but it is not a full exchange emulator.
 
-Performance
+Do not assume the suite currently guarantees:
 
-- Benchmark core paths on mock data to avoid network noise
-- Track latency targets separately for mock vs sandbox where relevant
+- queue-position realism
+- venue-specific microstructure parity
+- perfect partial-fill depth simulation
+- live-like latency under all paths
 
-Quality Assurance
+### Environment-Backed Coverage
 
-- CI runs unit and integration suites on every change
-- Fixtures provide stable, reusable setups
-- Clear failure messages and reproducible scenarios
+Sandbox and live coverage are intentionally gated.
+
+That means default local and CI evidence is strongest for hermetic runtime guarantees, not for every external venue interaction.
+
+### Docs Build Strictness
+
+The docs repo still has pre-existing navigation and broken-link debt outside the newest runtime pages.
+
+Normal MkDocs builds work, but strict mode still reports legacy warnings that need separate cleanup.
+
+### Legacy Documentation Drift
+
+Some older pages still exist for compatibility and migration context.
+
+Even after the runtime-map reset, not every legacy page has been rewritten yet. Use the `architecture/` pages as the preferred truth when pages disagree.
+
+## What This Means In Practice
+
+- prefer deterministic contract evidence over environment-backed confidence when possible
+- add regression tests when a gap turns into a real bug
+- document explicit non-guarantees instead of implying the runtime is more mature than it is
+
+## Next Cleanup Targets
+
+- stale advanced docs with broken relative links
+- larger docs information-architecture cleanup around migration and reference pages
+- deeper simulator-realism documentation once the runtime surface expands
