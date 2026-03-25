@@ -14,27 +14,26 @@ This directory contains comprehensive documentation for developing and contribut
 - Modern Python development workflow
 - Automated quality assurance with pre-commit hooks
 - Comprehensive CI/CD pipeline with GitHub Actions
-- Security scanning and performance monitoring
+- Contract, replay, and runtime validation in CI
 
 ### Code Quality
-- **Ruff**: Fast linting and formatting (55,000+ ops/sec)
+- **Ruff**: Primary linting and import-order checks
 - **Black**: Code formatting backup
-- **Bandit**: Security vulnerability scanning
-- **Type checking**: MyPy integration (optional)
+- **isort**: Import sorting in pre-commit
+- **Type checking**: MyPy integration
 
 ### Testing Strategy
 - Unit: fast, isolated component testing
 - Integration: cross-component behavior using a fake exchange
 - E2E (optional): sandbox/live validation for critical paths
-- Coverage and performance reports in CI
+- Contract, replay-regression, and web smoke suites in CI
 
 ### CI/CD Pipeline Features
 - Matrix testing (Python 3.11, 3.12)
 - Dependency caching
 - Parallel test execution
-- Security scanning
+- Rust parity gates
 - Build verification
-- Coverage reporting
 - Artifact collection
 
 ## Architecture Overview
