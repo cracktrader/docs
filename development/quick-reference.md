@@ -8,12 +8,12 @@ Essential commands and information for Cracktrader development.
 # Initial setup
 python -m venv .venv
 .venv\Scripts\activate  # Windows
-pip install -e ".[dev,web]"
+pip install -e ".[dev,test,web]" pre-commit
 pre-commit install
 
 # Verify setup
-pytest tests/unit/ -x -q
-ruff check src/ tests/
+pytest -q tests/contracts/engine tests/contracts
+pre-commit run --all-files
 ```
 
 ## Daily Development
@@ -21,26 +21,26 @@ ruff check src/ tests/
 ```bash
 # Before coding
 git pull origin main
-pre-commit run --all-files
 
 # Code quality checks
-ruff check src/ tests/ --fix
-ruff format src/ tests/
+pre-commit run --all-files
+pre-commit run --hook-stage pre-push --all-files
+mypy src
 
 # Run tests
-pytest tests/unit/ -v
-pytest tests/integration/ -v
+pytest -q
+pytest -q tests/contracts/engine tests/contracts
 
 # Before committing
-pytest tests/unit/ -x -q
+pytest -q tests/contracts/test_runtime_hook_contracts.py
 ```
 
 ## CI/CD Pipeline
 
-- **Triggers**: Push to `main`/`develop`, PRs to `main`
-- **Matrix**: Python 3.11, 3.12 on Ubuntu
-- **Duration**: ~2-5 minutes
-- **Coverage**: Auto-updates README badge
+- **Triggers**: Push to `main`/`develop`, version tags, and pull requests
+- **Core jobs**: lint, type-check, test matrix, contracts, replay regression, web smoke
+- **Rust jobs**: required parity gates plus an extended parity job
+- **Artifacts**: build distributions and feed benchmark reports
 
 ## Key File Locations
 
@@ -55,7 +55,7 @@ pytest tests/unit/ -x -q
 - **Data Processing**: 55,000+ candles/second
 - **Reordering**: 53,000+ candles/second  
 - **Memory**: <1MB for 1000 candles
-- **Test Coverage**: >95%
+- **Coverage posture**: use boundary coverage docs, not a fixed percentage target
 
 ## Troubleshooting
 
@@ -78,4 +78,4 @@ pytest tests/unit/feed/test_sub_minute_timeframes.py -v -s
 - **Brokers**: Paper and live trading with CCXT integration
 - **Engine**: Native-first runtime entrypoints (`run_native*`)
 - **Testing**: 19,200+ test lines vs 7,400 source lines
-- **Quality**: Comprehensive linting, formatting, security scanning
+- **Quality**: Pre-commit, contract suites, replay regression, and Rust parity gates

@@ -1,445 +1,214 @@
 # Development Workflow Guide
 
-This guide explains the comprehensive development workflow for Cracktrader, including CI/CD automation, code quality tools, and best practices.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Development Environment Setup](#development-environment-setup)
-- [Code Quality Tools](#code-quality-tools)
-- [Testing Strategy](#testing-strategy)
-- [CI/CD Pipeline](#cicd-pipeline)
-- [Pre-commit Hooks](#pre-commit-hooks)
-- [Release Process](#release-process)
-- [Performance Monitoring](#performance-monitoring)
+This guide documents the development workflow that the `cracktrader` repository actually runs today.
 
 ## Overview
 
-Cracktrader uses a modern development workflow with automated quality checks, comprehensive testing, and continuous integration. The system is designed to catch issues early and maintain high code quality.
+Cracktrader relies on pre-commit, targeted local checks, and a CI pipeline that emphasizes contract coverage, replay safety, and Rust parity gates.
 
 ### Key Technologies
 
-- **Python 3.11+**: Primary language
-- **Ruff**: Fast Python linter and formatter
-- **Black**: Code formatting
-- **pytest**: Testing framework
-- **Bandit**: Security scanning
-- **GitHub Actions**: CI/CD automation
-- **Pre-commit**: Git hooks for quality checks
+- Python 3.11+
+- Ruff for linting and import-order checks
+- Black for formatting compatibility
+- isort in pre-commit
+- pytest for unit, integration, contract, regression, and performance tests
+- mypy for static type checks
+- GitHub Actions for CI/CD
 
 ## Development Environment Setup
 
 ### 1. Initial Setup
 
 ```bash
-# Clone repository
 git clone <repository-url>
 cd cracktrader
 
-# Create virtual environment
 python -m venv .venv
 source .venv/bin/activate  # Linux/Mac
 # or
 .venv\Scripts\activate  # Windows
 
-# Install dependencies
-pip install -e ".[dev,web]"
+pip install -e ".[dev,test,web]" pre-commit
 ```
 
 ### 2. Install Pre-commit Hooks
 
 ```bash
-# Install pre-commit hooks
 pre-commit install
-
-# Test hooks
 pre-commit run --all-files
 ```
 
 ### 3. Verify Installation
 
 ```bash
-# Run tests
-pytest tests/unit/ -v
-
-# Check code quality
-ruff check src/ tests/
-ruff format --check src/ tests/
-
-# Run security scan
-bandit -r src/ -f json -o bandit-results.json
+pytest -q
+pytest -q tests/contracts/engine tests/contracts
+pre-commit run --all-files
+pre-commit run --hook-stage pre-push --all-files
+mypy src
 ```
 
 ## Code Quality Tools
 
-### Ruff (Primary Linter and Formatter)
+### Ruff
 
-Ruff is our primary code quality tool, replacing flake8, isort, and other tools with a single fast implementation.
-
-**Configuration**: `pyproject.toml`
+Ruff is the primary linting layer in the repository.
 
 ```toml
 [tool.ruff]
 line-length = 100
-target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "C90", "I", "N", "UP", "YTT", "S", "B", "A", "COM", "DTZ", "EM", "G", "INP", "PIE", "T20", "PT", "Q", "RSE", "RET", "SIM", "TID", "ARG", "ERA", "PD", "PGH", "PL", "TRY", "NPY", "PERF", "RUF"]
-ignore = ["S101", "PLR0913", "PLR0912", "PLR0915"]
+extend-select = ["I"]
+ignore = ["E501"]
 ```
 
-**Commands**:
 ```bash
-# Check code
 ruff check src/ tests/
-
-# Auto-fix issues
 ruff check src/ tests/ --fix
-
-# Format code
 ruff format src/ tests/
-
-# Check formatting
-ruff format --check src/ tests/
 ```
 
-### Black (Backup Formatter)
+### Black
 
-While Ruff handles most formatting, Black is included for compatibility.
+Black remains part of pre-commit and CI compatibility checks.
 
 ```bash
-# Format with Black
 black src/ tests/
-
-# Check formatting
 black --check src/ tests/
 ```
 
-### Bandit (Security Scanner)
+### isort
 
-Bandit scans for common security issues in Python code.
+isort still runs in pre-commit to normalize import blocks.
 
 ```bash
-# Run security scan
-bandit -r src/ -f json -o bandit-results.json
-
-# Run with configuration
-bandit -c pyproject.toml -r src/
+isort src/ tests/
 ```
 
 ## Testing Strategy
 
-### Test Structure
-
-```
-tests/
-├── unit/           # Unit tests for individual components
-├── integration/    # Integration tests for component interaction
-└── helpers/        # Test utilities and fixtures
-```
-
 ### Test Categories
 
-1. **Unit Tests**: Fast, isolated tests for individual functions/classes
-2. **Integration Tests**: Test component interactions and system behavior
-3. **Performance Tests**: Validate performance characteristics
-4. **Security Tests**: Embedded in regular tests, plus Bandit scans
+1. Unit tests for isolated component behavior.
+2. Integration tests for cross-component wiring that stays offline.
+3. Contract tests for runtime, engine, and schema boundaries.
+4. Replay and regression tests for deterministic behavior over time.
+5. Performance tests for throughput and latency-sensitive paths.
 
-### Running Tests
+### Common Commands
 
 ```bash
-# Run all tests
-pytest
-
-# Run specific test categories
-pytest tests/unit/ -v
-pytest tests/integration/ -v
-
-# Run with coverage
-pytest tests/unit/ --cov=src/cracktrader --cov-report=html
-
-# Run performance tests
+pytest -q
+pytest -q tests/unit/
+pytest -q tests/integration/
+pytest -q tests/contracts/engine tests/contracts
+pytest -q tests/regression/test_replay_regression.py
 pytest tests/unit/feed/test_sub_minute_timeframes.py -v -s
-
-# Run specific test
-pytest tests/integration/test_cerebro_compatibility.py::TestCerebroCompatibility::test_cerebro_run_with_preload_true -v
 ```
 
-### Test Configuration
+### Coverage Guidance
 
-**Configuration**: `pyproject.toml`
-
-```toml
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = "-v --tb=short"
-timeout = 30
-```
+Do not treat a single coverage percentage as the primary quality target. Prefer the boundary-based guidance in [`testing/test_coverage.md`](../testing/test_coverage.md) and ensure important runtime, replay, and contract seams are explicitly protected.
 
 ## CI/CD Pipeline
 
-### GitHub Actions Workflow
+### Workflow File
 
-The CI/CD pipeline runs automatically on push and pull requests to `main` and `develop` branches.
+- `.github/workflows/ci.yml`
 
-**File**: `.github/workflows/ci.yml`
-
-### Pipeline Stages
-
-#### 1. **Test Matrix**
-- Python 3.11 and 3.12
-- Ubuntu latest
-- Parallel execution for speed
-
-#### 2. **Dependency Caching**
-- Caches pip dependencies
-- Speeds up subsequent runs
-- Cache key based on requirements files
-
-#### 3. **Code Quality Checks**
-```yaml
-- name: Lint with ruff
-  run: |
-    ruff check src/ tests/ --output-format=github
-    ruff format --check src/ tests/
-```
-
-#### 4. **Type Checking** (Optional)
-```yaml
-- name: Type check with mypy
-  continue-on-error: true
-  run: |
-    pip install mypy || echo "mypy not available, skipping"
-    mypy src/ || echo "Type checking completed with issues"
-```
-
-#### 5. **Unit Tests with Coverage**
-```yaml
-- name: Run unit tests with coverage
-  run: |
-    pytest tests/unit/ \
-      --cov=src/cracktrader \
-      --cov-report=xml \
-      --cov-report=html \
-      --cov-report=term-missing \
-      --junitxml=test-results-unit.xml \
-      -v
-```
-
-#### 6. **Integration Tests**
-```yaml
-- name: Run integration tests
-  run: |
-    pytest tests/integration/ \
-      --junitxml=test-results-integration.xml \
-      -v
-```
-
-#### 7. **Security Scanning**
-- Separate job for security analysis
-- Uses Bandit for Python security issues
-- Uploads results as artifacts
-
-#### 8. **Build Verification**
-- Builds Python package
-- Verifies package integrity with twine
-- Uploads artifacts
-
-#### 9. **Documentation Build**
-- Builds documentation if MkDocs is configured
-- Uploads documentation artifacts
-
-#### 10. **Coverage Badge Update**
-- Updates README coverage badge automatically
-- Runs only on main branch
-- Uses green/yellow/red color coding
-
-### Workflow Triggers
+### Trigger Conditions
 
 ```yaml
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
+    tags: ['v*']
   pull_request:
-    branches: [ main ]
 ```
+
+### Current Pipeline Stages
+
+1. `lint`
+   Runs `pre-commit run --all-files` and the configured pre-push hook set.
+2. `type-check`
+   Runs `mypy src`.
+3. `test`
+   Runs the core pytest suite on Python 3.11 and 3.12.
+4. `contracts`
+   Validates the fixture manifest and runs `tests/contracts/engine` plus `tests/contracts`.
+5. `rust-parity-required`
+   Runs the required Rust parity suites.
+6. `rust-parity-extended`
+   Runs a broader parity gate as a non-blocking follow-up.
+7. `rust-feed-parity-required`
+   Runs the feed Rust parity gate and uploads benchmark artifacts.
+8. `replay-regression`
+   Runs the replay regression contract.
+9. `test-web`
+   Runs webhook smoke tests.
+10. `build`
+    Produces distribution artifacts once required checks pass.
+11. `release`
+    Publishes tagged builds when release credentials are configured.
 
 ### Artifact Collection
 
-The pipeline automatically collects:
-- Test results (JUnit XML)
-- Coverage reports (HTML, XML)
-- Security scan results (JSON)
-- Build artifacts (wheel, sdist)
-- Documentation
+- Build artifacts (`wheel`, `sdist`)
+- Feed benchmark artifacts and summaries
 
 ## Pre-commit Hooks
 
-Pre-commit hooks run automatically before each commit to ensure code quality.
+### Current Hook Set
 
-**Configuration**: `.pre-commit-config.yaml`
+1. Basic checks
+   `end-of-file-fixer`, `check-yaml`
+2. Code quality
+   `ruff`, `black`, `isort`
+3. Pre-push gate
+   repo-level `ruff` and `black --check` runs across `src` and `tests`
 
-### Hooks Enabled
-
-1. **Basic Checks**:
-   - trailing-whitespace
-   - end-of-file-fixer
-   - check-yaml
-   - check-added-large-files
-   - check-merge-conflict
-   - debug-statements
-
-2. **Code Formatting**:
-   - Black (code formatting)
-   - Ruff (linting and formatting)
-
-3. **Security**:
-   - Bandit (security scanning)
-
-4. **Testing**:
-   - pytest-check (runs unit tests)
-
-### Hook Execution
+### Useful Commands
 
 ```bash
-# Manual execution
 pre-commit run --all-files
-
-# Skip hooks (emergency only)
-git commit -m "message" --no-verify
-
-# Update hooks
+pre-commit run --hook-stage pre-push --all-files
 pre-commit autoupdate
 ```
 
 ## Release Process
 
-### Version Management
-
-1. **Update Version**: Increment version in `src/cracktrader/_version.py`
-2. **Update Changelog**: Document changes
-3. **Create Git Tag**: `git tag v1.x.x`
-4. **Push Tag**: `git push origin v1.x.x`
-
-### Automated Release (Future Enhancement)
-
-The pipeline can be extended to automatically:
-- Build and test release candidates
-- Publish to PyPI
-- Create GitHub releases
-- Generate release notes
-
-## Performance Monitoring
-
-### Continuous Performance Testing
-
-- Performance tests run in CI/CD
-- Detect performance regressions
-- Monitor memory usage and processing speed
-
-### Key Metrics Tracked
-
-1. **Data Processing Performance**:
-   - 55,000+ candles/second throughput
-   - <1MB memory usage for 1000 candles
-   - <1s processing time for high-frequency data
-
-2. **Reordering Performance**:
-   - 53,000+ candles/second with reordering
-   - Maintains chronological order
-   - Configurable buffer sizes
-
-3. **Memory Efficiency**:
-   - Queue-based architecture prevents memory leaks
-   - Automatic garbage collection
-   - Bounded buffer sizes
-
-### Performance Test Examples
-
-```bash
-# Run performance tests
-pytest tests/unit/feed/test_sub_minute_timeframes.py::TestSubMinuteTimeframes::test_sub_minute_data_processing_performance -v -s
-
-# Run with profiling
-pytest tests/unit/feed/test_tick_reordering.py -v -s --profile
-```
+1. Update the version in `pyproject.toml`.
+2. Update changelog or release notes.
+3. Create a git tag such as `v1.x.x`.
+4. Push the tag with `git push origin v1.x.x`.
 
 ## Development Best Practices
 
-### Code Quality Guidelines
-
-1. **Follow PEP 8**: Enforced by ruff and black
-2. **Write Docstrings**: Document all public functions/classes
-3. **Type Hints**: Use type hints where appropriate
-4. **Test Coverage**: Maintain >80% test coverage
-5. **Security First**: No hardcoded secrets, use bandit scanning
-
-### Git Workflow
-
-1. **Branch Naming**: `feature/description`, `fix/description`, `docs/description`
-2. **Commit Messages**: Clear, descriptive messages
-3. **Pull Requests**: Required for main branch
-4. **Code Review**: All changes reviewed before merge
-
-### Testing Guidelines
-
-1. **Test-Driven Development**: Write tests first when possible
-2. **Comprehensive Coverage**: Unit + integration + performance tests
-3. **Mock External Dependencies**: Use mocks for exchanges, networks
-4. **Performance Regression**: Include performance tests for critical paths
+1. Keep commits atomic and scoped to one coherent change.
+2. Prefer boundary coverage over percentage chasing.
+3. Add explicit tests for runtime, replay, and contract-sensitive changes.
+4. Avoid hardcoded secrets and be careful with network-facing code.
+5. Run the minimum relevant local checks before opening a PR.
 
 ## Troubleshooting
 
-### Common Issues
+### Pre-commit Failures
 
-**1. Pre-commit Hook Failures**
 ```bash
-# Fix formatting issues
-ruff format src/ tests/
 ruff check src/ tests/ --fix
-
-# Re-run hooks
+ruff format src/ tests/
+isort src/ tests/
 pre-commit run --all-files
 ```
 
-**2. Test Failures**
-```bash
-# Run specific failing test
-pytest tests/path/to/test.py::TestClass::test_method -v -s
+### CI Failures
 
-# Debug with pdb
-pytest --pdb tests/path/to/test.py::TestClass::test_method
-```
-
-**3. CI/CD Pipeline Issues**
-- Check GitHub Actions logs
-- Verify dependency versions
-- Ensure all tests pass locally first
-
-**4. Performance Issues**
-- Run performance tests locally
-- Check memory usage patterns
-- Review queue sizes and buffer configurations
-
-### Getting Help
-
-1. **Documentation**: Check existing docs in `docs/`
-2. **Tests**: Look at test examples for usage patterns
-3. **Code Comments**: Comprehensive docstrings throughout codebase
-4. **Issues**: Create GitHub issues for bugs or feature requests
+1. Check the failing GitHub Actions job first.
+2. Re-run the matching local command.
+3. Verify extras are installed for the job you are reproducing.
 
 ## Summary
 
-The Cracktrader development workflow provides:
-
-- ✅ **Automated Quality Assurance**: Pre-commit hooks + CI/CD pipeline
-- ✅ **Comprehensive Testing**: Unit, integration, and performance tests  
-- ✅ **Security First**: Automated security scanning with Bandit
-- ✅ **Performance Monitoring**: Continuous performance regression detection
-- ✅ **Developer Experience**: Fast feedback loops and helpful error messages
-- ✅ **Production Ready**: 19,200+ lines of tests vs 7,400 lines of source code
-
-This workflow ensures high code quality, catches issues early, and maintains the production-ready status of the Cracktrader cryptocurrency trading framework.
+The current workflow prioritizes truthful local validation, strong boundary contracts, and CI gates that reflect real runtime risks rather than outdated percentage targets or tools that are no longer wired into the repository.
