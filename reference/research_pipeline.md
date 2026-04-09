@@ -1,58 +1,86 @@
-# Research Pipeline: Run Metadata, Artifacts, and Comparison
+# Research Pipeline: Lab Runs, SQLite Registry, and Governance Ingress
 
-Source repository: [`cracktrader-lab`](https://github.com/cracktrader/cracktrader-lab).
+Primary repositories:
+- [`cracktrader-lab`](https://github.com/cracktrader/cracktrader-lab): deterministic research authoring and run execution
+- [`cracktrader-research-control`](https://github.com/cracktrader/cracktrader-research-control): governance/control-plane ingestion, evidence sealing, and promotion state
 
-The DSL evaluator writes each run under `.cracktrader/runs/<run_id>/` (or `EvaluationOptions.artifacts_root` when provided).
+This page reflects the current lab-first flow where runs are produced in `cracktrader-lab`, then candidate bundles are ingested into `cracktrader-research-control`.
 
-## Stored outputs
+## Lab Workflow Entry Points
 
-- `request.json`: validated evaluation request payload.
-- `report.json`: `StrategyReport` with split metrics, stress tests, and failure capsule.
-- `metadata.json`: compact run metadata (`RunMetadataSpec`) for indexing and reproducibility.
+`ctlab` is the primary contributor-facing entrypoint:
+
+- `ctlab init strategy <slug>`
+- `ctlab validate <slug>`
+- `ctlab run <slug>`
+- `ctlab family plan <slug>`
+- `ctlab family run <slug>`
+- `ctlab compare <slug>`
+- `ctlab falsify <slug>`
+- `ctlab candidate pack <slug>`
+
+These commands execute and inspect deterministic research runs, then package governance handoff bundles.
+
+## Run Artifact Layout
+
+By default, run artifacts are written under:
+
+- `.cracktrader/runs/<run_id>/`
+
+Each run directory contains:
+
+- `request.json`: validated evaluation request payload
+- `report.json`: strategy report with split metrics, stress summaries, and failure capsule
+- `metadata.json`: compact run metadata for reproducibility and comparison
 - `splits/<split_id>/trades.csv`
 - `splits/<split_id>/equity_curve.csv`
-- `stress/...` artifacts for cost/delay/parameter stress reruns.
+- additional stress/falsification artifacts when present
 
-## Metadata schema highlights
+## Run Registry Storage (SQLite-Backed)
 
-`RunMetadataSpec` includes:
+`RunRegistry` is now SQLite-backed via:
 
-- `run_id`
-- `reproducibility_key` (deterministic hash of request/strategy/dataset hashes)
-- `request_hash`, `strategy_hash`, `config_hash`
-- `dataset_id`, `dataset_hash`
-- `seed` (optional)
-- `engine_versions`
-- `artifacts` (path registry)
-- `metrics` (summary metrics snapshot)
+- `.cracktrader/runs/registry.sqlite3`
 
-## Registry indexes
+Core tables:
 
-- `index.json`: request-hash to run-id cache mapping.
-- `metadata_index.json`: queryable run metadata records keyed by `run_id`.
+- `request_runs`: request hash -> run id mapping
+- `run_metadata`: metadata payload rows keyed by run id
 
-Use `RunRegistry.list_metadata()` to enumerate runs without loading each report.
+`RunRegistry.list_metadata()` reads from SQLite-backed metadata rows and is the canonical way to enumerate runs.
 
-## Comparison tooling
+Legacy JSON indexes (`index.json`, `metadata_index.json`) are treated as migration input only. If present, they are imported into SQLite and are no longer the source of truth.
 
-`research.dsl_evaluator.comparison` provides:
+## Candidate Bundle Handoff
 
-- `compare_reports(left, right, metric="net_return_after_costs")`
-- `leaderboard(reports, metric="net_return_after_costs", role="out_of_sample")`
-- `compare_registered_runs(registry, run_ids=None, metric=..., role=...)`
+`ctlab candidate pack <slug>` writes a governance handoff bundle to:
 
-Example:
+- `.cracktrader/candidates/<candidate_revision_id>/candidate_bundle.json`
 
-```python
-from pathlib import Path
+The bundle includes:
 
-from research.dsl_evaluator.comparison import compare_registered_runs
-from research.dsl_evaluator.registry import RunRegistry
+- candidate identity and lineage metadata
+- run linkage (`run_id`, hashes, summary metrics)
+- artifact references and content hashes
+- seal request payload for governance ingestion
 
-registry = RunRegistry(Path(".cracktrader/runs"))
-rows = compare_registered_runs(registry)
-best = rows[0]
-print(best["run_id"], best["metric"])
-```
+## Research-Control Ingress and Promotion State
 
-For time-series validation sampler details, see `docs/reference/research_samplers.md`.
+The control-plane ingress path is:
+
+- `POST /candidate-bundles/ingest`
+
+Ingestion materializes governance facts and updates derived promotion state. Common read surfaces include:
+
+- `GET /promotion-state/{subject_type}/{subject_id}`
+- `GET /promotion-plans/{subject_type}/{subject_id}/{stage}`
+- `GET /pending-experiments/{subject_type}/{subject_id}[/{stage}]`
+- `GET /deployable-registry/{family_id}`
+
+This keeps deterministic research generation (`cracktrader-lab`) separated from authoritative governance state (`cracktrader-research-control`).
+
+## Comparison and Validation
+
+Comparison is driven through `ctlab compare` and registry-backed metadata/report reads.
+
+For sampler and leakage-safety details, see [Research Samplers](research_samplers.md).

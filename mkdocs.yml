@@ -81,6 +81,7 @@ nav:
       - Entry Points & API Freeze: reference/entry_points.md
       - Web API Reference: reference/web_api.md
       - Configuration Reference: reference/configuration.md
+      - Research Pipeline: reference/research_pipeline.md
   - Testing & Reliability:
       - Runtime Guarantees: testing/runtime_guarantees.md
       - Testing Guidelines: development/testing_guidelines.md
