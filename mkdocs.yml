@@ -92,6 +92,7 @@ nav:
       - Backtrader Compatibility Envelope: testing/backtrader_compatibility_envelope.md
       - Rust CI Policy: testing/rust_ci_policy.md
   - Migration and Compatibility:
+      - Python vs Rust Ownership Map: migration/python_rust_ownership_map.md
       - Legacy Architecture Context: core_concepts/architecture.md
       - Schema-First Boundary RFC: plans/schema_first_python_rust_boundary_rfc.md
       - Backtrader Broker API Envelope: compatibility/backtrader_broker_api_envelope.md

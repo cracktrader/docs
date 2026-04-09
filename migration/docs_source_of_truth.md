@@ -89,5 +89,6 @@ These pages can be valuable, but they are not the first place to look for curren
 
 - [Architecture Index](../architecture/agent_index.md)
 - [Runtime Map](../architecture/runtime_map.md)
+- [Python vs Rust Ownership Map](python_rust_ownership_map.md)
 - [Runtime Guarantees](../testing/runtime_guarantees.md)
 - [Legacy Architecture Context](../core_concepts/architecture.md)
