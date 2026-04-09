@@ -97,6 +97,7 @@ nav:
   - Migration and Compatibility:
       - Legacy architecture context: core_concepts/architecture.md
       - Schema-first boundary RFC: plans/schema_first_python_rust_boundary_rfc.md
+      - Python vs Rust ownership snapshot: migration/python_rust_ownership.md
       - Backtrader broker API envelope: compatibility/backtrader_broker_api_envelope.md
   - Reference Appendices:
       - Plugins and extras: plugins_and_extras.md
