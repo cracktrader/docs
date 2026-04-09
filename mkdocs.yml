@@ -77,6 +77,7 @@ nav:
   - How-to:
       - Strategy Cookbook: strategy_guide.md
       - Web Hooks: webhooks.md
+      - Signer Threat Model and Handling: support/signer_threat_model.md
   - Reference:
       - Entry Points & API Freeze: reference/entry_points.md
       - Web API Reference: reference/web_api.md
