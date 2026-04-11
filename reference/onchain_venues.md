@@ -147,6 +147,7 @@ On-chain broker results expose:
 
 - Use encrypted local key material and never log private key data.
 - Keep signer implementations behind the signer abstraction.
+- Review [Signer Threat Model and Operational Handling](../support/signer_threat_model.md) before changing signer setup.
 - See [On-chain Signer Security Checklist](../plans/onchain_signer_security_checklist.md).
 
 ## Troubleshooting
