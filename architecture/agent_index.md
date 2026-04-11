@@ -7,9 +7,10 @@ Read this page first if you need to ingest Cracktrader quickly as an engineer, r
 Use these pages in order:
 
 1. [Runtime Map](runtime_map.md)
-2. [Mode Matrix](mode_matrix.md)
-3. [Runtime Terms](runtime_terms.md)
-4. [Entry Points and API Freeze](../reference/entry_points.md)
+2. [Runtime Event Topology](runtime_event_topology.md)
+3. [Mode Matrix](mode_matrix.md)
+4. [Runtime Terms](runtime_terms.md)
+5. [Entry Points and API Freeze](../reference/entry_points.md)
 
 If you are checking whether an older page is still authoritative, assume the pages above are the current truth unless they explicitly point you elsewhere.
 

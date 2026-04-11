@@ -64,6 +64,7 @@ nav:
   - Architecture:
       - Read This First: architecture/agent_index.md
       - Runtime Map: architecture/runtime_map.md
+      - Runtime Event Topology: architecture/runtime_event_topology.md
       - Source of Truth and Migration Map: migration/docs_source_of_truth.md
       - Mode Matrix: architecture/mode_matrix.md
       - Runtime Terms: architecture/runtime_terms.md
