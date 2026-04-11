@@ -78,10 +78,13 @@ nav:
       - Strategy Cookbook: strategy_guide.md
       - Web Hooks: webhooks.md
       - Signer Threat Model and Handling: support/signer_threat_model.md
+      - Operator Troubleshooting Workflow: support/operator_troubleshooting_workflow.md
+      - On-chain Ops Runbook: support/onchain_ops_runbook.md
   - Reference:
       - Entry Points & API Freeze: reference/entry_points.md
       - Web API Reference: reference/web_api.md
       - Configuration Reference: reference/configuration.md
+      - Research Factory Workflow: reference/research_factory_workflow.md
   - Testing & Reliability:
       - Runtime Guarantees: testing/runtime_guarantees.md
       - Testing Guidelines: development/testing_guidelines.md
