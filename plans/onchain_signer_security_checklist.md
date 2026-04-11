@@ -1,6 +1,7 @@
 # On-chain Signer Security Checklist (M1)
 
 Use this checklist for any signer backend changes.
+For operational context, see [Signer Threat Model and Operational Handling](../support/signer_threat_model.md).
 
 - [ ] No secret material logged (private key bytes, decrypted payloads, passphrases).
 - [ ] Error messages are sanitized and do not leak key material.
