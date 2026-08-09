@@ -38,7 +38,7 @@ def next(self):
 
 ## Next Steps
 
-- [Multi-Asset Strategy](multi_asset.md) - Trade multiple symbols
-- [Live Trading](live_trading.md) - Deploy to production
-- [Web Dashboard](web_dashboard.md) - Monitor with web interface
+- [Multi-Asset Strategy](../tutorials/multi_asset.md) - Trade multiple symbols
+- [Live Trading](../getting_started/configuration.md) - Deploy to production
+- [Web Dashboard](../getting_started/web_interface.md) - Monitor with web interface
 - [Performance Guide](../performance/overview.md) - Optimize for speed

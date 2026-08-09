@@ -1114,6 +1114,6 @@ if __name__ == "__main__":
 ---
 
 **Next Steps:**
-- [Broker Integration](brokers.md) - Order execution and management
-- [Advanced Configuration](advanced.md) - Performance tuning and scaling
-- [Extending Cracktrader](extending.md) - Building custom integrations
+- [Broker Integration](../core_concepts/brokers.md) - Order execution and management
+- [Advanced Configuration](../getting_started/configuration.md) - Performance tuning and scaling
+- [Extending Cracktrader](../development/README.md) - Building custom integrations

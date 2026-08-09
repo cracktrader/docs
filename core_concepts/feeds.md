@@ -848,5 +848,5 @@ feed = CleanedDataFeed(store=store, symbol='BTC/USDT', timeframe='1h')
 
 **Next Steps:**
 - [Broker Integration](brokers.md) - Order execution and management
-- [Strategy Development](strategy_guide.md) - Using data feeds in strategies
-- [Advanced Configuration](advanced.md) - Performance tuning and optimization
+- [Strategy Development](../strategy_guide.md) - Using data feeds in strategies
+- [Advanced Configuration](../performance/overview.md) - Performance tuning and optimization

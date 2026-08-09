@@ -8,6 +8,7 @@ edit_uri: ""  # Disable edit links for private repo
 # Docs directory - in subtree, markdown files are at root level
 docs_dir: .
 site_dir: /tmp/mkdocs_site
+exclude_docs: /README.md
 
 theme:
   name: material
